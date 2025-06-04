@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Dish {
+  id          Int          @id @default(autoincrement())
+  name        String
+  price       Float
+  description String
+  category    Category     @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  ingredients DishIngredient[]
+  images      DishImage[]
+  tags        DishTag[]
+}
+
+model Category {
+  id         Int     @id @default(autoincrement())
+  name       String
+  isActive   Boolean @default(true)
+  updatedAt  DateTime @updatedAt
+  dishes     Dish[]
+}
+
+model Ingredient {
+  id         Int     @id @default(autoincrement())
+  name       String
+  isActive   Boolean @default(true)
+  updatedAt  DateTime @updatedAt
+  dishes     DishIngredient[]
+}
+
+model DishIngredient {
+  id           Int        @id @default(autoincrement())
+  dish         Dish       @relation(fields: [dishId], references: [id])
+  dishId       Int
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+  updatedAt    DateTime   @updatedAt
+}
+
+model DishImage {
+  id        Int     @id @default(autoincrement())
+  dish      Dish    @relation(fields: [dishId], references: [id])
+  dishId    Int
+  imageUrl  String
+  imageName String
+  imageType String
+  isPrimary Boolean @default(false)
+  updatedAt DateTime @updatedAt
+}
+
+model Tag {
+  id         Int     @id @default(autoincrement())
+  name       String
+  isActive   Boolean @default(true)
+  updatedAt  DateTime @updatedAt
+  dishes     DishTag[]
+}
+
+model DishTag {
+  id         Int   @id @default(autoincrement())
+  dish       Dish  @relation(fields: [dishId], references: [id])
+  dishId     Int
+  tag        Tag   @relation(fields: [tagId], references: [id])
+  tagId      Int
+  isActive   Boolean @default(true)
+  updatedAt  DateTime @updatedAt
+}
+
