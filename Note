@@ -1,0 +1,3 @@
+Run server: node server/index.js
+Run prisma|DB: npx prisma studio
+Run front: run npm dev

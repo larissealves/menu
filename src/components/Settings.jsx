@@ -1,8 +1,12 @@
 import AddDishes from "./NewDishes"
+import AddCategory from "./NewCategory"
 
 export default function Settings() {
 
     return(
-        <AddDishes />
+        <div>
+            <AddDishes />
+            <AddCategory />
+        </div>
     );
 }
