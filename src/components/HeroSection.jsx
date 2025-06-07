@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import mainImage from '../assets/images/sakura.png';
 
-import Settings from './Settings.jsx'
+import Settings from '../pages/Settings.jsx'
 
 import '../styles/base.css'
 

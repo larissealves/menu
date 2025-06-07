@@ -30,7 +30,7 @@ router.get('/get/dishes', async (req, res) => {
   try {
     const dishes = await prisma.dish.findMany({
       include: {
-        category: true, // se quiser incluir nome da categoria
+        category: true, 
       },
     })
     res.status(200).json(dishes)
