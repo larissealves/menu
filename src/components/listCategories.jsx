@@ -2,9 +2,15 @@ import React, { useEffect, useState } from 'react';
 import AddCategory from './NewCategory';
 
 export default function ListCategories() {
+
   const [listCategories, setCategories] = useState([]);
   const [categoryEditID, setCategoryEditID] = useState(null);
+
   const [controlPopup, setControlPopup] = useState(false);
+  
+  const toggleControlPopup = () => {
+    setControlPopup(!controlPopup)
+  }
 
   // Abre modal com o ID da categoria para edição
   const editCategory = (id) => {
@@ -45,7 +51,8 @@ export default function ListCategories() {
       {controlPopup && (
         <AddCategory
           propsCategoryID={categoryEditID}
-          toggleControlPopup={() => setControlPopup(false)}
+          handletoggleControlPopup={toggleControlPopup}
+          controlPopup = { controlPopup}
         />
       )}
     </div>
