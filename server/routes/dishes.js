@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client'
 const router = express.Router()
 const prisma = new PrismaClient()
 
-// Criar novo prato
+/* ============== CREATE ================= */
 router.post('/new/addDishes', async (req, res) => {
   const { name, price, description, categoryId } = req.body
 
@@ -25,7 +25,8 @@ router.post('/new/addDishes', async (req, res) => {
   }
 })
 
-// Listar todos os pratos
+
+/* ============== LIST ALL ITEMS ================= */
 router.get('/get/dishes', async (req, res) => {
   try {
     const dishes = await prisma.dish.findMany({
@@ -39,5 +40,34 @@ router.get('/get/dishes', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar pratos' })
   }
 })
+
+/* ============== FILTER DISHES BY CATEGORY ID ================= */
+router.get('/get/filterDishesById/:id', async (req, res) => {
+  const categoryId = parseInt(req.params.id);
+
+  try {
+    const dishes = await prisma.dish.findMany({
+      where: {
+        categoryId: categoryId,
+      },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        description: true,
+      },
+    });
+
+    if (dishes.length === 0) {
+      console.log('Nenhum prato encontrado para esta categoria');
+    }
+
+    res.status(200).json(dishes);
+  } catch (error) {
+    console.error('Erro ao buscar pratos por categoryId:', error);
+    res.status(500).json({ error: 'Erro ao buscar pratos por categoryId' });
+  }
+});
+
 
 export default router

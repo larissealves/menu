@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react'
+
+import BtnDeleteCategory from './BtnDeleteCategory'
+
 export default function AddCategory({ propsCategoryID, handletoggleControlPopup, controlPopup }) {
 
     const [formNewCategory, setFormNewCategory] = useState({
@@ -60,21 +63,7 @@ export default function AddCategory({ propsCategoryID, handletoggleControlPopup,
         }
     }
 
-    const handleDeleteSubmit = async (e) => {
-        e.preventDefault()
-        const endpoint = `http://localhost:5000/api/delete/category/${propsCategoryID}`
 
-        const method = 'DELETE'
-
-
-        if (res.ok) {
-            setFormNewCategory({ name: '', isActive: true })
-            handletoggleControlPopup()
-        } else {
-            console.error('Erro ao salvar categoria')
-        }
-
-    }
 
     return (
         <div className="main-content">
@@ -125,13 +114,12 @@ export default function AddCategory({ propsCategoryID, handletoggleControlPopup,
                                 </button>
 
                                 {propsCategoryID && (
-                                    <button
-                                        type="button"
-                                        onClick={handleDeleteSubmit}
-                                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                                    >
-                                        Delete
-                                    </button>
+                                    <BtnDeleteCategory
+                                        categoryID={propsCategoryID}
+                                        onDelete={() => {
+                                            toggleControlPopup();
+                                        }}
+                                    />
                                 )}
                             </div>
                         </form>
