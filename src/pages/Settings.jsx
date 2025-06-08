@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
 import AddDishes from "../components/NewDishes"
 import AddCategory from "../components/NewCategory"
-import ListCategories from '../components/listCategories'
+import ListCategories from '../components/ListCategories'
+import ListAllDishes from '../components/ListDishes'
 
 export default function Settings() {
     const [controlPopup, setControlPopup ] = useState(false)
@@ -18,6 +19,7 @@ export default function Settings() {
             controlPopup = {controlPopup}
             />
             <ListCategories />
+            <ListAllDishes />
         </div>
     );
 }
