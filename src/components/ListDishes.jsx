@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import AddDishes from './NewDishes'
 import ListTagsByDisheId from './ListTagsbyDish'
+import ListIngredientsByDisheId from './ListIngredientsbyDish'
 
 export default function ListAllDishes() {
     const [dishEditId, setdishEditId] = useState(null);
@@ -38,6 +39,10 @@ export default function ListAllDishes() {
                     <span>{item.price}</span>
                     <span>{item.description}</span>
                     <span>{item.isActive}</span>
+                    <ListIngredientsByDisheId 
+                        propDishId = {item.id}
+                    />
+                    
                     < ListTagsByDisheId 
                         propDishId = {item.id}
                     />

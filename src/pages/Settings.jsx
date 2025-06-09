@@ -5,18 +5,31 @@ import ListCategories from "../components/ListCategories"
 import ListAllDishes from '../components/ListDishes'
 
 export default function Settings() {
-    const [controlPopup, setControlPopup ] = useState(false)
+    
+    {/*===========POPUP CATEGORY=========== */}
+    const [controlPopupCategory, setControlPopupCategory ] = useState(false)
 
-    const handletoggleControlPopup = () => {
-        setControlPopup(!controlPopup)
+    const handletoggleControlPopupCategory = () => {
+        setControlPopupCategory(!controlPopupCategory)
+    }
+
+    {/*===========POPUP DISH=========== */}
+    const [controlPopupDish, setControlPopupDish ] = useState(false)
+
+    const handletoggleControlPopupDish = () => {
+        setControlPopupDish(!controlPopupDish)
     }
 
     return(
         <div>
-            <AddDishes />
+            <AddDishes 
+                togglePopup = {handletoggleControlPopupDish}
+                controlPopup = {controlPopupDish}
+            />
+
             <AddCategory 
-            handletoggleControlPopup= {handletoggleControlPopup} 
-            controlPopup = {controlPopup}
+            handletoggleControlPopupCategory= {handletoggleControlPopupCategory} 
+            controlPopupCategory = {controlPopupCategory}
             />
             <ListCategories />
             <ListAllDishes />
