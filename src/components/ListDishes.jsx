@@ -34,6 +34,7 @@ export default function ListAllDishes() {
 
     return (
         <div>
+            <h2 className="text-xl font-bold mb-4">Dishes</h2>
             {listAllDishes.map((item) => (
                 <div key={item.id} className="mb-2 flex items-center gap-4">
                     <span>{item.name}</span>
@@ -56,7 +57,7 @@ export default function ListAllDishes() {
                     <BtnDeleteDish
                         dishID = {item.id} 
                     />
-                    
+
                 </div>
             ))}
 

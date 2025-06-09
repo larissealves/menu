@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react'
 
-export default function BtnDeleteCategory({ categoryID, onDelete }) {
+export default function BtnDeleteIngredient({ ingredientID, onDelete }) {
   const [hasDishesLinked, setHasDishesLinked] = useState(false)
 
-  // Buscar pratos com base na categoryID
+  // Buscar pratos com base na ingredientID
   useEffect(() => {
     const fetchDishes = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/get/filterDishesByCategoryId/${categoryID}`);
+        const res = await fetch(`http://localhost:5000/api/get/filterDishesByIngredientId/${ingredientID}`);
         const data = await res.json();
         setHasDishesLinked(data.length > 0);
       } catch (error) {
-        console.error('Erro ao buscar pratos vinculados à categoria:', error);
+        console.error('Erro ao buscar pratos vinculados à este ingrediente', error);
       }
     };
-    if (categoryID) fetchDishes();
-  }, [categoryID]);
+    if (ingredientID) fetchDishes();
+  }, [ingredientID]);
 
   const handleDeleteSubmit = async () => {
-    const endpoint = `http://localhost:5000/api/delete/category/${categoryID}`;
+    const endpoint = `http://localhost:5000/api/delete/ingredient/${ingredientID}`;
 
     try {
       const res = await fetch(endpoint, {
@@ -26,13 +26,13 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
       });
 
       if (res.ok) {
-        console.log('Categoria deletada com sucesso');
-        if (onDelete) onDelete(); // callback opcional para atualizar a lista
+        console.log('Ingrediente deletado com sucesso');
+        if (onDelete) onDelete(); 
       } else {
-        console.error('Erro ao deletar categoria');
+        console.error('Erro ao deletar ingrediente');
       }
     } catch (error) {
-      console.error('Erro ao deletar esta categoria', error);
+      console.error('Erro ao deletar esta ingrediente', error);
     }
   };
 
@@ -40,8 +40,8 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
     <div>
       <button
         type="button"
-        title={hasDishesLinked ? 'Há pratos vinculados a esta categoria' : ''}
-        disabled={hasDishesLinked} // <-- corrigido
+        title={hasDishesLinked ? 'Há pratos vinculados a este ingrediente' : ''}
+        disabled={hasDishesLinked} 
         onClick={handleDeleteSubmit}
         className={`px-4 py-2 rounded text-white ${
           hasDishesLinked ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'

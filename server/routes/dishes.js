@@ -149,7 +149,7 @@ router.get('/get/disheID/:id', async (req, res) => {
 });
 
 /* ============== FILTER DISHES BY CATEGORY ID ================= */
-router.get('/get/filterDishesById/:id', async (req, res) => {
+router.get('/get/filterDishesByCategoryId/:id', async (req, res) => {
   const categoryId = parseInt(req.params.id);
 
   try {
@@ -173,6 +173,31 @@ router.get('/get/filterDishesById/:id', async (req, res) => {
   } catch (error) {
     console.error('Erro ao buscar pratos por categoryId:', error);
     res.status(500).json({ error: 'Erro ao buscar pratos por categoryId' });
+  }
+});
+
+/* ============== FILTER DISHES BY INGREDIENT ID ================= */
+router.get('/get/filterDishesByIngredientId/:id', async (req, res) => {
+  const ingredientId = parseInt(req.params.id);
+
+  try {
+    const dishes = await prisma.dishIngredient.findMany({
+      where: {
+        ingredientId: ingredientId,
+      },
+      include: {
+        ingredient: true,
+      },
+    });
+
+    if (dishes.length === 0) {
+      console.log('Nenhum prato encontrado para este ingrediente');
+    }
+
+    res.status(200).json(dishes);
+  } catch (error) {
+    console.error('Erro ao buscar pratos por ingredientId:', error);
+    res.status(500).json({ error: 'Erro ao buscar pratos por ingredientId' });
   }
 });
 

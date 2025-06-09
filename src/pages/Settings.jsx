@@ -1,11 +1,14 @@
 import React, {useState} from 'react'
+
 import AddDishes from "../components/NewDishes"
 import AddCategory from "../components/NewCategory"
+import AddIngredient from '../components/NewIngredient'
 import ListCategories from "../components/ListCategories"
 import ListAllDishes from '../components/ListDishes'
+import ListIngredient from '../components/ListIngredient'
 
 export default function Settings() {
-    
+
     {/*===========POPUP CATEGORY=========== */}
     const [controlPopupCategory, setControlPopupCategory ] = useState(false)
 
@@ -20,6 +23,13 @@ export default function Settings() {
         setControlPopupDish(!controlPopupDish)
     }
 
+    {/*===========POPUP INGREDIENT=========== */}
+    const [controlPopupIngredient, setControlPopupIngredient ] = useState(false)
+
+    const handletoggleControlPopupIngredient = () => {
+        setControlPopupIngredient(!controlPopupIngredient)
+    }
+
     return(
         <div>
             <AddDishes 
@@ -28,11 +38,18 @@ export default function Settings() {
             />
 
             <AddCategory 
-            handletoggleControlPopupCategory= {handletoggleControlPopupCategory} 
-            controlPopupCategory = {controlPopupCategory}
+                handletoggleControlPopup= {handletoggleControlPopupCategory} 
+                controlPopup = {controlPopupCategory}
             />
+
+            <AddIngredient
+                handletoggleControlPopup = {handletoggleControlPopupIngredient}
+                controlPopup = {controlPopupIngredient}
+            />
+
             <ListCategories />
             <ListAllDishes />
+            <ListIngredient />
         </div>
     );
 }
