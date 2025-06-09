@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import AddDishes from './NewDishes'
+import ListTagsByDisheId from './ListTagsbyDish'
 
 export default function ListAllDishes() {
     const [dishEditId, setdishEditId] = useState(null);
@@ -37,6 +38,9 @@ export default function ListAllDishes() {
                     <span>{item.price}</span>
                     <span>{item.description}</span>
                     <span>{item.isActive}</span>
+                    < ListTagsByDisheId 
+                        propDishId = {item.id}
+                    />
                     <button onClick={() => clickButtonEdit(item.id)}
                         className="px-2 py-1 bg-blue-500 text-white rounded"
                     >
