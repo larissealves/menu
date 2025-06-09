@@ -158,7 +158,7 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
       : `http://localhost:5000/api/new/addDishes`;
 
     const method = propDishID ? 'PUT' : 'POST';
-
+    console.log('Formulário add dish', JSON.stringify(formDishes),)
     try {
       const res = await fetch(endpoint, {
         method,

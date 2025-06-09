@@ -4,9 +4,15 @@ import { PrismaClient } from '@prisma/client'
 const router = express.Router()
 const prisma = new PrismaClient()
 
-/* ============== CREATE ================= */
+/* ============== CREATE DISH ================= */
 router.post('/new/addDishes', async (req, res) => {
-  const { name, price, description, categoryId } = req.body
+  const { 
+    name, price, 
+    description, 
+    categoryId, 
+    tags = [], 
+    ingredients = []
+  } = req.body
 
   try {
     const newDish = await prisma.dish.create({
@@ -16,7 +22,32 @@ router.post('/new/addDishes', async (req, res) => {
         description,
         categoryId: parseInt(categoryId),
       },
-    })
+    });
+
+    const newDishId = newDish.id;
+
+    if (tags.length > 0 ) {
+      console.log('tem tags')
+      await prisma.dishTag.createMany({
+        data: tags.map((tagId) => ({
+          dishId: newDishId,
+          tagId,
+          updatedAt: new Date(),
+        })),
+      });
+    }
+
+    if (ingredients.length > 0 ) {
+      
+      console.log('tem ingredientes')
+      await prisma.dishIngredient.createMany({
+        data: ingredients.map((ingredientId) => ({
+          dishId: newDishId,
+          ingredientId,
+          updatedAt: new Date(),
+        })),
+      });
+    }
 
     res.status(201).json(newDish)
   } catch (error) {
@@ -25,7 +56,6 @@ router.post('/new/addDishes', async (req, res) => {
   }
 })
 
-
 /* ============== UPDATE ================= */
 router.put('/update/editDishes/:id', async (req, res) => {
   const dishID = parseInt(req.params.id)
@@ -33,7 +63,7 @@ router.put('/update/editDishes/:id', async (req, res) => {
 
   try {
     const update = await prisma.dish.update({
-      where: { id:  dishID },
+      where: { id: dishID },
       data: {
         name,
         price: parseFloat(price),
@@ -49,13 +79,45 @@ router.put('/update/editDishes/:id', async (req, res) => {
   }
 })
 
+/* ============== DELETE ================= */
+router.delete('/delete/dish/:id', async (req, res) => {
+  const dishId = parseInt(req.params.id);
+
+  try {
+    await prisma.$transaction([
+      // 1. Deletar relacionamentos com tags
+      prisma.dishTag.deleteMany({
+        where: { dishId },
+      }),
+
+      // 2. Deletar relacionamentos com ingredientes
+      prisma.dishIngredient.deleteMany({
+        where: { dishId },
+      }),
+
+      // 3. Deletar o prato
+      prisma.dish.delete({
+        where: { id: dishId },
+      }),
+    ]);
+
+    res.status(200).json({ message: 'Prato e relacionamentos deletados com sucesso.' });
+  } catch (error) {
+    console.error('Erro ao deletar com rollback automático:', error);
+    res.status(500).json({ error: 'Erro ao deletar o prato. Nenhuma alteração foi feita.' });
+  }
+});
+
+
+
+
 
 /* ============== LIST ALL ITEMS ================= */
 router.get('/get/dishes', async (req, res) => {
   try {
     const dishes = await prisma.dish.findMany({
       include: {
-        category: true, 
+        category: true,
       },
     })
     res.status(200).json(dishes)
@@ -72,11 +134,11 @@ router.get('/get/disheID/:id', async (req, res) => {
 
   try {
     const dish = await prisma.dish.findUnique({
-      where: { id:  dishID },
+      where: { id: dishID },
     })
 
-    if(!dish) {
-      return res.status(404).json({error: 'Prato não encontrado'})
+    if (!dish) {
+      return res.status(404).json({ error: 'Prato não encontrado' })
     }
 
     res.status(200).json(dish)
@@ -171,7 +233,7 @@ router.get('/get/filterTagByDishId/:id', async (req, res) => {
 /* ============== FILTER INGREDIENT BY DISHES ID ================= */
 router.get('/get/filterIngredientsByDishId/:id', async (req, res) => {
   const in_dishId = parseInt(req.params.id);
-  
+
   try {
     const dishesIngredient = await prisma.dishIngredient.findMany({
       where: {

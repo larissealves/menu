@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import AddDishes from './NewDishes'
 import ListTagsByDisheId from './ListTagsbyDish'
 import ListIngredientsByDisheId from './ListIngredientsbyDish'
+import BtnDeleteDish from './BtnDeleteDish'
 
 export default function ListAllDishes() {
     const [dishEditId, setdishEditId] = useState(null);
@@ -42,7 +43,7 @@ export default function ListAllDishes() {
                     <ListIngredientsByDisheId 
                         propDishId = {item.id}
                     />
-                    
+
                     < ListTagsByDisheId 
                         propDishId = {item.id}
                     />
@@ -51,6 +52,11 @@ export default function ListAllDishes() {
                     >
                         Edit
                     </button>
+
+                    <BtnDeleteDish
+                        dishID = {item.id} 
+                    />
+                    
                 </div>
             ))}
 
