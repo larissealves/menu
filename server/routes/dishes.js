@@ -211,10 +211,8 @@ router.get('/get/filterDishesByTag/:id', async (req, res) => {
       where: {
         tagId: tagId,
       },
-      select: {
-        id: true,
-        isActive: true,
-        dish: true,
+      include: {
+        tag: true,
       },
     });
 
