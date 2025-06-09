@@ -37,7 +37,7 @@ router.get('/get/categoryList', async (req, res) => {
 
 
 /* ============== GET ONE ITEM - FOR ID ================= */
-router.get('/update/categoryID/:id', async (req, res) => {
+router.get('/get/categoryID/:id', async (req, res) => {
   const categoryId = parseInt(req.params.id);
 
   try {

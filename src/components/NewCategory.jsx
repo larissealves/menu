@@ -13,7 +13,7 @@ export default function AddCategory({ propsCategoryID, handletoggleControlPopup,
         if (propsCategoryID) {
             const fetchCategory = async () => {
                 try {
-                    const res = await fetch(`http://localhost:5000/api/update/categoryID/${propsCategoryID}`)
+                    const res = await fetch(`http://localhost:5000/api/get/categoryID/${propsCategoryID}`)
                     const data = await res.json()
                     setFormNewCategory({
                         name: data.name || '',
