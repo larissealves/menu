@@ -5,6 +5,7 @@ import mainImage from '../assets/images/sakura.png';
 import Settings from '../pages/Settings.jsx';
 import ListTagsByDisheId from './ListTagsbyDish'
 import ListIngredientsByDisheId from './ListIngredientsbyDish'
+import ListImagesByDish from './ListImagesbyDish'
 
 import '../styles/base.css';
 
@@ -107,6 +108,8 @@ export default function HeroSection() {
         : [];
 
 
+
+
     return (
         <div className="flex flex-col items-center px-4 py-8 md:px-8 md:py-12 max-w-6xl mx-auto gap-12">
             <Settings />
@@ -191,11 +194,9 @@ export default function HeroSection() {
                                         className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border border-gray-200 rounded-lg p-4 mb-4 bg-white"
                                     >
                                         <div className="w-full sm:w-36">
-                                            <img
-                                                src={mainImage}
-                                                alt="dish"
-                                                className="w-full h-30 object-cover rounded-md"
-                                            />
+                                           <ListImagesByDish 
+                                                dishId={item.id}
+                                           />
                                         </div>
                                         <div className="flex-1 flex flex-col gap-1">
                                             <p className="font-semibold text-lg text-gray-800">{item.name}</p>
