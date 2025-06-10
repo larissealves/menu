@@ -1,4 +1,3 @@
-import { image } from 'framer-motion/client';
 import React, { useEffect, useState } from 'react';
 
 export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
@@ -18,6 +17,53 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
     listImages: [],
   });
 
+  useEffect(() => {
+    if (propDishID) {
+      const fetchDish = async () => {
+        try {
+          const res = await fetch(`http://localhost:5000/api/get/disheID/${propDishID}`);
+          const data = await res.json();
+          setFormDishes((prev) => ({
+            ...prev,
+            name: data.name || '',
+            description: data.description || '',
+            price: data.price || '',
+            categoryId: data.categoryId || '',
+          }));
+        } catch (error) {
+          console.error('Erro ao buscar dados do prato:', error);
+        }
+      };
+
+      const fetchDishTags = async () => {
+        try {
+          const res = await fetch(`http://localhost:5000/api/get/filterTagByDishId/${propDishID}`);
+          const data = await res.json();
+          const tags = data.map((item) => item.tagId);
+          setFormDishes((prev) => ({ ...prev, tags }));
+        } catch (error) {
+          console.error('Erro ao buscar tags do prato:', error);
+        }
+      };
+
+      const fetchDishIngredients = async () => {
+        try {
+          const res = await fetch(`http://localhost:5000/api/get/filterIngredientsByDishId/${propDishID}`);
+          const data = await res.json();
+          const ingredients = data.map((item) => item.ingredient.id);
+          setFormDishes((prev) => ({ ...prev, ingredients }));
+        } catch (error) {
+          console.error('Erro ao buscar ingredientes do prato:', error);
+        }
+      };
+
+      fetchDish();
+      fetchDishTags();
+      fetchDishIngredients();
+    }
+  }, [propDishID]);
+
+  // ================ TEMP IMAGE ========================
   const handleTempImage = (e) => {
     const files = Array.from(e.target.files);
     files.forEach((file) => {
@@ -32,6 +78,8 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
   const handleRemoveTempImage = (index) => {
     setListImageTemp((prev) => prev.filter((_, i) => i !== index));
   };
+
+  // ================ END TEMP IMAGE ========================
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -95,6 +143,50 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
     fetchAll();
   }, []);
 
+  // ============= LIST IMAGES - EDIT ===============
+  const [imagesEditDish, setImagesEditDish] = useState([]);
+  
+      useEffect(() => {
+          if (!propDishID) return;
+  
+          const fetchImagesEditDish = async () => {
+              try {
+                  const res = await fetch(`http://localhost:5000/api/get/imagesByDishId/${propDishID}`);
+                  const data = await res.json();
+                  if (Array.isArray(data)) {
+                      setImagesEditDish(data);
+                  } else {
+                      console.warn('Resposta inesperada:', data);
+                      setImagesEditDish([]);
+                  }
+              } catch (error) {
+                  console.error('Erro ao buscar imagens:', error);
+                  setImagesEditDish([]);
+              }
+          };
+  
+          fetchImagesEditDish();
+      }, [propDishID]);
+
+  const handleDeleteImage = async (id) => {
+    const endpoint = `http://localhost:5000/api/delete/imageByDishId/${id}`;
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        console.log('Imagem deletada com sucesso');
+      } else {
+        console.error('Erro ao deletar imagem');
+      }
+    } catch (error) {
+      console.error('Erro ao deletar esta imagem', error);
+    }
+  };
+    // ============= END LIST IMAGES - EDIT ===============  
+
   return (
     <div className="main-content">
       <button onClick={togglePopup}>{controlPopup ? 'Fechar Formulário' : 'Adicionar Prato'}</button>
@@ -129,17 +221,38 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
 
               <input type="file" name="image" multiple accept="image/*" onChange={handleTempImage} />
 
-              {listTempImages.length > 0 && (
+              
                 <div className="grid grid-cols-2 gap-4 mt-4">
-                  {listTempImages.map((item, index) => (
+                  {imagesEditDish.map((item, index) => (
                     <div key={index} className="relative border p-2 rounded">
-                      <img src={item.preview} alt={`preview-${index}`} className="w-full h-32 object-cover rounded" />
-                      <button type="button" onClick={() => handleRemoveTempImage(index)} className="absolute top-1 right-1 text-white bg-red-500 rounded-full px-2">×</button>
-                      <p className="text-xs mt-1 truncate text-center">{item.name}</p>
+                      <img 
+                        src={`http://localhost:5173${item.imageUrl}`} 
+                        alt={`preview-${index}`} 
+                        className="w-full h-32 object-cover rounded" 
+                      />
+                      <button type="button" onClick={() => handleDeleteImage(item.id)} className="absolute top-1 right-1 text-white bg-red-500 rounded-full px-2">×</button>
+                      {/*
+                        <p className="text-xs mt-1 truncate text-center">{item.imageName}</p>
+                      */}
                     </div>
                   ))}
                 </div>
-              )}
+              
+                {listTempImages.length > 0 && (
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    {listTempImages.map((item, index) => (
+                      <div key={index} className="relative border p-2 rounded">
+                        <img src={item.preview} 
+                          alt={`preview-${index}`} 
+                          className="w-full h-32 object-cover rounded" 
+                        />
+                        <button type="button" onClick={() => handleRemoveTempImage(index)} className="absolute top-1 right-1 text-white bg-red-500 rounded-full px-2">×</button>
+                        <p className="text-xs mt-1 truncate text-center">{item.name}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              )
 
               <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">{propDishID ? 'Atualizar' : 'Criar'}</button>
               {status && <p className="text-sm text-center text-green-600">{status}</p>}

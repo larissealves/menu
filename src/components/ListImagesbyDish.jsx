@@ -17,8 +17,8 @@ export default function ListImagesByDish({ dishId }) {
                     console.warn('Resposta inesperada:', data);
                     setImages([]);
                 }
-            } catch (err) {
-                console.error('Erro ao buscar imagens:', err);
+            } catch (error) {
+                console.error('Erro ao buscar imagens:', error);
                 setImages([]);
             }
         };

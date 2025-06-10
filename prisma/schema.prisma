@@ -58,7 +58,15 @@ model DishImage {
   imageName String
   imageType String
   isPrimary Boolean @default(false)
+  imageBinary DishImageBinary?  
   updatedAt DateTime @updatedAt
+}
+
+model DishImageBinary {
+  id           Int    @id @default(autoincrement())
+  dishImageId  Int    @unique
+  binaryData   Bytes
+  dishImage    DishImage @relation(fields: [dishImageId], references: [id])
 }
 
 model Tag {

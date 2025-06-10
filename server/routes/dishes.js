@@ -3,7 +3,8 @@ import { PrismaClient } from '@prisma/client'
 
 import multer from 'multer'
 import path from 'path'
-import fs from 'fs';
+import fs from 'fs/promises';
+
 
 const router = express.Router()
 const prisma = new PrismaClient()
@@ -24,23 +25,11 @@ const upload = multer({ storage });
 
 /* ============== CREATE DISH ================= */
 router.post('/new/addDishes', upload.array('images'), async (req, res) => {
-  const { 
-    name, 
-    price, 
-    description, 
-    categoryId, 
-    //tags = [], 
-    //ingredients = [],
-    //listImages = [],
-  } = req.body
+  const { name, price, description, categoryId } = req.body;
 
   const tags = JSON.parse(req.body.tags || '[]');
-  console.log(JSON.parse(req.body.tags || '[]'))
   const ingredients = JSON.parse(req.body.ingredients || '[]');
-  
-  console.log(JSON.parse(req.body.ingredients || '[]'))
 
-  
   try {
     const newDish = await prisma.dish.create({
       data: {
@@ -53,8 +42,7 @@ router.post('/new/addDishes', upload.array('images'), async (req, res) => {
 
     const newDishId = newDish.id;
 
-    if (tags.length > 0 ) {
-      console.log('tem tags')
+    if (tags.length > 0) {
       await prisma.dishTag.createMany({
         data: tags.map((tagId) => ({
           dishId: newDishId,
@@ -64,47 +52,61 @@ router.post('/new/addDishes', upload.array('images'), async (req, res) => {
       });
     }
 
-    if (ingredients.length > 0 ) {
-      console.log('tem ingredientes')
+    if (ingredients.length > 0) {
       await prisma.dishIngredient.createMany({
         data: ingredients.map((ingredientId) => ({
           dishId: newDishId,
           ingredientId,
           updatedAt: new Date(),
         })),
-      }); 
+      });
     }
 
-    console.log(req.files.length)
     if (req.files && req.files.length > 0) {
-        for (let file of req.files) {
-          await prisma.dishImage.create({
-            data: {
-              dishId: newDishId,
-              imageUrl: `/uploads/${file.filename}`,
-              imageName: file.originalname,
-              imageType: file.mimetype,
-              isPrimary: false,
-            },
-          });
-        }
+      for (const file of req.files) {
+        // 1. Salva os metadados na tabela DishImage
+        const dishImage = await prisma.dishImage.create({
+          data: {
+            dishId: newDishId,
+            imageUrl: `/uploads/${file.filename}`,
+            imageName: file.originalname,
+            imageType: file.mimetype,
+            isPrimary: false,
+          },
+        });
+
+        // 2. Lê o binário do arquivo salvo
+        const binary = await fs.readFile(file.path); // lê como Buffer
+
+        // 3. Salva o binário na tabela DishImageBinary
+        await prisma.dishImageBinary.create({
+          data: {
+            dishImageId: dishImage.id,
+            binaryData: binary,
+          },
+        });
       }
+    }
 
-
-    res.status(201).json(newDish)
+    res.status(201).json(newDish);
   } catch (error) {
-    console.error('Erro ao criar prato:', error)
-    res.status(500).json({ error: 'Erro ao criar prato' })
+    console.error('Erro ao criar prato:', error);
+    res.status(500).json({ error: 'Erro ao criar prato' });
   }
-})
+});
 
-/* ============== UPDATE ================= */
-router.put('/update/editDishes/:id', async (req, res) => {
-  const dishID = parseInt(req.params.id)
-  const { name, price, description, categoryId } = req.body
+
+/* ============== UPDATE DISH ================= */
+router.put('/update/editDishes/:id', upload.array('images'), async (req, res) => {
+  const dishID = parseInt(req.params.id);
+  const { name, price, description, categoryId } = req.body;
+
+  const tags = JSON.parse(req.body.tags || '[]');
+  const ingredients = JSON.parse(req.body.ingredients || '[]');
 
   try {
-    const update = await prisma.dish.update({
+    // Atualiza prato
+    const updatedDish = await prisma.dish.update({
       where: { id: dishID },
       data: {
         name,
@@ -112,14 +114,61 @@ router.put('/update/editDishes/:id', async (req, res) => {
         description,
         categoryId: parseInt(categoryId),
       },
-    })
+    });
 
-    res.status(200).json(update)
+    // Atualiza tags: apaga e recria
+    await prisma.dishTag.deleteMany({ where: { dishId: dishID } });
+    if (tags.length > 0) {
+      await prisma.dishTag.createMany({
+        data: tags.map(tagId => ({
+          dishId: dishID,
+          tagId,
+          updatedAt: new Date(),
+        })),
+      });
+    }
+
+    // Atualiza ingredientes: apaga e recria
+    await prisma.dishIngredient.deleteMany({ where: { dishId: dishID } });
+    if (ingredients.length > 0) {
+      await prisma.dishIngredient.createMany({
+        data: ingredients.map(ingredientId => ({
+          dishId: dishID,
+          ingredientId,
+          updatedAt: new Date(),
+        })),
+      });
+    }
+
+    // Se houver novas imagens, salva
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const newImage = await prisma.dishImage.create({
+          data: {
+            dishId: dishID,
+            imageUrl: `/uploads/${file.filename}`,
+            imageName: file.originalname,
+            imageType: file.mimetype,
+            isPrimary: false,
+          },
+        });
+
+        const binary = await fs.readFile(file.path);
+        await prisma.dishImageBinary.create({
+          data: {
+            dishImageId: newImage.id,
+            binaryData: binary,
+          },
+        });
+      }
+    }
+
+    res.status(200).json(updatedDish);
   } catch (error) {
-    console.error('Erro ao editar o prato:', error)
-    res.status(500).json({ error: 'Erro ao editar o prato' })
+    console.error('Erro ao editar o prato:', error);
+    res.status(500).json({ error: 'Erro ao editar o prato' });
   }
-})
+});
 
 /* ============== DELETE ================= */
 router.delete('/delete/dish/:id', async (req, res) => {
@@ -140,6 +189,11 @@ router.delete('/delete/dish/:id', async (req, res) => {
       // 3. Deletar o prato
       prisma.dish.delete({
         where: { id: dishId },
+      }),
+
+      // 3. Deletar imagens
+      prisma.dishImage.deleteMany({
+        where: { dishId },
       }),
     ]);
 
@@ -356,26 +410,35 @@ router.get('/get/imagesByDishId/:id', async (req, res) => {
   try {
     const images = await prisma.dishImage.findMany({
       where: { dishId },
-      select: {
-        id: true,
-        imageUrl: true,
-        imageName: true,
-        imageType: true,
-        isPrimary: true,
-        updatedAt: true,
-      },
     });
 
     if (!images || images.length === 0) {
       return res.status(404).json({ message: 'Nenhuma imagem encontrada para esse prato.' });
     }
 
-    res.status(200).json(images);
+    // Buscar binário para cada imagem
+    const imagesWithBinary = await Promise.all(
+      images.map(async (img) => {
+        const binary = await prisma.dishImageBinary.findUnique({
+          where: { dishImageId: img.id },
+        });
+
+        return {
+          ...img,
+          binaryData: binary?.binaryData || null,
+        };
+      })
+    );
+
+    console.log('image: ', imagesWithBinary);
+    res.status(200).json(imagesWithBinary);
   } catch (error) {
     console.error('Erro ao buscar imagens:', error);
     res.status(500).json({ error: 'Erro interno ao buscar imagens.' });
   }
 });
+
+
 
 
 export default router
