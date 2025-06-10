@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import AddTag from './NewTag';
 import BtnDeleteTag from '../components/BtnDeleteTag'
 
-export default function ListTags() {
+export default function ListTags({ showInList }) {
 
     const [listTags, setTags] = useState([]);
     const [tagsEditID, setTagsEditID] = useState(null);
@@ -36,24 +36,34 @@ export default function ListTags() {
 
     return (
         <div>
-            <h2 className="text-xl font-bold mb-4">Tags</h2>
+            {showInList ? "" : <h2 className="text-xl font-bold mb-4">Tags</h2>}
+
             {listTags.map((item) => (
                 <div key={item.id} className="mb-2 flex items-center gap-4">
-                    <span>{item.name}</span>
-                    <span>{item.id}</span>
-                    <button
-                        onClick={() => editTag(item.id)}
-                        className="px-2 py-1 bg-blue-500 text-white rounded"
-                    >
-                        Edit
-                    </button>
+                    {showInList ? (
+                        <div className='list-tags'>
+                            <span>{item.name}</span>
+                        </div>
 
-                    <BtnDeleteTag
-                        tagID={item.id}
-                        onDelete={() => {
-                            toggleControlPopup();
-                        }}
-                    />
+                    ) : (
+                        <>
+                            <span>{item.name}</span>
+                            <span>{item.id}</span>
+                            <button
+                                onClick={() => editTag(item.id)}
+                                className="px-2 py-1 bg-blue-500 text-white rounded"
+                            >
+                                Edit
+                            </button>
+                            <BtnDeleteTag
+                                tagID={item.id}
+                                onDelete={() => {
+                                    toggleControlPopup();
+                                }}
+                            />
+                        </>
+                    )}
+
 
                 </div>
             ))}

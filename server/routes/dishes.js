@@ -278,6 +278,35 @@ router.get('/get/filterIngredientsByDishId/:id', async (req, res) => {
   }
 });
 
+//=============== FILTERS FRONT-END ==========
+router.get('/get/dishes-id-relations', async (req, res) => {
+  try {
+    const dishes = await prisma.dish.findMany({
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        categoryId: true,
+        tags: {
+          select: {
+            tagId: true,
+          },
+        },
+        ingredients: {
+          select: {
+            ingredientId: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json(dishes);
+  } catch (error) {
+    console.error('Erro ao buscar dados leves de pratos:', error);
+    res.status(500).json({ error: 'Erro ao buscar os pratos simplificados' });
+  }
+});
+
 
 
 export default router

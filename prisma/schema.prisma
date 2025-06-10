@@ -20,9 +20,9 @@ model Dish {
   description String
   category    Category     @relation(fields: [categoryId], references: [id])
   categoryId  Int
-  ingredients DishIngredient[]
   images      DishImage[]
-  tags        DishTag[]
+  ingredients    DishIngredient[] @relation("DishToDishIngredients")
+  tags           DishTag[]        @relation("DishToDishTags")      
 }
 
 model Category {
@@ -43,7 +43,7 @@ model Ingredient {
 
 model DishIngredient {
   id           Int        @id @default(autoincrement())
-  dish         Dish       @relation(fields: [dishId], references: [id])
+  dish         Dish       @relation("DishToDishIngredients", fields: [dishId], references: [id])
   dishId       Int
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId Int
@@ -71,7 +71,7 @@ model Tag {
 
 model DishTag {
   id         Int   @id @default(autoincrement())
-  dish       Dish  @relation(fields: [dishId], references: [id])
+  dish       Dish  @relation("DishToDishTags", fields: [dishId], references: [id])
   dishId     Int
   tag        Tag   @relation(fields: [tagId], references: [id])
   tagId      Int

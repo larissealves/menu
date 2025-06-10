@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import AddIngredient from './NewIngredient';
 import BtnDeleteIngredient from '../components/BtnDeleteIngredient'
 
-export default function ListIngredient() {
+export default function ListIngredient({ showInList }) {
 
     const [listIngredient, setIngredient] = useState([]);
     const [ingredientEditID, setIngredientEditID] = useState(null);
@@ -36,25 +36,32 @@ export default function ListIngredient() {
 
     return (
         <div>
-            <h2 className="text-xl font-bold mb-4">Ingredients</h2>
+            {showInList ? "" : <h2 className="text-xl font-bold mb-4">Ingredients</h2>}
             {listIngredient.map((item) => (
                 <div key={item.id} className="mb-2 flex items-center gap-4">
-                    <span>{item.name}</span>
-                    <span>{item.id}</span>
-                    <button
-                        onClick={() => editCategory(item.id)}
-                        className="px-2 py-1 bg-blue-500 text-white rounded"
-                    >
-                        Edit
-                    </button>
-                  
- <BtnDeleteIngredient
-                        ingredientID={item.id}
-                        onDelete={() => {
-                            toggleControlPopup();
-                        }}
-                    />
+                    {showInList ? (
+                        <div className='list-tags'>
+                            <span>{item.name}</span>
+                        </div>
+                    ) :
+                        <>
+                            <span>{item.name}</span>
+                            <span>{item.id}</span>
+                            <button
+                                onClick={() => editCategory(item.id)}
+                                className="px-2 py-1 bg-blue-500 text-white rounded"
+                            >
+                                Edit
+                            </button>
 
+                            <BtnDeleteIngredient
+                                ingredientID={item.id}
+                                onDelete={() => {
+                                    toggleControlPopup();
+                                }}
+                            />
+                        </>
+                    }
                 </div>
             ))}
 
