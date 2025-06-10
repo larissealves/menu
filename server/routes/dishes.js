@@ -1,19 +1,46 @@
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
 
+import multer from 'multer'
+import path from 'path'
+import fs from 'fs';
+
 const router = express.Router()
 const prisma = new PrismaClient()
 
+// Configuração do Multer - Imagens 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads'); // ou outro caminho onde deseja salvar
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage });
+
+
 /* ============== CREATE DISH ================= */
-router.post('/new/addDishes', async (req, res) => {
+router.post('/new/addDishes', upload.array('images'), async (req, res) => {
   const { 
-    name, price, 
+    name, 
+    price, 
     description, 
     categoryId, 
-    tags = [], 
-    ingredients = []
+    //tags = [], 
+    //ingredients = [],
+    //listImages = [],
   } = req.body
 
+  const tags = JSON.parse(req.body.tags || '[]');
+  console.log(JSON.parse(req.body.tags || '[]'))
+  const ingredients = JSON.parse(req.body.ingredients || '[]');
+  
+  console.log(JSON.parse(req.body.ingredients || '[]'))
+
+  
   try {
     const newDish = await prisma.dish.create({
       data: {
@@ -38,7 +65,6 @@ router.post('/new/addDishes', async (req, res) => {
     }
 
     if (ingredients.length > 0 ) {
-      
       console.log('tem ingredientes')
       await prisma.dishIngredient.createMany({
         data: ingredients.map((ingredientId) => ({
@@ -46,8 +72,24 @@ router.post('/new/addDishes', async (req, res) => {
           ingredientId,
           updatedAt: new Date(),
         })),
-      });
+      }); 
     }
+
+    console.log(req.files.length)
+    if (req.files && req.files.length > 0) {
+        for (let file of req.files) {
+          await prisma.dishImage.create({
+            data: {
+              dishId: newDishId,
+              imageUrl: `/uploads/${file.filename}`,
+              imageName: file.originalname,
+              imageType: file.mimetype,
+              isPrimary: false,
+            },
+          });
+        }
+      }
+
 
     res.status(201).json(newDish)
   } catch (error) {
