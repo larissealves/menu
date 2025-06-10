@@ -114,13 +114,10 @@ export default function HeroSection() {
             {/* === Hero Header === */}
             <section className="flex flex-col w-full gap-8">
                 <div className="flex flex-col sm:flex-row items-center gap-6" ref={targetRefDivHeader}>
-                    <motion.img
+                    <image
                         src={mainImage}
                         alt="main image"
                         className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-lg"
-                        animate={controls}
-                        initial={{ opacity: 0, scale: 0.8, y: 0 }}
-                        transition={{ duration: 1, ease: 'easeOut' }}
                     />
                     <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-700">YOLK TH</h1>
                 </div>
@@ -136,37 +133,40 @@ export default function HeroSection() {
                         onChange={(e) => setFilterName(e.target.value)}
                         className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-sm"
                     />
+                    <div>
 
-                    <div className="flex items-center gap-2">
-                        <label className="text-sm text-gray-700">Category:</label>
-                        <select
-                            value={filterCategory}
-                            onChange={(e) => setFilterCategory(e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                        >
-                            <option value="">Todas</option>
-                            {listCategories.map((item) => (
-                                <option key={item.id} value={item.id}>
-                                    {item.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
 
-                    <div className="flex items-center gap-2">
-                        <label className="text-sm text-gray-700">Tag:</label>
-                        <select
-                            value={filterTag}
-                            onChange={(e) => setFilterTag(e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                        >
-                            <option value="">Todas</option>
-                            {listTags.map((item) => (
-                                <option key={item.id} value={item.id}>
-                                    {item.name}
-                                </option>
-                            ))}
-                        </select>
+                        <div className="flex items-center gap-2">
+                            <label className="text-sm text-gray-700">Category:</label>
+                            <select
+                                value={filterCategory}
+                                onChange={(e) => setFilterCategory(e.target.value)}
+                                className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                            >
+                                <option value="">Todas</option>
+                                {listCategories.map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                        {item.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <label className="text-sm text-gray-700">Tag:</label>
+                            <select
+                                value={filterTag}
+                                onChange={(e) => setFilterTag(e.target.value)}
+                                className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                            >
+                                <option value="">Todas</option>
+                                {listTags.map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                        {item.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div>
 

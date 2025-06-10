@@ -5,6 +5,32 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
   const [ingredients, setIngredients] = useState([]);
   const [tags, setTags] = useState([]);
 
+  // ============== IMAGE - TEMP LIST ===================
+  const [listTempImages, setListImageTemp] = useState([]);
+
+  const handleTempImage = (e) => {
+    const files = Array.from(e.target.files);
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setListImageTemp((prev) => [...prev, { name: file.name, file, preview: reader.result }]);
+      };
+      reader.readAsDataURL(file); // gera base64 para preview
+    });
+  };
+
+  // Remover= 
+  const handleRemoveTempImage = (index) => {
+    setListImageTemp((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleClearTempImage = () => {
+    setListImageTemp([]);
+  }
+
+  // ============== END IMAGE  ===================
+
   const [formDishes, setFormDishes] = useState({
     name: '',
     price: '',
@@ -265,8 +291,8 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
                   </option>
                 ))}
               </select>
-   {/*----- SELECT TAGS ----- */}
-   <select
+              {/*----- SELECT TAGS ----- */}
+              <select
                 multiple
                 name="tags"
                 value={formDishes.tags}
@@ -283,6 +309,40 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
                   </option>
                 ))}
               </select>
+
+              {/* =========== INSERT IMAGEM =========== */}
+              <form enctype="multipart/form-data">
+                <input
+                  type="file"
+                  name="image"
+                  multiple
+                  accept="image/*"
+                  onChange={handleTempImage}
+                />
+              </form>
+
+              {listTempImages.length > 0 && (
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  {listTempImages.map((item, index) => (
+                    <div key={index} className="relative border p-2 rounded">
+                      <img
+                        src={item.preview}
+                        alt={`preview-${index}`}
+                        className="w-full h-32 object-cover rounded"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTempImage(index)}
+                        className="absolute top-1 right-1 text-white bg-red-500 rounded-full px-2"
+                      >
+                        ×
+                      </button>
+                      <p className="text-xs mt-1 truncate text-center">{item.name}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {/* =========== END - INSERT IMAGEM =========== */}
 
               <button
                 type="submit"
