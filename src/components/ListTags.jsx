@@ -1,81 +1,70 @@
 import React, { useEffect, useState } from 'react';
-
 import AddTag from './NewTag';
-import BtnDeleteTag from '../components/BtnDeleteTag'
+import BtnDeleteTag from './BtnDeleteTag';
 
 export default function ListTags({ showInList }) {
+  const [listTags, setTags] = useState([]);
+  const [tagsEditID, setTagsEditID] = useState(null);
+  const [controlPopup, setControlPopup] = useState(false);
 
-    const [listTags, setTags] = useState([]);
-    const [tagsEditID, setTagsEditID] = useState(null);
+  const toggleControlPopup = () => setControlPopup(!controlPopup);
 
-    const [controlPopup, setControlPopup] = useState(false);
+  const editTag = (id) => {
+    setTagsEditID(id);
+    setControlPopup(true);
+  };
 
-    const toggleControlPopup = () => {
-        setControlPopup(!controlPopup)
-    }
-
-    // Abre modal com o ID da categoria para edição
-    const editTag = (id) => {
-        setTagsEditID(id);
-        setControlPopup(true);
+  useEffect(() => {
+    const fetchTag = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/get/tagList');
+        const data = await res.json();
+        setTags(data);
+      } catch (error) {
+        console.log('Erro ao buscar a lista de tags', error);
+      }
     };
+    fetchTag();
+  }, []);
 
-    // Buscar categorias ao carregar o componente
-    useEffect(() => {
-        const fetchTag = async () => {
-            try {
-                const res = await fetch('http://localhost:5000/api/get/tagList');
-                const data = await res.json();
-                setTags(data);
-            } catch (error) {
-                console.log('Erro ao buscar a lista de tags', error);
-            }
-        };
-        fetchTag();
-    }, []);
+  return (
+    <div className="bg-white rounded-lg shadow p-4 mt-6">
+      {!showInList && (
+        <h2 className="text-lg font-semibold mb-4 border-b pb-2">Tags</h2>
+      )}
 
-    return (
-        <div>
-            {showInList ? "" : <h2 className="text-xl font-bold mb-4">Tags</h2>}
+      <div className="space-y-2">
+        {listTags.map((item) => (
+          <div
+            key={item.id}
+            className={`flex items-center justify-between border p-2 rounded ${
+              showInList ? 'bg-gray-50' : 'hover:bg-gray-50'
+            }`}
+          >
+            <span className="text-sm">{item.name}</span>
 
-            {listTags.map((item) => (
-                <div key={item.id} className="mb-2 flex items-center gap-4">
-                    {showInList ? (
-                        <div className='list-tags'>
-                            <span>{item.name}</span>
-                        </div>
-
-                    ) : (
-                        <>
-                            <span>{item.name}</span>
-                            <span>{item.id}</span>
-                            <button
-                                onClick={() => editTag(item.id)}
-                                className="px-2 py-1 bg-blue-500 text-white rounded"
-                            >
-                                Edit
-                            </button>
-                            <BtnDeleteTag
-                                tagID={item.id}
-                                onDelete={() => {
-                                    toggleControlPopup();
-                                }}
-                            />
-                        </>
-                    )}
-
-
-                </div>
-            ))}
-
-            {/* Popup do formulário */}
-            {controlPopup && (
-                <AddTag
-                    propsTagID={tagsEditID}
-                    handletoggleControlPopup={toggleControlPopup}
-                    controlPopup={controlPopup}
-                />
+            {!showInList && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => editTag(item.id)}
+                  className="px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Editar
+                </button>
+                <BtnDeleteTag tagID={item.id} />
+              </div>
             )}
-        </div>
-    );
+          </div>
+        ))}
+      </div>
+
+      {controlPopup && (
+        <AddTag
+          propsTagID={tagsEditID}
+          handletoggleControlPopup={toggleControlPopup}
+          controlPopup={controlPopup}
+        />
+      )}
+    </div>
+  );
 }

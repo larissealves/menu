@@ -12,7 +12,7 @@ router.post('/new/ingredient', async (req, res) => {
       data: {
         name,
         isActive: isActive === 'true' || isActive === true,
-        updatedAt: new Date(),
+        //updatedAt: new Date(),
       },
     })
     res.status(201).json(newIngredient)
@@ -55,7 +55,7 @@ router.put('/update/ingredient/:id', async (req, res) => {
       data: {
         name,
         isActive: Boolean(isActive),
-        updatedAt: new Date(),
+        //updatedAt: new Date(),
       },
     })
     res.status(200).json(updated)
@@ -69,6 +69,25 @@ router.put('/update/ingredient/:id', async (req, res) => {
 router.get('/get/ingredientList', async (req, res) => {
   try {
     const ingredients = await prisma.ingredient.findMany()
+    res.status(200).json(ingredients)
+  } catch (error) {
+    console.error('Erro ao buscar os ingredientes:', error)
+    res.status(500).json({ error: 'Erro ao buscar os ingredientes' })
+  }
+})
+
+/* ============== GET ALL ITEMS - Active ================= */
+router.get('/get/ingredientList/active', async (req, res) => {
+  try {
+    const ingredients = await prisma.ingredient.findMany
+    ({
+      where:{
+        isActive: true,
+      },
+      orderBy: {
+        name: 'asc',
+      }
+    });
     res.status(200).json(ingredients)
   } catch (error) {
     console.error('Erro ao buscar os ingredientes:', error)

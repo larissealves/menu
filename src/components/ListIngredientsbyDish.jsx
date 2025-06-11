@@ -22,9 +22,12 @@ export default function ListIngredientsByDisheId ({propDishId}) {
             {listIngredients.length > 0 &&(
                  <div>
                 {listIngredients.map((item) => (
-                    <div key={item.id} >
-                    <span> {item.ingredient.name} </span>
-                    </div>
+                    <span>
+          {listIngredients
+            .map((item) => item.ingredient?.name)
+            .filter(Boolean)
+            .join(', ')}
+        </span>
                 ))}
                 </div>
             )}

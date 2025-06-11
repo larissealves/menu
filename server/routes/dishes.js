@@ -9,7 +9,7 @@ import fs from 'fs/promises';
 const router = express.Router()
 const prisma = new PrismaClient()
 
-// Configuração do Multer - Imagens 
+/* Configuração do Multer - Imagens  */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads'); // ou outro caminho onde deseja salvar
@@ -25,8 +25,8 @@ const upload = multer({ storage });
 
 /* ============== CREATE DISH ================= */
 router.post('/new/addDishes', upload.array('images'), async (req, res) => {
-  const { name, price, description, categoryId } = req.body;
-
+  const { name, price, description, categoryId, isActive } = req.body;
+  console.log('AAAA', req.body)
   const tags = JSON.parse(req.body.tags || '[]');
   const ingredients = JSON.parse(req.body.ingredients || '[]');
 
@@ -37,6 +37,8 @@ router.post('/new/addDishes', upload.array('images'), async (req, res) => {
         price: parseFloat(price),
         description,
         categoryId: parseInt(categoryId),
+        isActive: isActive === 'true' || isActive === true,
+        //updatedAt: new Date(),
       },
     });
 
@@ -47,7 +49,7 @@ router.post('/new/addDishes', upload.array('images'), async (req, res) => {
         data: tags.map((tagId) => ({
           dishId: newDishId,
           tagId,
-          updatedAt: new Date(),
+         // updatedAt: new Date(),
         })),
       });
     }
@@ -57,7 +59,7 @@ router.post('/new/addDishes', upload.array('images'), async (req, res) => {
         data: ingredients.map((ingredientId) => ({
           dishId: newDishId,
           ingredientId,
-          updatedAt: new Date(),
+          //updatedAt: new Date(),
         })),
       });
     }
@@ -113,6 +115,8 @@ router.put('/update/editDishes/:id', upload.array('images'), async (req, res) =>
         price: parseFloat(price),
         description,
         categoryId: parseInt(categoryId),
+        isActive: Boolean(isActive),
+        //updateAt: new Date(),
       },
     });
 
@@ -123,7 +127,7 @@ router.put('/update/editDishes/:id', upload.array('images'), async (req, res) =>
         data: tags.map(tagId => ({
           dishId: dishID,
           tagId,
-          updatedAt: new Date(),
+          //updatedAt: new Date(),
         })),
       });
     }
@@ -135,7 +139,7 @@ router.put('/update/editDishes/:id', upload.array('images'), async (req, res) =>
         data: ingredients.map(ingredientId => ({
           dishId: dishID,
           ingredientId,
-          updatedAt: new Date(),
+         // updatedAt: new Date(),
         })),
       });
     }
@@ -205,16 +209,13 @@ router.delete('/delete/dish/:id', async (req, res) => {
 });
 
 
-
-
-
 /* ============== LIST ALL ITEMS ================= */
 router.get('/get/dishes', async (req, res) => {
   try {
     const dishes = await prisma.dish.findMany({
-      include: {
-        category: true,
-      },
+      orderBy: {
+        name: 'asc',
+      }
     })
     res.status(200).json(dishes)
   } catch (error) {
@@ -244,7 +245,7 @@ router.get('/get/disheID/:id', async (req, res) => {
   }
 });
 
-/* ============== FILTER DISHES BY CATEGORY ID ================= */
+/* ============== FILTER DISHES BY CATEGORY ID ================= 
 router.get('/get/filterDishesByCategoryId/:id', async (req, res) => {
   const categoryId = parseInt(req.params.id);
 
@@ -270,9 +271,12 @@ router.get('/get/filterDishesByCategoryId/:id', async (req, res) => {
     console.error('Erro ao buscar pratos por categoryId:', error);
     res.status(500).json({ error: 'Erro ao buscar pratos por categoryId' });
   }
-});
+}); 
+*/
 
-/* ============== FILTER DISHES BY INGREDIENT ID ================= */
+
+
+/* ============== FILTER DISHES BY INGREDIENT ID ================= 
 router.get('/get/filterDishesByIngredientId/:id', async (req, res) => {
   const ingredientId = parseInt(req.params.id);
 
@@ -296,9 +300,9 @@ router.get('/get/filterDishesByIngredientId/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar pratos por ingredientId' });
   }
 });
+*/
 
-
-/* ============== FILTER DISHES BY TAG ID ================= */
+/* ============== FILTER DISHES BY TAG ID ================= 
 router.get('/get/filterDishesByTag/:id', async (req, res) => {
   const tagId = parseInt(req.params.id);
 
@@ -322,6 +326,8 @@ router.get('/get/filterDishesByTag/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar pratos por tagId' });
   }
 });
+*/
+
 
 /* ============== FILTER TAGS BY DISH ID ================= */
 router.get('/get/filterTagByDishId/:id', async (req, res) => {
@@ -331,10 +337,18 @@ router.get('/get/filterTagByDishId/:id', async (req, res) => {
     const dishesTag = await prisma.dishTag.findMany({
       where: {
         dishId: dishId,
+        tag: {
+          isActive: true,
+        }
       },
       include: {
-        tag: true,
+       tag: true,
       },
+      orderBy: {
+        tag: {
+          name: 'asc',
+        },
+       },
     });
 
     if (dishesTag.length === 0) {
@@ -357,10 +371,18 @@ router.get('/get/filterIngredientsByDishId/:id', async (req, res) => {
     const dishesIngredient = await prisma.dishIngredient.findMany({
       where: {
         dishId: in_dishId,
+        ingredient: {
+          isActive: true, // Filtrando diretamente pela relação
+        }
       },
       include: {
         ingredient: true,
       },
+      orderBy: {
+        ingredient: {
+          name: 'asc', // Ordenando pela relação
+        }
+      }
     });
 
     if (dishesIngredient.length === 0) {
@@ -378,23 +400,30 @@ router.get('/get/filterIngredientsByDishId/:id', async (req, res) => {
 router.get('/get/dishes-id-relations', async (req, res) => {
   try {
     const dishes = await prisma.dish.findMany({
+  where: {
+    isActive: true,
+  },
+  orderBy: [
+  { name: 'asc' },
+  { isActive: 'asc' }
+  ],
+  select: {
+    id: true,
+    name: true,
+    price: true,
+    categoryId: true,
+    tags: {
       select: {
-        id: true,
-        name: true,
-        price: true,
-        categoryId: true,
-        tags: {
-          select: {
-            tagId: true,
-          },
-        },
-        ingredients: {
-          select: {
-            ingredientId: true,
-          },
-        },
+        tagId: true,
       },
-    });
+    },
+    ingredients: {
+      select: {
+        ingredientId: true,
+      },
+    },
+  },
+});
 
     res.status(200).json(dishes);
   } catch (error) {

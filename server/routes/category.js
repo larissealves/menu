@@ -13,7 +13,7 @@ router.post('/new/category', async (req, res) => {
       data: {
         name,
         isActive: isActive === 'true' || isActive === true,
-        updatedAt: new Date(),
+        //updatedAt: new Date(),
       },
     })
     res.status(201).json(newCategory)
@@ -28,6 +28,25 @@ router.post('/new/category', async (req, res) => {
 router.get('/get/categoryList', async (req, res) => {
   try {
     const categories = await prisma.category.findMany()
+    res.status(200).json(categories)
+  } catch (error) {
+    console.error('Erro ao buscar categorias:', error)
+    res.status(500).json({ error: 'Erro ao buscar categorias' })
+  }
+})
+
+
+/* ============== GET ALL ITEMS - Active ================= */
+router.get('/get/categoryList/active', async (req, res) => {
+  try {
+    const categories = await prisma.category.findMany({
+      where:{
+        isActive: true,
+      },
+      orderBy: {
+        name: 'asc',
+      }
+    });
     res.status(200).json(categories)
   } catch (error) {
     console.error('Erro ao buscar categorias:', error)
@@ -68,7 +87,7 @@ router.put('/update/category/:id', async (req, res) => {
       data: {
         name,
         isActive: Boolean(isActive),
-        updatedAt: new Date(),
+        //updatedAt: new Date(),
       },
     })
     res.status(200).json(updated)

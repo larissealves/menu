@@ -1,72 +1,80 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react';
+import { PlusCircle, LayoutGrid, Utensils, Tag, List } from 'lucide-react';
 
-import AddDishes from "../components/NewDishes"
-import AddCategory from "../components/NewCategory"
-import AddIngredient from '../components/NewIngredient'
-import AddTag from '../components/NewTag'
-import ListCategories from "../components/ListCategories"
-import ListAllDishes from '../components/ListDishes'
-import ListIngredient from '../components/ListIngredient'
-import ListTags from '../components/ListTags'
+import AddDishes from '../components/NewDishes';
+import AddCategory from '../components/NewCategory';
+import AddIngredient from '../components/NewIngredient';
+import AddTag from '../components/NewTag';
+
+import ListCategories from '../components/ListCategories';
+import ListAllDishes from '../components/ListDishes';
+import ListIngredient from '../components/ListIngredient';
+import ListTags from '../components/ListTags';
 
 export default function Settings() {
+  const [activeTab, setActiveTab] = useState('categories');
 
-    {/*===========POPUP CATEGORY=========== */}
-    const [controlPopupCategory, setControlPopupCategory ] = useState(false)
+  const [controlPopupDish, setControlPopupDish] = useState(false);
+  const [controlPopupCategory, setControlPopupCategory] = useState(false);
+  const [controlPopupIngredient, setControlPopupIngredient] = useState(false);
+  const [controlPopupTag, setControlPopupTag] = useState(false);
 
-    const handletoggleControlPopupCategory = () => {
-        setControlPopupCategory(!controlPopupCategory)
-    }
+  const tabs = [
+    { key: 'categories', label: 'Categorias', icon: <LayoutGrid size={16} /> },
+    { key: 'dishes', label: 'Pratos', icon: <Utensils size={16} /> },
+    { key: 'ingredients', label: 'Ingredientes', icon: <List size={16} /> },
+    { key: 'tags', label: 'Tags', icon: <Tag size={16} /> },
+  ];
 
-    {/*===========POPUP DISH=========== */}
-    const [controlPopupDish, setControlPopupDish ] = useState(false)
+  return (
+    <div className="p-6 max-w-6xl mx-auto space-y-8">
+      {/* Ações */}
+      <div className="flex flex-wrap gap-4 justify-start">
+        <button onClick={() => setControlPopupCategory(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+          <PlusCircle size={18} /> Categoria
+        </button>
+        <button onClick={() => setControlPopupDish(true)} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+          <PlusCircle size={18} /> Prato
+        </button>
+        <button onClick={() => setControlPopupIngredient(true)} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+          <PlusCircle size={18} /> Ingrediente
+        </button>
+        <button onClick={() => setControlPopupTag(true)} className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+          <PlusCircle size={18} /> Tag
+        </button>
+      </div>
 
-    const handletoggleControlPopupDish = () => {
-        setControlPopupDish(!controlPopupDish)
-    }
+      {/* Tabs */}
+      <div className="flex gap-4 border-b pb-2 text-sm font-medium text-gray-600">
+        {tabs.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`flex items-center gap-1 px-3 py-1 border-b-2 transition ${
+              activeTab === tab.key
+                ? 'border-blue-600 text-blue-600 font-semibold'
+                : 'border-transparent hover:text-black'
+            }`}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
-    {/*===========POPUP INGREDIENT=========== */}
-    const [controlPopupIngredient, setControlPopupIngredient ] = useState(false)
+      {/* Conteúdo */}
+      <div className="bg-white rounded-xl shadow p-6">
+        {activeTab === 'categories' && <ListCategories />}
+        {activeTab === 'dishes' && <ListAllDishes />}
+        {activeTab === 'ingredients' && <ListIngredient />}
+        {activeTab === 'tags' && <ListTags />}
+      </div>
 
-    const handletoggleControlPopupIngredient = () => {
-        setControlPopupIngredient(!controlPopupIngredient)
-    }
-
-    {/*===========POPUP TAG=========== */}
-    const [controlPopupTag, setControlPopupTag ] = useState(false)
-
-    const handletoggleControlPopupTag = () => {
-        setControlPopupTag(!controlPopupTag)
-    }
-
-
-    return(
-        <div>
-            <AddDishes 
-                togglePopup = {handletoggleControlPopupDish}
-                controlPopup = {controlPopupDish}
-            />
-
-            <AddCategory 
-                handletoggleControlPopup= {handletoggleControlPopupCategory} 
-                controlPopup = {controlPopupCategory}
-            />
-
-            <AddIngredient
-                handletoggleControlPopup = {handletoggleControlPopupIngredient}
-                controlPopup = {controlPopupIngredient}
-            />
-
-            <AddTag
-                handletoggleControlPopup = {handletoggleControlPopupTag}
-                controlPopup = {controlPopupTag}
-            />
-
-
-            <ListCategories />
-            <ListAllDishes />
-            <ListIngredient />
-            <ListTags />
-        </div>
-    );
+      {/* Popups */}
+      <AddDishes togglePopup={() => setControlPopupDish(false)} controlPopup={controlPopupDish} />
+      <AddCategory handletoggleControlPopup={() => setControlPopupCategory(false)} controlPopup={controlPopupCategory} />
+      <AddIngredient handletoggleControlPopup={() => setControlPopupIngredient(false)} controlPopup={controlPopupIngredient} />
+      <AddTag handletoggleControlPopup={() => setControlPopupTag(false)} controlPopup={controlPopupTag} />
+    </div>
+  );
 }

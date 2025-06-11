@@ -12,7 +12,7 @@ router.post('/new/tag', async (req, res) => {
       data: {
         name,
         isActive: isActive === 'true' || isActive === true,
-        updatedAt: new Date(),
+        //updatedAt: new Date(),
       },
     })
     res.status(201).json(newTag)
@@ -27,6 +27,25 @@ router.post('/new/tag', async (req, res) => {
 router.get('/get/tagList', async (req, res) => {
   try {
     const tags = await prisma.tag.findMany()
+    res.status(200).json(tags)
+  } catch (error) {
+    console.error('Erro ao buscar as tags', error)
+    res.status(500).json({ error: 'Erro ao buscar as tags' })
+  }
+})
+
+/* ============== GET ALL ITEMS - ACTIVE ================= */
+router.get('/get/tagList/active', async (req, res) => {
+  try {
+    const tags = await prisma.tag.findMany({
+      where:{
+        isActive: true,
+      },
+      orderBy: {
+        name: 'asc',
+      }
+    });
+
     res.status(200).json(tags)
   } catch (error) {
     console.error('Erro ao buscar as tags', error)
@@ -65,7 +84,7 @@ router.put('/update/tag/:id', async (req, res) => {
       data: {
         name,
         isActive: Boolean(isActive),
-        updatedAt: new Date(),
+        //updatedAt: new Date(),
       },
     })
     res.status(200).json(updated)

@@ -22,7 +22,9 @@ model Dish {
   categoryId  Int
   images      DishImage[]
   ingredients    DishIngredient[] @relation("DishToDishIngredients")
-  tags           DishTag[]        @relation("DishToDishTags")      
+  tags           DishTag[]        @relation("DishToDishTags")     
+  isActive   Boolean @default(true)
+  createdAt  DateTime @default(now()) 
 }
 
 model Category {
@@ -30,6 +32,7 @@ model Category {
   name       String
   isActive   Boolean @default(true)
   updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
   dishes     Dish[]
 }
 
@@ -38,6 +41,7 @@ model Ingredient {
   name       String
   isActive   Boolean @default(true)
   updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
   dishes     DishIngredient[]
 }
 
@@ -47,6 +51,7 @@ model DishIngredient {
   dishId       Int
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId Int
+  createdAt  DateTime @default(now())
   updatedAt    DateTime   @updatedAt
 }
 
@@ -59,6 +64,7 @@ model DishImage {
   imageType String
   isPrimary Boolean @default(false)
   imageBinary DishImageBinary?  
+  createdAt  DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
@@ -74,6 +80,7 @@ model Tag {
   name       String
   isActive   Boolean @default(true)
   updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
   dishes     DishTag[]
 }
 
@@ -84,6 +91,7 @@ model DishTag {
   tag        Tag   @relation(fields: [tagId], references: [id])
   tagId      Int
   isActive   Boolean @default(true)
+  createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
 

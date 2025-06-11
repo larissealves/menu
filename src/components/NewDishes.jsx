@@ -12,6 +12,7 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
     price: '',
     description: '',
     categoryId: '',
+    isActive: true,
     ingredients: [],
     tags: [],
     listImages: [],
@@ -28,6 +29,7 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
             name: data.name || '',
             description: data.description || '',
             price: data.price || '',
+            isActive: data.isActive ?? true,
             categoryId: data.categoryId || '',
           }));
         } catch (error) {
@@ -82,8 +84,12 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
   // ================ END TEMP IMAGE ========================
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormDishes((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked  } = e.target;
+    setFormDishes((prev) => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? checked : value,
+
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -94,6 +100,7 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
     formData.append('description', formDishes.description);
     formData.append('categoryId', formDishes.categoryId);
     formData.append('tags', JSON.stringify(formDishes.tags));
+    formData.append('isActive', String(formDishes.isActive));
     formData.append('ingredients', JSON.stringify(formDishes.ingredients));
     listTempImages.forEach((img) => {
       formData.append('images', img.file);
@@ -114,7 +121,7 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
       if (res.ok) {
         setStatus('Prato salvo com sucesso!');
         setListImageTemp([]);
-        setFormDishes({ name: '', price: '', description: '', categoryId: '', ingredients: [], tags: [], listImages: [] });
+        setFormDishes({ name: '', price: '', description: '', categoryId: '', isActive: true, ingredients: [], tags: [], listImages: [] });
         togglePopup();
       } else {
         setStatus('Erro ao salvar prato.');
@@ -129,9 +136,9 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
     const fetchAll = async () => {
       try {
         const [catRes, ingRes, tagRes] = await Promise.all([
-          fetch('http://localhost:5000/api/get/categoryList'),
-          fetch('http://localhost:5000/api/get/ingredientList'),
-          fetch('http://localhost:5000/api/get/tagList'),
+          fetch('http://localhost:5000/api/get/categoryList/active'),
+          fetch('http://localhost:5000/api/get/ingredientList/active'),
+          fetch('http://localhost:5000/api/get/tagList/active'),
         ]);
         setCategories(await catRes.json());
         setIngredients(await ingRes.json());
@@ -144,47 +151,58 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
   }, []);
 
   // ============= LIST IMAGES - EDIT ===============
-  const [imagesEditDish, setImagesEditDish] = useState([]);
-  
-      useEffect(() => {
-          if (!propDishID) return;
-  
-          const fetchImagesEditDish = async () => {
-              try {
-                  const res = await fetch(`http://localhost:5000/api/get/imagesByDishId/${propDishID}`);
-                  const data = await res.json();
-                  if (Array.isArray(data)) {
-                      setImagesEditDish(data);
-                  } else {
-                      console.warn('Resposta inesperada:', data);
-                      setImagesEditDish([]);
-                  }
-              } catch (error) {
-                  console.error('Erro ao buscar imagens:', error);
-                  setImagesEditDish([]);
-              }
-          };
-  
-          fetchImagesEditDish();
-      }, [propDishID]);
+const [imagesEditDish, setImagesEditDish] = useState([]);
 
-  const handleDeleteImage = async (id) => {
-    const endpoint = `http://localhost:5000/api/delete/imageByDishId/${id}`;
+useEffect(() => {
+  if (!propDishID) return;
 
+  const fetchImagesEditDish = async () => {
     try {
-      const res = await fetch(endpoint, {
-        method: 'DELETE',
-      });
+      const res = await fetch(`http://localhost:5000/api/get/imagesByDishId/${propDishID}`);
+      const data = await res.json();
 
-      if (res.ok) {
-        console.log('Imagem deletada com sucesso');
+      if (Array.isArray(data)) {
+        const imagesWithPreview = data.map((img) => {
+          const byteArray = Object.values(img.binaryData); // transforma objeto em array de bytes
+          const uint8 = new Uint8Array(byteArray);
+          const blob = new Blob([uint8], { type: img.imageType });
+          const previewUrl = URL.createObjectURL(blob);
+          return { ...img, previewUrl };
+        });
+
+        setImagesEditDish(imagesWithPreview);
       } else {
-        console.error('Erro ao deletar imagem');
+        console.warn('Resposta inesperada:', data);
+        setImagesEditDish([]);
       }
     } catch (error) {
-      console.error('Erro ao deletar esta imagem', error);
+      console.error('Erro ao buscar imagens:', error);
+      setImagesEditDish([]);
     }
   };
+
+  fetchImagesEditDish();
+}, [propDishID]);
+
+
+// DELETE imagem e atualiza lista
+const handleDeleteImage = async (id) => {
+  try {
+    const res = await fetch(`http://localhost:5000/api/delete/imageByDishId/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (res.ok) {
+      console.log('Imagem deletada com sucesso');
+      setImagesEditDish((prev) => prev.filter((img) => img.id !== id));
+    } else {
+      console.error('Erro ao deletar imagem');
+    }
+  } catch (error) {
+    console.error('Erro ao deletar esta imagem', error);
+  }
+};
+
     // ============= END LIST IMAGES - EDIT ===============  
 
   return (
@@ -193,13 +211,13 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
 
       {controlPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+          <div className="bg-white rounded-lg shadow-lg w-full p-6 relative">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">{propDishID ? 'Editar Prato' : 'Criar Novo Prato'}</h2>
               <button onClick={togglePopup} className="text-gray-600 hover:text-red-600 text-xl font-bold">×</button>
             </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <div className='flex gap-16'>
+            <form onSubmit={handleSubmit} className="space-y-4 w-32 flex-auto">
               <input name="name" placeholder="Nome do prato" value={formDishes.name} onChange={handleChange} required className="w-full border rounded px-3 py-2" />
               <input name="price" type="number" step="0.01" placeholder="Preço" value={formDishes.price} onChange={handleChange} required className="w-full border rounded px-3 py-2" />
               <textarea name="description" placeholder="Descrição" value={formDishes.description} onChange={handleChange} required className="w-full border rounded px-3 py-2" />
@@ -208,6 +226,17 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
                 <option value="">-- Selecione uma categoria --</option>
                 {categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
               </select>
+
+              <label className="flex items-center space-x-2">
+                                <input
+                                    type="checkbox"
+                                    name="isActive"
+                                    checked={formDishes.isActive}
+                                    onChange={handleChange}
+                                    className="accent-blue-600"
+                                />
+                                <span>{formDishes.isActive ? 'Active' : 'Disabled'}</span>
+                            </label>
 
               <select multiple name="ingredients" value={formDishes.ingredients} onChange={(e) => setFormDishes(prev => ({ ...prev, ingredients: Array.from(e.target.selectedOptions, opt => Number(opt.value)) }))} className="w-full border rounded px-3 py-2">
                 <option value="">-- Selecione ingredientes --</option>
@@ -219,14 +248,19 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
                 {tags.map((item) => <option key={item.id} value={item.id}>{item.name || item.tag?.name || 'Sem nome'}</option>)}
               </select>
 
+              
+              <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">{propDishID ? 'Atualizar' : 'Criar'}</button>
+              {status && <p className="text-sm text-center text-green-600">{status}</p>}
+            </form>
+             <div className='w-14 flex-auto'>  
               <input type="file" name="image" multiple accept="image/*" onChange={handleTempImage} />
 
               
-                <div className="grid grid-cols-2 gap-4 mt-4">
+                <div className="grid grid-cols-2 mt-4">
                   {imagesEditDish.map((item, index) => (
                     <div key={index} className="relative border p-2 rounded">
                       <img 
-                        src={`http://localhost:5173${item.imageUrl}`} 
+                        src={item.previewUrl} 
                         alt={`preview-${index}`} 
                         className="w-full h-32 object-cover rounded" 
                       />
@@ -252,11 +286,8 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
                     ))}
                   </div>
                 )}
-              )
-
-              <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">{propDishID ? 'Atualizar' : 'Criar'}</button>
-              {status && <p className="text-sm text-center text-green-600">{status}</p>}
-            </form>
+              </div>
+            </div>
           </div>
         </div>
       )}

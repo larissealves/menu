@@ -1,34 +1,31 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function ListTagsByDisheId ({propDishId}) {
-    const [listTags, setListTags] = useState([])
+export default function ListTagsByDisheId({ propDishId }) {
+  const [listTags, setListTags] = useState([]);
 
-    useEffect(() => {
-            const fetchDishes = async () => {
-                try {
-                    const res = await fetch(`http://localhost:5000/api/get/filterTagByDishId/${propDishId}`);
-                    const data = await res.json();
-                    setListTags(data);
-                    console.log(data)
-                } catch (error) {
-                    console.log('Erro ao buscar a lista de tags', error);
-                }
-            };
-            fetchDishes();
-        }, []);
+  useEffect(() => {
+    const fetchDishes = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/get/filterTagByDishId/${propDishId}`);
+        const data = await res.json();
+        setListTags(data);
+      } catch (error) {
+        console.log('Erro ao buscar a lista de tags', error);
+      }
+    };
+    fetchDishes();
+  }, [propDishId]);
 
-    return(
-        <div>
-            {listTags.length > 0 &&(
-                 <div>
-                {listTags.map((item) => (
-                    <div key={item.id} >
-                    <span> {item.tag.name} </span>
-                    </div>
-                ))}
-                </div>
-            )}
-
-        </div>
-    );
+  return (
+    <div className="flex flex-wrap gap-2 mt-1">
+      {listTags.length > 0 && listTags.map((item) => (
+        <span
+          key={item.id}
+          className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+        >
+          {item.tag?.name}
+        </span>
+      ))}
+    </div>
+  );
 }
