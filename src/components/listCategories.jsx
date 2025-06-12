@@ -31,41 +31,53 @@ export default function ListCategories() {
   }, []);
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <h2 className="text-lg font-semibold mb-4 border-b pb-2">Categorias</h2>
+   <div className="">
+  <h2 className="text-xl font-semibold mb-6 border-b pb-3 text-gray-700">Categories</h2>
 
-      <div className="space-y-3">
-        {listCategories.map((item) => (
-          <div
-            key={item.id}
-            className="flex justify-between items-center border rounded px-3 py-2 hover:bg-gray-50"
+  <div className="space-y-3">
+    {listCategories.map((item) => (
+      <div
+        key={item.id}
+        className="grid grid-cols-1 md:grid-cols-5 items-center border rounded px-4 py-3 bg-gray-50 hover:bg-gray-100 transition"
+      >
+        <span className="font-medium text-gray-800">{item.name}</span>
+        <span className="text-sm text-gray-500">
+          Created: {new Date(item.createdAt).toLocaleDateString('pt-BR')}
+        </span>
+        <span className="text-sm text-gray-500">
+          Last update:  {new Date(item.updatedAt).toLocaleDateString('pt-BR')}
+        </span>
+        <span
+          className={`text-sm font-semibold ${
+            item.isActive ? 'text-green-600' : 'text-red-500'
+          }`}
+        >
+          {item.isActive ? 'Active' : 'Disabled'}
+        </span>
+        <div className="flex justify-end gap-4 mt-2 md:mt-0">
+          <button
+            onClick={() => editCategory(item.id)}
+            className="px-3 py-1 text-sm bg-fuchsia-600 hover:bg-violet-700 text-white rounded cursor-pointer"
           >
-            <span className="font-medium">{item.name}</span>
-            <span className="font-medium">{item.updatedAt}</span>
-            <span className="font-medium">{item.isActive}</span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => editCategory(item.id)}
-                className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded"
-              >
-                Editar
-              </button>
-              <BtnDeleteCategory
-                categoryID={item.id}
-                onDelete={fetchCategories} // atualiza após delete
-              />
-            </div>
-          </div>
-        ))}
+            Edit
+          </button>
+          <BtnDeleteCategory
+            categoryID={item.id}
+            onDelete={fetchCategories}
+          />
+        </div>
       </div>
+    ))}
+  </div>
 
-      {controlPopup && (
-        <AddCategory
-          propsCategoryID={categoryEditID}
-          handletoggleControlPopup={toggleControlPopup}
-          controlPopup={controlPopup}
-        />
-      )}
-    </div>
+  {controlPopup && (
+    <AddCategory
+      propsCategoryID={categoryEditID}
+      handletoggleControlPopup={toggleControlPopup}
+      controlPopup={controlPopup}
+    />
+  )}
+</div>
+
   );
 }

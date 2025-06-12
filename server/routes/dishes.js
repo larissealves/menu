@@ -101,7 +101,7 @@ router.post('/new/addDishes', upload.array('images'), async (req, res) => {
 /* ============== UPDATE DISH ================= */
 router.put('/update/editDishes/:id', upload.array('images'), async (req, res) => {
   const dishID = parseInt(req.params.id);
-  const { name, price, description, categoryId } = req.body;
+  const { name, price, description, categoryId, isActive } = req.body;
 
   const tags = JSON.parse(req.body.tags || '[]');
   const ingredients = JSON.parse(req.body.ingredients || '[]');
@@ -245,7 +245,8 @@ router.get('/get/disheID/:id', async (req, res) => {
   }
 });
 
-/* ============== FILTER DISHES BY CATEGORY ID ================= 
+/* ============== FILTER DISHES BY CATEGORY ID ================= */
+// controls delete button status - screen settings
 router.get('/get/filterDishesByCategoryId/:id', async (req, res) => {
   const categoryId = parseInt(req.params.id);
 
@@ -272,11 +273,12 @@ router.get('/get/filterDishesByCategoryId/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar pratos por categoryId' });
   }
 }); 
-*/
 
 
 
-/* ============== FILTER DISHES BY INGREDIENT ID ================= 
+
+/* ============== FILTER DISHES BY INGREDIENT ID ================= */
+// controls delete button status - screen settings
 router.get('/get/filterDishesByIngredientId/:id', async (req, res) => {
   const ingredientId = parseInt(req.params.id);
 
@@ -300,9 +302,10 @@ router.get('/get/filterDishesByIngredientId/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar pratos por ingredientId' });
   }
 });
-*/
 
-/* ============== FILTER DISHES BY TAG ID ================= 
+
+/* ============== FILTER DISHES BY TAG ID ================= */
+// controls delete button status - screen settings
 router.get('/get/filterDishesByTag/:id', async (req, res) => {
   const tagId = parseInt(req.params.id);
 
@@ -326,7 +329,6 @@ router.get('/get/filterDishesByTag/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar pratos por tagId' });
   }
 });
-*/
 
 
 /* ============== FILTER TAGS BY DISH ID ================= */
@@ -412,6 +414,7 @@ router.get('/get/dishes-id-relations', async (req, res) => {
     name: true,
     price: true,
     categoryId: true,
+    description: true,
     tags: {
       select: {
         tagId: true,

@@ -4,7 +4,7 @@ export default function BtnDeleteDish({ dishID, onDelete }) {
   const [loading, setLoading] = useState(false);
 
   const handleDeleteSubmit = async () => {
-    const confirmDelete = window.confirm("Tem certeza que deseja deletar este prato?");
+    const confirmDelete = window.confirm("Are you sure you want to delete this dish?");
     if (!confirmDelete) return;
 
     const endpoint = `http://localhost:5000/api/delete/dish/${dishID}`;
@@ -34,9 +34,9 @@ export default function BtnDeleteDish({ dishID, onDelete }) {
         type="button"
         onClick={handleDeleteSubmit}
         disabled={loading}
-        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+        className="bg-red-500 text-white px-4 py-2 cursor-pointer rounded hover:bg-red-600 transition"
       >
-        {loading ? 'Deletando...' : 'Deletar'}
+        {loading ? 'Deleting...' : 'Delete'}
       </button>
     </div>
   );

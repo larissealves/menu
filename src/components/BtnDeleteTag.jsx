@@ -41,10 +41,10 @@ export default function BtnDeleteTag({ tagID, onDelete }) {
     <div>
       <button
         type="button"
-        title={hasDishesLinked ? 'Há pratos vinculados a esta tag' : ''}
+        title={hasDishesLinked ? 'There are dishes linked to this tag' : ''}
         disabled={hasDishesLinked} 
         onClick={handleDeleteSubmit}
-        className={`px-4 py-2 rounded text-white ${
+        className={`px-4 py-2 rounded text-white cursor-pointer ${
           hasDishesLinked ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'
         }`}
       >

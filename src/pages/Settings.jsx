@@ -29,18 +29,18 @@ export default function Settings() {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8">
       {/* Ações */}
-      <div className="flex flex-wrap gap-4 justify-start">
-        <button onClick={() => setControlPopupCategory(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+      <div className="flex flex-wrap gap-4 justify-end">
+        <button onClick={() => setControlPopupCategory(true)} className="bg-purple-400 hover:bg-purple-400 text-white  font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Categoria
         </button>
-        <button onClick={() => setControlPopupDish(true)} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-          <PlusCircle size={18} /> Prato
-        </button>
-        <button onClick={() => setControlPopupIngredient(true)} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+        <button onClick={() => setControlPopupIngredient(true)} className="bg-purple-400 hover:bg-purple-700 text-white  cursor-pointerfont-semibold px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Ingrediente
         </button>
-        <button onClick={() => setControlPopupTag(true)} className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+        <button onClick={() => setControlPopupTag(true)} className="bg-purple-400 hover:bg-purple-700 text-white font-semibold  cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Tag
+        </button>
+        <button onClick={() => setControlPopupDish(true)} className="bg-pink-600 hover:bg-pink-700 text-white font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
+          <PlusCircle size={18} /> Prato
         </button>
       </div>
 
@@ -50,10 +50,10 @@ export default function Settings() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-1 px-3 py-1 border-b-2 transition ${
+            className={`flex items-center gap-1 px-3 py-1 border-b-2 transition cursor-pointer  ${
               activeTab === tab.key
-                ? 'border-blue-600 text-blue-600 font-semibold'
-                : 'border-transparent hover:text-black'
+                ? 'border-fuchsia-600 text-fuchsia-600 font-semibold '
+                : 'border-transparent hover:text-violet'
             }`}
           >
             {tab.icon}

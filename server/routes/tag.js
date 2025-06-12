@@ -41,9 +41,10 @@ router.get('/get/tagList/active', async (req, res) => {
       where:{
         isActive: true,
       },
-      orderBy: {
-        name: 'asc',
-      }
+      orderBy: [
+        {name: 'asc'},
+        {isActive: 'desc'},
+      ]
     });
 
     res.status(200).json(tags)

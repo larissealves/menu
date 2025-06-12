@@ -67,10 +67,7 @@ export default function AddCategory({ propsCategoryID, handletoggleControlPopup,
 
     return (
         <div className="main-content">
-            <button onClick={handletoggleControlPopup}>
-                {propsCategoryID ? 'Edit Category' : 'Add Category'}
-            </button>
-
+            
             {controlPopup && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md relative">
@@ -80,7 +77,7 @@ export default function AddCategory({ propsCategoryID, handletoggleControlPopup,
                             </h2>
                             <button
                                 onClick={handletoggleControlPopup}
-                                className="text-gray-500 hover:text-gray-800 text-2xl font-bold leading-none"
+                                className="text-gray-500 hover:text-gray-800 cursor-pointer text-2xl font-bold leading-none"
                                 aria-label="Close"
                             >
                                 ×
@@ -105,22 +102,22 @@ export default function AddCategory({ propsCategoryID, handletoggleControlPopup,
                                 />
                                 <span>{formNewCategory.isActive ? 'Active' : 'Disabled'}</span>
                             </label>
-                            <div className="flex justify-end pt-4 border-t">
+                            <div className="flex justify-end pt-4 gap-4 border-t">
                                 <button
                                     type="submit"
-                                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                                    className="bg-blue-600  cursor-pointer  text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                                 >
                                     {propsCategoryID ? 'Update' : 'Create'}
                                 </button>
 
-                                {propsCategoryID && (
+                                {/*propsCategoryID && (
                                     <BtnDeleteCategory
                                         categoryID={propsCategoryID}
                                         onDelete={() => {
                                             toggleControlPopup();
                                         }}
                                     />
-                                )}
+                                )*/}
                             </div>
                         </form>
                     </div>

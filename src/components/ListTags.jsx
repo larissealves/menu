@@ -28,43 +28,60 @@ export default function ListTags({ showInList }) {
   }, []);
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 mt-6">
-      {!showInList && (
-        <h2 className="text-lg font-semibold mb-4 border-b pb-2">Tags</h2>
-      )}
+  <div className="">
+    {!showInList && (
+      <h2 className="text-xl font-semibold mb-6 border-b pb-3 text-gray-700">Tags</h2>
+    )}
 
-      <div className="space-y-2">
-        {listTags.map((item) => (
-          <div
-            key={item.id}
-            className={`flex items-center justify-between border p-2 rounded ${
-              showInList ? 'bg-gray-50' : 'hover:bg-gray-50'
+    <div className="space-y-2">
+      {listTags.map((item) => (
+        <div
+          key={item.id}
+          className={`grid grid-cols-1 md:grid-cols-5 items-center border px-4 py-3 rounded-md ${
+            showInList ? 'bg-gray-50' : 'hover:bg-gray-100'
+          } transition`}
+        >
+        
+          <span className="text-sm font-medium text-gray-800">{item.name}</span>
+       
+          <span className="text-sm text-gray-500 hidden md:block">
+            Created: {new Date(item.createdAt).toLocaleDateString('pt-BR')}
+          </span>
+          <span className="text-sm text-gray-500 hidden md:block">
+            Last update:  {new Date(item.updatedAt).toLocaleDateString('pt-BR')}
+          </span>
+
+          <span
+            className={`text-sm font-semibold ${
+              item.isActive ? 'text-green-600' : 'text-red-500'
             }`}
           >
-            <span className="text-sm">{item.name}</span>
+            {item.isActive ? 'Active' : 'Disabled'}
+          </span>
 
-            {!showInList && (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => editTag(item.id)}
-                  className="px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Editar
-                </button>
-                <BtnDeleteTag tagID={item.id} />
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {controlPopup && (
-        <AddTag
-          propsTagID={tagsEditID}
-          handletoggleControlPopup={toggleControlPopup}
-          controlPopup={controlPopup}
-        />
-      )}
+          {!showInList && (
+            <div className="flex gap-2 justify-end mt-2 md:mt-0">
+              <button
+                onClick={() => editTag(item.id)}
+                className="px-3 py-1 cursor-pointer text-sm bg-blue-600 hover:bg-blue-700 text-white cursor-point rounded"
+              >
+                Edit
+              </button>
+              <BtnDeleteTag tagID={item.id} />
+            </div>
+          )}
+        </div>
+      ))}
     </div>
-  );
+
+    {controlPopup && (
+      <AddTag
+        propsTagID={tagsEditID}
+        handletoggleControlPopup={toggleControlPopup}
+        controlPopup={controlPopup}
+      />
+    )}
+  </div>
+);
+
 }

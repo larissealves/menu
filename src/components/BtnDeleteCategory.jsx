@@ -9,6 +9,7 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
       try {
         const res = await fetch(`http://localhost:5000/api/get/filterDishesByCategoryId/${categoryID}`);
         const data = await res.json();
+        console.log('AAAAAAAAAAAAAAAA', res.json)
         setHasDishesLinked(data.length > 0);
       } catch (error) {
         console.error('Erro ao buscar pratos vinculados à categoria:', error);
@@ -26,8 +27,7 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
       });
 
       if (res.ok) {
-        console.log('Categoria deletada com sucesso');
-        if (onDelete) onDelete(); // callback opcional para atualizar a lista
+        if (onDelete) onDelete(); 
       } else {
         console.error('Erro ao deletar categoria');
       }
@@ -40,10 +40,10 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
     <div>
       <button
         type="button"
-        title={hasDishesLinked ? 'Há pratos vinculados a esta categoria' : ''}
-        disabled={hasDishesLinked} // <-- corrigido
+        title={hasDishesLinked ? 'There are dishes linked to this category' : ''}
+        disabled={hasDishesLinked} 
         onClick={handleDeleteSubmit}
-        className={`px-4 py-2 rounded text-white ${
+        className={`px-4 py-2 rounded text-white cursor-pointer ${
           hasDishesLinked ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'
         }`}
       >

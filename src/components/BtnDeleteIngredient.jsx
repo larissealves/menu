@@ -40,10 +40,10 @@ export default function BtnDeleteIngredient({ ingredientID, onDelete }) {
     <div>
       <button
         type="button"
-        title={hasDishesLinked ? 'Há pratos vinculados a este ingrediente' : ''}
+        title={hasDishesLinked ? 'There are dishes linked to this ingredient' : ''}
         disabled={hasDishesLinked} 
         onClick={handleDeleteSubmit}
-        className={`px-4 py-2 rounded text-white ${
+        className={`px-4 py-2 rounded text-white cursor-pointer ${
           hasDishesLinked ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'
         }`}
       >

@@ -69,27 +69,30 @@ export default function HeroSection() {
   return (
     <div className="flex flex-col items-center px-4 py-8 md:px-8 md:py-12 max-w-6xl mx-auto gap-12">
       {/* Header */}
-      <section className="w-full flex flex-col gap-8">
-        <div className="flex flex-col sm:flex-row items-center gap-6" ref={headerRef}>
+      <section className="w-full flex flex-row justify-between gap-16">
+        <div className="flex flex-col sm:flex-row items-center   gap-16" ref={headerRef}>
           <img
             src={mainImage}
             alt="main image"
             className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-lg"
           />
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-700">YOLK TH</h1>
+            <div>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-700">Saboré</h1>
+                <p className="text-1xl font-bold text-gray-700">MENU</p>
+            </div>
         </div>
-        <Link to="/settings" target="_blank" className="text-blue-600 underline">Settings</Link>
+        <Link to="/settings" target="_blank" className="text-blue-600 underline font-bold">SETTINGS</Link>
       </section>
 
       {/* Filtros */}
       <section className="w-full flex flex-col gap-8">
-        <div className="flex flex-wrap justify-between gap-4">
+        <div className="flex flex-wrap justify-between gap-8">
           <input
             type="text"
             placeholder="Buscar por nome"
             value={filters.name}
             onChange={(e) => setFilters(prev => ({ ...prev, name: e.target.value }))}
-            className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-sm"
+            className=" flex-1 sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-sm"
           />
           <div className="flex gap-4 flex-wrap items-center">
             <div className="flex items-center gap-2">
@@ -139,9 +142,10 @@ export default function HeroSection() {
                     <div className="flex-1 flex flex-col gap-1">
                       <p className="font-semibold text-lg text-gray-800">{dish.name}</p>
                       <p className="text-gray-500 text-sm">R$ {dish.price}</p>
+                      <p className="text-gray-500 text-sm">{dish.description}</p>
                       <ListIngredientsByDisheId propDishId={dish.id} showInList />
                       <ListTagsByDisheId propDishId={dish.id} showInList />
-                    </div>
+                    </div> 
 
                     <div className="w-full  sm:w-36">
                       <ListImagesByDish dishId={dish.id} />
