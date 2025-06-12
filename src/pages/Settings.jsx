@@ -30,7 +30,7 @@ export default function Settings() {
     <div className="p-6 max-w-6xl mx-auto space-y-8">
       {/* Ações */}
       <div className="flex flex-wrap gap-4 justify-end">
-        <button onClick={() => setControlPopupCategory(true)} className="bg-purple-400 hover:bg-purple-400 text-white  font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
+        <button onClick={() => setControlPopupCategory(true)} className="bg-purple-400 hover:bg-purple-700 text-white  font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Categoria
         </button>
         <button onClick={() => setControlPopupIngredient(true)} className="bg-purple-400 hover:bg-purple-700 text-white  cursor-pointerfont-semibold px-4 py-2 rounded-lg flex items-center gap-2">

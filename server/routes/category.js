@@ -86,7 +86,7 @@ router.put('/update/category/:id', async (req, res) => {
       where: { id: categoryId},
       data: {
         name,
-        isActive: Boolean(isActive),
+        isActive: isActive === 'true' || isActive === true,
         //updatedAt: new Date(),
       },
     })

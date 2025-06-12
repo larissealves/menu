@@ -9,6 +9,7 @@ export default function ListCategories() {
 
   const toggleControlPopup = () => {
     setControlPopup(!controlPopup);
+    fetchCategories();
   };
 
   const editCategory = (id) => {

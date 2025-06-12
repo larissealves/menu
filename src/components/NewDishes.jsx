@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
+export default function AddDishes({ propDishID, handletoggleControlPopup, controlPopup }) {
   const [categories, setCategories] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [tags, setTags] = useState([]);
@@ -125,8 +125,8 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
         {! propDishID 
           setListImageTemp([]);
           setFormDishes({ name: '', price: '', description: '', categoryId: '', isActive: true, ingredients: [], tags: [], listImages: [] });
-          togglePopup();
         }
+        handletoggleControlPopup();
         
         setStatus("");
       } else {
@@ -140,7 +140,6 @@ export default function AddDishes({ propDishID, togglePopup, controlPopup }) {
       console.error('FRONT new dish - Error in request:', error);
       setStatus('FRONT new dish - Error in request ');
     }
-    fetchDishes(); 
   };
 
   useEffect(() => {
@@ -224,7 +223,7 @@ const handleDeleteImage = async (id) => {
           <div className="bg-white rounded-lg shadow-lg w-full max-w-5xl max-h-[90vh] p-6 relative flex flex-col">
             <div className="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 pb-2">
               <h2 className="text-xl font-semibold ">{propDishID ? 'Edit Dish' : 'Create Dish'}</h2>
-              <button onClick={togglePopup} className="text-gray-600 hover:text-red-600 text-xl  cursor-pointer   font-bold">×</button>
+              <button onClick={handletoggleControlPopup} className="text-gray-600 hover:text-red-600 text-xl  cursor-pointer   font-bold">×</button>
             </div>
 
             <div className="overflow-y-auto flex-grow">

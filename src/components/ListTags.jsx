@@ -7,15 +7,20 @@ export default function ListTags({ showInList }) {
   const [tagsEditID, setTagsEditID] = useState(null);
   const [controlPopup, setControlPopup] = useState(false);
 
-  const toggleControlPopup = () => setControlPopup(!controlPopup);
+  const toggleControlPopup = () => {
+    if(controlPopup) {
+      fetchTag();
+    }
+    setControlPopup(!controlPopup);
+  }
 
   const editTag = (id) => {
     setTagsEditID(id);
     setControlPopup(true);
   };
 
-  useEffect(() => {
-    const fetchTag = async () => {
+  
+  const fetchTag = async () => {
       try {
         const res = await fetch('http://localhost:5000/api/get/tagList');
         const data = await res.json();
@@ -23,9 +28,13 @@ export default function ListTags({ showInList }) {
       } catch (error) {
         console.log('Erro ao buscar a lista de tags', error);
       }
-    };
+  };
+ 
+
+  useEffect(() => {
     fetchTag();
   }, []);
+
 
   return (
   <div className="">

@@ -54,7 +54,7 @@ router.put('/update/ingredient/:id', async (req, res) => {
       where: { id: ingredientId},
       data: {
         name,
-        isActive: Boolean(isActive),
+        isActive: isActive === 'true' || isActive === true,
         //updatedAt: new Date(),
       },
     })

@@ -84,7 +84,7 @@ router.put('/update/tag/:id', async (req, res) => {
       where: { id: tagId},
       data: {
         name,
-        isActive: Boolean(isActive),
+        isActive: isActive === 'true' || isActive === true,
         //updatedAt: new Date(),
       },
     })

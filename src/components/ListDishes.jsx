@@ -9,7 +9,12 @@ export default function ListAllDishes() {
     const [listAllDishes, setListAllDishes] = useState([]);
     const [controlPopup, setControlPopup] = useState(false);
 
-    const toggleControlPopup = () => setControlPopup(!controlPopup);
+    const toggleControlPopup = () => {
+      if(controlPopup) {
+         fetchDishes();
+      }
+      setControlPopup(!controlPopup);
+    }
 
     const clickButtonEdit = (id) => {
         setDishEditId(id);
@@ -89,7 +94,7 @@ export default function ListAllDishes() {
     {controlPopup && (
       <AddDishes
         propDishID={dishEditId}
-        togglePopup={toggleControlPopup}
+        handletoggleControlPopup={toggleControlPopup}
         controlPopup={controlPopup}
       />
     )}

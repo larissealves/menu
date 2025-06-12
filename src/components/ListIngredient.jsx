@@ -4,29 +4,36 @@ import AddIngredient from './NewIngredient';
 import BtnDeleteIngredient from './BtnDeleteIngredient';
 
 export default function ListIngredient({ showInList }) {
-  const [listIngredient, setIngredient] = useState([]);
-  const [ingredientEditID, setIngredientEditID] = useState(null);
-  const [controlPopup, setControlPopup] = useState(false);
+const [listIngredient, setIngredient] = useState([]);
+const [ingredientEditID, setIngredientEditID] = useState(null);
+const [controlPopup, setControlPopup] = useState(false);
 
-  const toggleControlPopup = () => setControlPopup(!controlPopup);
 
-  const editIngredient = (id) => {
-    setIngredientEditID(id);
-    setControlPopup(true);
-  };
+const fetchIngredient = async () => {
+  try {
+    const res = await fetch('http://localhost:5000/api/get/ingredientList');
+    const data = await res.json();
+    setIngredient(data);
+  } catch (error) {
+    console.log('Erro ao buscar a lista de ingredientes', error);
+  }
+};
 
-  useEffect(() => {
-    const fetchIngredient = async () => {
-      try {
-        const res = await fetch('http://localhost:5000/api/get/ingredientList');
-        const data = await res.json();
-        setIngredient(data);
-      } catch (error) {
-        console.log('Erro ao buscar a lista de ingredientes', error);
-      }
-    };
-    fetchIngredient();
-  }, []);
+const toggleControlPopup = () => {
+  if (controlPopup) {
+    fetchIngredient(); 
+  }
+  setControlPopup(!controlPopup);
+};
+
+const editIngredient = (id) => {
+  setIngredientEditID(id);
+  setControlPopup(true);
+};
+
+useEffect(() => {
+  fetchIngredient(); 
+}, []);
 
   return (
   <div className="">

@@ -102,6 +102,7 @@ router.post('/new/addDishes', upload.array('images'), async (req, res) => {
 router.put('/update/editDishes/:id', upload.array('images'), async (req, res) => {
   const dishID = parseInt(req.params.id);
   const { name, price, description, categoryId, isActive } = req.body;
+  console.log('update dish', req.body)
 
   const tags = JSON.parse(req.body.tags || '[]');
   const ingredients = JSON.parse(req.body.ingredients || '[]');
@@ -115,7 +116,7 @@ router.put('/update/editDishes/:id', upload.array('images'), async (req, res) =>
         price: parseFloat(price),
         description,
         categoryId: parseInt(categoryId),
-        isActive: Boolean(isActive),
+        isActive: isActive === 'true' || isActive === true,
         //updateAt: new Date(),
       },
     });
