@@ -1,9 +1,20 @@
 import React from 'react';
+import { useNavigate, Link } from "react-router-dom";
+
+import image01 from '../../public/app-images/img-01.png'
+import image02 from '../../public/app-images/img-02.png'
+import image03 from '../../public/app-images/img-03.png'
+import image04 from '../../public/app-images/img-04.png'
+import image05 from '../../public/app-images/img-05.png'
+import image06 from '../../public/app-images/img-06.png'
+
 
 export default function ProjectDocumentation() {
   return (
-    <div className="max-w-4xl mx-auto p-8 text-gray-800 space-y-8">
-      <h1 className="text-3xl font-bold">Project Documentation - "Menu"</h1>
+    <div className="max-w-4xl mx-auto p-8 text-gray-800 space-y-8 ">
+        <Link to="/" target="_blank" className="text-blue-600 underline font-bold"> ← BACK TO HOME </Link>
+        <br></br>
+      <h1 className="text-3xl font-bold mt-8">Project Documentation - "Menu"</h1>
 
       <section>
         <h2 className="text-2xl font-semibold">📌 Overview</h2>
@@ -83,6 +94,18 @@ export default function ProjectDocumentation() {
           <li><code>ListIngredientsByDisheId.jsx</code>: displays ingredients of a dish</li>
           <li><code>ListTagsByDisheId.jsx</code>: displays tags of a dish</li>
         </ul>
+      </section>
+
+      <section>
+        <h2 className="text-2xl font-semibold">🖼️ Screenshots</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <img src={image01} alt="Screenshot 1" className="rounded shadow" />
+          <img src={image02} alt="Screenshot 2" className="rounded shadow" />
+          <img src={image03} alt="Screenshot 3" className="rounded shadow" />
+          <img src={image04} alt="Screenshot 4" className="rounded shadow" />
+          <img src={image05} alt="Screenshot 5" className="rounded shadow" />
+          <img src={image06} alt="Screenshot 6" className="rounded shadow" />
+        </div>
       </section>
 
       <section>
