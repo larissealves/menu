@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PlusCircle, LayoutGrid, Utensils, Tag, List } from 'lucide-react';
+import { useNavigate, Link } from "react-router-dom";
 
 import AddDishes from '../components/NewDishes';
 import AddCategory from '../components/NewCategory';
@@ -20,27 +21,32 @@ export default function Settings() {
   const [controlPopupTag, setControlPopupTag] = useState(false);
 
   const tabs = [
-    { key: 'categories', label: 'Categorias', icon: <LayoutGrid size={16} /> },
-    { key: 'dishes', label: 'Pratos', icon: <Utensils size={16} /> },
-    { key: 'ingredients', label: 'Ingredientes', icon: <List size={16} /> },
+    { key: 'categories', label: 'Categories', icon: <LayoutGrid size={16} /> },
     { key: 'tags', label: 'Tags', icon: <Tag size={16} /> },
+    { key: 'ingredients', label: 'Ingredients', icon: <List size={16} /> },
+    { key: 'dishes', label: 'Dishes', icon: <Utensils size={16} /> },
+   
   ];
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8">
+      <Link to="/" target="_blank" className="text-blue-600 underline font-bold"> ← BACK TO HOME </Link>
+      <br></br>
+      <Link to="/ProjectDocumentation" target="_blank" className="text-blue-600 underline font-bold"> 
+        Project Documentation → </Link>
       {/* Ações */}
       <div className="flex flex-wrap gap-4 justify-end">
         <button onClick={() => setControlPopupCategory(true)} className="bg-purple-400 hover:bg-purple-700 text-white  font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
-          <PlusCircle size={18} /> Categoria
+          <PlusCircle size={18} /> Category
         </button>
         <button onClick={() => setControlPopupIngredient(true)} className="bg-purple-400 hover:bg-purple-700 text-white  cursor-pointerfont-semibold px-4 py-2 rounded-lg flex items-center gap-2">
-          <PlusCircle size={18} /> Ingrediente
+          <PlusCircle size={18} /> Ingredient
         </button>
         <button onClick={() => setControlPopupTag(true)} className="bg-purple-400 hover:bg-purple-700 text-white font-semibold  cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Tag
         </button>
         <button onClick={() => setControlPopupDish(true)} className="bg-pink-600 hover:bg-pink-700 text-white font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
-          <PlusCircle size={18} /> Prato
+          <PlusCircle size={18} /> Dish
         </button>
       </div>
 

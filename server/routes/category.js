@@ -27,7 +27,12 @@ router.post('/new/category', async (req, res) => {
 /* ============== GET ALL ITEMS ================= */
 router.get('/get/categoryList', async (req, res) => {
   try {
-    const categories = await prisma.category.findMany()
+    const categories = await prisma.category.findMany({
+      orderBy: [
+        {isActive:'desc'},
+        {name:'asc'},
+      ]
+    })
     res.status(200).json(categories)
   } catch (error) {
     console.error('Erro ao buscar categorias:', error)

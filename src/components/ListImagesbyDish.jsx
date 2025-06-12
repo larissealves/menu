@@ -38,7 +38,7 @@ export default function ListImagesByDish({ dishId }) {
 
 
     return (
-        <div className="flex gap-4 w-full flex-row">
+        <div className="flex gap-4 w-full flex-row ">
            {/* {imagesEditDish.length === 0 ? (
                 <img
                     src={blankimage}
@@ -48,7 +48,6 @@ export default function ListImagesByDish({ dishId }) {
                 ) : 
                 <>*/}
                     {imagesEditDish.map((img) => (
-                    console.log('aaaa', img.imageUrl),
                     <img
                         key={img.id}
                         src={img.previewUrl}

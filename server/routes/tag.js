@@ -26,7 +26,12 @@ router.post('/new/tag', async (req, res) => {
 /* ============== GET ALL ITEMS ================= */
 router.get('/get/tagList', async (req, res) => {
   try {
-    const tags = await prisma.tag.findMany()
+    const tags = await prisma.tag.findMany({
+      orderBy: [
+        {isActive:'desc'},
+        {name:'asc'},
+      ]
+    })
     res.status(200).json(tags)
   } catch (error) {
     console.error('Erro ao buscar as tags', error)

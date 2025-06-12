@@ -37,7 +37,7 @@ export default function ListAllDishes() {
 
     return (
   <div>
-    <h2 className="text-xl font-semibold mb-6 border-b pb-3 text-gray-800">Pratos</h2>
+    <h2 className="text-xl font-semibold mb-6 border-b pb-3 text-gray-800">DISHES</h2>
 
     <div className="space-y-4">
       {listAllDishes.map((item) => (
@@ -47,17 +47,18 @@ export default function ListAllDishes() {
         >
           <div className="flex flex-col md:flex-row justify-between gap-6">
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-800">{item.name}</h3>
-              <p className="text-sm text-gray-700 mt-1">
+              <h3 className="text-lg uppercase font-bold text-gray-800">{item.name}</h3>
+              <p className="text-lg text-gray-700 mt-1">
                 Price: <span className="font-medium">R$ {parseFloat(item.price).toFixed(2)}</span>
               </p>
 
               <div className="mt-2">
-                <p className="text-sm text-gray-700 font-medium">Description:</p>
-                <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                <p className="text-lg text-gray-700 font-medium">Description:</p>
+                <p className="text-lg text-gray-600 mt-1">{item.description}</p>
               </div>
 
-              <div className="text-sm text-gray-500 mt-3 space-y-1">
+              <div className="text-lg text-gray-500 mt-3 space-y-1">
+                <p>Category: {item.category.name} </p>
                 <p>Created: {new Date(item.createdAt).toLocaleDateString('pt-BR')}</p>
                 <p>Last update: {new Date(item.updatedAt).toLocaleDateString('pt-BR')}</p>
                 <p>

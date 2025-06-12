@@ -214,8 +214,12 @@ router.delete('/delete/dish/:id', async (req, res) => {
 router.get('/get/dishes', async (req, res) => {
   try {
     const dishes = await prisma.dish.findMany({
-      orderBy: {
-        name: 'asc',
+      orderBy: [
+        {isActive: 'desc'},
+        {name: 'asc'},
+      ],
+      include: {
+        category: true,
       }
     })
     res.status(200).json(dishes)

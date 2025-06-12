@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion, useAnimation } from 'framer-motion';
 
 import mainImage from '../assets/images/sakura.png';
-import Settings from '../pages/Settings.jsx';
 import ListTagsByDisheId from './ListTagsbyDish';
 import ListIngredientsByDisheId from './ListIngredientsbyDish';
 import ListImagesByDish from './ListImagesbyDish';
@@ -14,11 +13,12 @@ export default function HeroSection() {
   const [filters, setFilters] = useState({ name: '', category: '', tag: '' });
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
   const [dishes, setDishes] = useState([]);
 
   const headerRef = useRef(null);
   const controls = useAnimation();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   // Animação no scroll
   useEffect(() => {
@@ -40,13 +40,15 @@ export default function HeroSection() {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [catRes, tagRes, dishRes] = await Promise.all([
+        const [catRes, tagRes, ingredientsRes, dishRes] = await Promise.all([
           fetch('http://localhost:5000/api/get/categoryList/active'),
           fetch('http://localhost:5000/api/get/tagList/active'),
+          fetch('http://localhost:5000/api/get/ingredientList/active'),
           fetch('http://localhost:5000/api/get/dishes-id-relations')
         ]);
         setCategories(await catRes.json());
         setTags(await tagRes.json());
+        setIngredients(await ingredientsRes.json());
         const data = await dishRes.json();
         setDishes(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -63,7 +65,11 @@ export default function HeroSection() {
     const matchesTag = filters.tag
       ? dish.tags?.some(tag => tag.tagId === +filters.tag)
       : true;
-    return matchesName && matchesCategory && matchesTag;
+    
+    const matchesIngredients = filters.ingredients 
+      ? dish.ingredients?.some(ing => ing.ingredientsId === + filters.ingredients)
+      : true;
+    return matchesName && matchesCategory && matchesTag && matchesIngredients;
   });
 
   return (
@@ -89,39 +95,61 @@ export default function HeroSection() {
         <div className="flex flex-wrap justify-between gap-8">
           <input
             type="text"
-            placeholder="Buscar por nome"
+            placeholder="Search by name"
             value={filters.name}
             onChange={(e) => setFilters(prev => ({ ...prev, name: e.target.value }))}
             className=" flex-1 sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-sm"
           />
+          
           <div className="flex gap-4 flex-wrap items-center">
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-700">Categoria:</label>
+            { categories.length > 0 && (
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-700">Category:</label>
+                <select
+                  value={filters.category}
+                  onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                >
+                  <option value="">All categories</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            
+            { ingredients.length > 0 && (
+             <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-700">Ingredients / side dishes:</label>
               <select
-                value={filters.category}
-                onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
+                value={filters.ingredients}
+                onChange={(e) => setFilters(prev => ({ ...prev, ingredients: e.target.value }))}
                 className="px-3 py-2 border border-gray-300 rounded-md text-sm"
               >
-                <option value="">Todas</option>
-                {categories.map((cat) => (
+                <option value="">All options</option>
+                {ingredients.map((cat) => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
             </div>
+            )}
 
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-700">Tag:</label>
-              <select
-                value={filters.tag}
-                onChange={(e) => setFilters(prev => ({ ...prev, tag: e.target.value }))}
-                className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-              >
-                <option value="">Todas</option>
-                {tags.map((tag) => (
-                  <option key={tag.id} value={tag.id}>{tag.name}</option>
-                ))}
-              </select>
-            </div>
+            { tags.length > 0 && (
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-700"></label>
+                <select
+                  value={filters.tag}
+                  onChange={(e) => setFilters(prev => ({ ...prev, tag: e.target.value }))}
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+                >
+                  <option value="">Other highlights</option>
+                  {tags.map((tag) => (
+                    <option key={tag.id} value={tag.id}>{tag.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
           </div>
         </div>
 
@@ -141,9 +169,11 @@ export default function HeroSection() {
                   >
                     <div className="flex-1 flex flex-col gap-1">
                       <p className="font-semibold text-lg text-gray-800">{dish.name}</p>
-                      <p className="text-gray-500 text-sm">R$ {dish.price}</p>
-                      <p className="text-gray-500 text-sm">{dish.description}</p>
-                      <ListIngredientsByDisheId propDishId={dish.id} showInList />
+                      <p className="text-gray-500 text-lg">R$ {dish.price}</p>
+                      <p className="text-gray-500 text-lg">{dish.description}</p>
+                      <p> 
+                        <ListIngredientsByDisheId propDishId={dish.id} showInList />
+                      </p>
                       <ListTagsByDisheId propDishId={dish.id} showInList />
                     </div> 
 

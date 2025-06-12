@@ -21,7 +21,7 @@ export default function ListTagsByDisheId({ propDishId }) {
       {listTags.length > 0 && listTags.map((item) => (
         <span
           key={item.id}
-          className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
+          className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full"
         >
           {item.tag?.name}
         </span>

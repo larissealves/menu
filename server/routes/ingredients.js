@@ -68,7 +68,12 @@ router.put('/update/ingredient/:id', async (req, res) => {
 /* ============== GET ALL ITEMS ================= */
 router.get('/get/ingredientList', async (req, res) => {
   try {
-    const ingredients = await prisma.ingredient.findMany()
+    const ingredients = await prisma.ingredient.findMany({
+      orderBy: [
+        {isActive:'desc'},
+        {name:'asc'},
+      ]
+    })
     res.status(200).json(ingredients)
   } catch (error) {
     console.error('Erro ao buscar os ingredientes:', error)
