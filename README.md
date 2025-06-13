@@ -44,3 +44,11 @@ This system allows restaurant managers or owners to:
    ```bash
    git clone https://github.com/your-username/menu.git
    cd menu
+
+## 🖼️ Screenshots
+<img src="https://github.com/larissealves/menu/blob/master/public/app-images/img-01.png" height="40" alt="React" />
+<img src="https://github.com/larissealves/menu/blob/master/public/app-images/img-02.png" height="40" alt="React" />
+<img src="https://github.com/larissealves/menu/blob/master/public/app-images/img-03.png" height="40" alt="React" />
+<img src="https://github.com/larissealves/menu/blob/master/public/app-images/img-04.png" height="40" alt="React" />
+<img src="https://github.com/larissealves/menu/blob/master/public/app-images/img-05.png" height="40" alt="React" />
+<img src="https://github.com/larissealves/menu/blob/master/public/app-images/img-06.png" height="40" alt="React" />
