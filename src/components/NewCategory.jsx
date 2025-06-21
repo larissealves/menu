@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import BtnDeleteCategory from './BtnDeleteCategory'
 
-export default function AddCategory({ propsCategoryID, handletoggleControlPopup, controlPopup }) {
+export default function AddCategory({ propsCategoryID, handleToggleControlPopup, controlPopup }) {
 
     const [formNewCategory, setFormNewCategory] = useState({
         name: '',
@@ -54,7 +54,7 @@ export default function AddCategory({ propsCategoryID, handletoggleControlPopup,
 
             if (res.ok) {
                 setFormNewCategory({ name: '', isActive: true })
-                handletoggleControlPopup()
+                handleToggleControlPopup()
             } else {
                 console.error('Erro ao salvar categoria')
             }
@@ -76,7 +76,7 @@ export default function AddCategory({ propsCategoryID, handletoggleControlPopup,
                                 {propsCategoryID ? 'Edit' : 'Create'} Category
                             </h2>
                             <button
-                                onClick={handletoggleControlPopup}
+                                onClick={handleToggleControlPopup}
                                 className="text-gray-500 hover:text-gray-800 cursor-pointer text-2xl font-bold leading-none"
                                 aria-label="Close"
                             >

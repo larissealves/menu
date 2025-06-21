@@ -28,8 +28,10 @@ export default function ListCategories() {
   };
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    if (!controlPopup) {
+      fetchCategories();
+    }
+  }, [fetchCategories]);
 
   return (
     <div className="">
@@ -45,7 +47,7 @@ export default function ListCategories() {
             key={item.id}
             className="grid grid-cols-1 md:grid-cols-5 items-center border rounded px-4 py-3 bg-gray-50 hover:bg-gray-100 transition"
           >
-            <span className="font-medium text-gray-800">{item.name}</span>
+            <span className="font-medium text-gray-800 break-all">{item.name}</span>
             <span className="text-sm text-gray-500">
               Created: {new Date(item.createdAt).toLocaleDateString('pt-BR')}
             </span>
@@ -77,7 +79,7 @@ export default function ListCategories() {
       {controlPopup && (
         <AddCategory
           propsCategoryID={categoryEditID}
-          handletoggleControlPopup={toggleControlPopup}
+          handleToggleControlPopup={toggleControlPopup}
           controlPopup={controlPopup}
         />
       )}

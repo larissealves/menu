@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client'
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs/promises';
+import { filter } from 'framer-motion/client';
 
 
 const router = express.Router()
@@ -49,7 +50,7 @@ router.post('/new/addDishes', upload.array('images'), async (req, res) => {
         data: tags.map((tagId) => ({
           dishId: newDishId,
           tagId,
-         // updatedAt: new Date(),
+          // updatedAt: new Date(),
         })),
       });
     }
@@ -123,27 +124,34 @@ router.put('/update/editDishes/:id', upload.array('images'), async (req, res) =>
 
     // Atualiza tags: apaga e recria
     await prisma.dishTag.deleteMany({ where: { dishId: dishID } });
+    
     if (tags.length > 0) {
-      await prisma.dishTag.createMany({
-        data: tags.map(tagId => ({
-          dishId: dishID,
-          tagId,
-          //updatedAt: new Date(),
-        })),
-      });
+      const validTags = tags.filter(tagId => tagId !== null && tagId !== undefined && tagId !== 0)
+      if (validTags.length > 0) {
+        await prisma.dishTag.createMany({
+          data: validTags.map(tagId => ({
+            dishId: dishID,
+            tagId,
+            //updatedAt: new Date(),
+          })),
+        });
+      }
+
     }
 
     // Atualiza ingredientes: apaga e recria
     await prisma.dishIngredient.deleteMany({ where: { dishId: dishID } });
     if (ingredients.length > 0) {
-      await prisma.dishIngredient.createMany({
-        data: ingredients.map(ingredientId => ({
+      const validIngredients = ingredients.filter(ingredientId => ingredientId !== null && ingredientId !== undefined && ingredientId !== 0)
+      if (validIngredients.length > 0 ){
+        await prisma.dishIngredient.createMany({
+        data: validIngredients.map(ingredientId => ({
           dishId: dishID,
           ingredientId,
-         // updatedAt: new Date(),
+          // updatedAt: new Date(),
         })),
       });
-    }
+    }}
 
     // Se houver novas imagens, salva
     if (req.files && req.files.length > 0) {
@@ -215,13 +223,14 @@ router.get('/get/dishes', async (req, res) => {
   try {
     const dishes = await prisma.dish.findMany({
       orderBy: [
-        {isActive: 'desc'},
-        {name: 'asc'},
+        { isActive: 'desc' },
+        { name: 'asc' },
       ],
       include: {
         category: true,
       }
     })
+    console.log('list dishes - api', dishes)
     res.status(200).json(dishes)
   } catch (error) {
     console.error('Erro ao buscar pratos:', error)
@@ -277,7 +286,7 @@ router.get('/get/filterDishesByCategoryId/:id', async (req, res) => {
     console.error('Erro ao buscar pratos por categoryId:', error);
     res.status(500).json({ error: 'Erro ao buscar pratos por categoryId' });
   }
-}); 
+});
 
 
 
@@ -349,13 +358,13 @@ router.get('/get/filterTagByDishId/:id', async (req, res) => {
         }
       },
       include: {
-       tag: true,
+        tag: true,
       },
       orderBy: {
         tag: {
           name: 'asc',
         },
-       },
+      },
     });
 
     if (dishesTag.length === 0) {
@@ -407,31 +416,31 @@ router.get('/get/filterIngredientsByDishId/:id', async (req, res) => {
 router.get('/get/dishes-id-relations', async (req, res) => {
   try {
     const dishes = await prisma.dish.findMany({
-  where: {
-    isActive: true,
-  },
-  orderBy: [
-  { name: 'asc' },
-  { isActive: 'asc' }
-  ],
-  select: {
-    id: true,
-    name: true,
-    price: true,
-    categoryId: true,
-    description: true,
-    tags: {
-      select: {
-        tagId: true,
+      where: {
+        isActive: true,
       },
-    },
-    ingredients: {
+      orderBy: [
+        { name: 'asc' },
+        { isActive: 'asc' }
+      ],
       select: {
-        ingredientId: true,
+        id: true,
+        name: true,
+        price: true,
+        categoryId: true,
+        description: true,
+        tags: {
+          select: {
+            tagId: true,
+          },
+        },
+        ingredients: {
+          select: {
+            ingredientId: true,
+          },
+        },
       },
-    },
-  },
-});
+    });
 
     res.status(200).json(dishes);
   } catch (error) {

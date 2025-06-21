@@ -32,8 +32,10 @@ export default function ListTags({ showInList }) {
  
 
   useEffect(() => {
-    fetchTag();
-  }, []);
+    if (!controlPopup) {
+      fetchTag();
+    }
+  }, [fetchTag]);
 
 
   return (
@@ -51,7 +53,7 @@ export default function ListTags({ showInList }) {
           } transition`}
         >
         
-          <span className="text-sm font-medium text-gray-800">{item.name}</span>
+          <span className="text-sm font-medium break-all text-gray-800">{item.name}</span>
        
           <span className="text-sm text-gray-500 hidden md:block">
             Created: {new Date(item.createdAt).toLocaleDateString('pt-BR')}

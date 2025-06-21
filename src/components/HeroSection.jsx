@@ -51,8 +51,8 @@ export default function HeroSection() {
         setIngredients(await ingredientsRes.json());
         const data = await dishRes.json();
         setDishes(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error('Erro ao buscar dados iniciais:', err);
+      } catch (error) {
+        console.error('Erro ao buscar dados iniciais:', error);
       }
     };
     fetchInitialData();
@@ -172,9 +172,9 @@ export default function HeroSection() {
                       <p className="text-gray-500 text-lg">R$ {dish.price}</p>
                       <p className="text-gray-500 text-lg">{dish.description}</p>
                       <p> 
-                        <ListIngredientsByDisheId propDishId={dish.id} showInList />
+                        <ListIngredientsByDisheId propDishId={dish.id}  />
                       </p>
-                      <ListTagsByDisheId propDishId={dish.id} showInList />
+                      <ListTagsByDisheId propDishId={dish.id}  />
                     </div> 
 
                     <div className="w-full  sm:w-36">

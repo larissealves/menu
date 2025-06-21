@@ -1,98 +1,90 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model Dish {
-  id          Int          @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   name        String
   price       Float
   description String
-  category    Category     @relation(fields: [categoryId], references: [id])
   categoryId  Int
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  category    Category         @relation(fields: [categoryId], references: [id])
   images      DishImage[]
-  ingredients    DishIngredient[] @relation("DishToDishIngredients")
-  tags           DishTag[]        @relation("DishToDishTags")     
-  isActive   Boolean @default(true)
-  createdAt  DateTime @default(now()) 
-  updatedAt  DateTime @updatedAt
+  ingredients DishIngredient[] @relation("DishToDishIngredients")
+  tags        DishTag[]        @relation("DishToDishTags")
 }
 
 model Category {
-  id         Int     @id @default(autoincrement())
-  name       String
-  isActive   Boolean @default(true)
-  updatedAt  DateTime @updatedAt
-  createdAt  DateTime @default(now())
-  dishes     Dish[]
+  id        Int      @id @default(autoincrement())
+  name      String
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  dishes    Dish[]
 }
 
 model Ingredient {
-  id         Int     @id @default(autoincrement())
-  name       String
-  isActive   Boolean @default(true)
-  updatedAt  DateTime @updatedAt
-  createdAt  DateTime @default(now())
-  dishes     DishIngredient[]
+  id        Int              @id @default(autoincrement())
+  name      String
+  isActive  Boolean          @default(true)
+  updatedAt DateTime         @updatedAt
+  createdAt DateTime         @default(now())
+  dishes    DishIngredient[]
 }
 
 model DishIngredient {
   id           Int        @id @default(autoincrement())
-  dish         Dish       @relation("DishToDishIngredients", fields: [dishId], references: [id])
   dishId       Int
-  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId Int
-  createdAt  DateTime @default(now())
+  createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  dish         Dish       @relation("DishToDishIngredients", fields: [dishId], references: [id])
 }
 
 model DishImage {
-  id        Int     @id @default(autoincrement())
-  dish      Dish    @relation(fields: [dishId], references: [id])
-  dishId    Int
-  imageUrl  String
-  imageName String
-  imageType String
-  isPrimary Boolean @default(false)
-  imageBinary DishImageBinary?  
-  createdAt  DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int              @id @default(autoincrement())
+  dishId      Int
+  imageUrl    String
+  imageName   String
+  imageType   String
+  isPrimary   Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  dish        Dish             @relation(fields: [dishId], references: [id])
+  imageBinary DishImageBinary?
 }
 
 model DishImageBinary {
-  id           Int    @id @default(autoincrement())
-  dishImageId  Int    @unique
-  binaryData   Bytes
-  dishImage    DishImage @relation(fields: [dishImageId], references: [id])
+  id          Int       @id @default(autoincrement())
+  dishImageId Int       @unique
+  binaryData  Bytes
+  dishImage   DishImage @relation(fields: [dishImageId], references: [id])
 }
 
 model Tag {
-  id         Int     @id @default(autoincrement())
-  name       String
-  isActive   Boolean @default(true)
-  updatedAt  DateTime @updatedAt
-  createdAt  DateTime @default(now())
-  dishes     DishTag[]
+  id        Int       @id @default(autoincrement())
+  name      String
+  isActive  Boolean   @default(true)
+  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now())
+  dishes    DishTag[]
 }
 
 model DishTag {
-  id         Int   @id @default(autoincrement())
-  dish       Dish  @relation("DishToDishTags", fields: [dishId], references: [id])
-  dishId     Int
-  tag        Tag   @relation(fields: [tagId], references: [id])
-  tagId      Int
-  isActive   Boolean @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  dishId    Int
+  tagId     Int
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tag       Tag      @relation(fields: [tagId], references: [id])
+  dish      Dish     @relation("DishToDishTags", fields: [dishId], references: [id])
 }
-

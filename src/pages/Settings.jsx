@@ -39,11 +39,11 @@ export default function Settings() {
         <button onClick={() => setControlPopupCategory(true)} className="bg-purple-400 hover:bg-purple-700 text-white  font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Category
         </button>
-        <button onClick={() => setControlPopupIngredient(true)} className="bg-purple-400 hover:bg-purple-700 text-white  cursor-pointerfont-semibold px-4 py-2 rounded-lg flex items-center gap-2">
-          <PlusCircle size={18} /> Ingredient
-        </button>
         <button onClick={() => setControlPopupTag(true)} className="bg-purple-400 hover:bg-purple-700 text-white font-semibold  cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Tag
+        </button>
+        <button onClick={() => setControlPopupIngredient(true)} className="bg-purple-400 hover:bg-purple-700 text-white  cursor-pointerfont-semibold px-4 py-2 rounded-lg flex items-center gap-2">
+          <PlusCircle size={18} /> Ingredient
         </button>
         <button onClick={() => setControlPopupDish(true)} className="bg-pink-600 hover:bg-pink-700 text-white font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Dish
@@ -78,7 +78,7 @@ export default function Settings() {
 
       {/* Popups */}
       <AddDishes togglePopup={() => setControlPopupDish(false)} controlPopup={controlPopupDish} />
-      <AddCategory handletoggleControlPopup={() => setControlPopupCategory(false)} controlPopup={controlPopupCategory} />
+      <AddCategory handleToggleControlPopup={() => setControlPopupCategory(false)} controlPopup={controlPopupCategory} />
       <AddIngredient handletoggleControlPopup={() => setControlPopupIngredient(false)} controlPopup={controlPopupIngredient} />
       <AddTag handletoggleControlPopup={() => setControlPopupTag(false)} controlPopup={controlPopupTag} />
     </div>

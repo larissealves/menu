@@ -8,17 +8,15 @@ export default function ListAllDishes() {
     const [dishEditId, setDishEditId] = useState(null);
     const [listAllDishes, setListAllDishes] = useState([]);
     const [controlPopup, setControlPopup] = useState(false);
+    const [refreshListsAux, setRefreshListAux] = useState(false);
 
     const toggleControlPopup = () => {
-      if(controlPopup) {
-         fetchDishes();
-      }
-      setControlPopup(!controlPopup);
+      setControlPopup(prev => !prev);
     }
 
     const clickButtonEdit = (id) => {
         setDishEditId(id);
-        toggleControlPopup();
+        setControlPopup(prev => !prev);
     };
 
     const fetchDishes = async () => {
@@ -26,28 +24,34 @@ export default function ListAllDishes() {
             const res = await fetch('http://localhost:5000/api/get/dishes');
             const data = await res.json();
             setListAllDishes(data);
+            console.log('refresh');
         } catch (error) {
             console.log('Erro ao buscar a lista de pratos', error);
         }
     };
 
     useEffect(() => {
+      if (!controlPopup) {
         fetchDishes();
-    }, []);
+        setRefreshListAux(prev => prev + 1);
+      }
+    }, [controlPopup]);
 
     return (
   <div>
     <h2 className="text-xl font-semibold mb-6 border-b pb-3 text-gray-800">DISHES</h2>
 
     <div className="space-y-4">
-      {listAllDishes.map((item) => (
+      {listAllDishes.length > 0 ?
+      <> 
+        {listAllDishes.map((item) => (
         <div
           key={item.id}
           className="border rounded-lg p-4 shadow-sm hover:shadow-md hover:bg-gray-50 transition"
         >
           <div className="flex flex-col md:flex-row justify-between gap-6">
             <div className="flex-1">
-              <h3 className="text-lg uppercase font-bold text-gray-800">{item.name}</h3>
+              <h3 className="text-lg uppercase font-bold text-gray-800 break-all">{item.name}</h3>
               <p className="text-lg text-gray-700 mt-1">
                 Price: <span className="font-medium">R$ {parseFloat(item.price).toFixed(2)}</span>
               </p>
@@ -70,14 +74,17 @@ export default function ListAllDishes() {
               </div>
 
               <div className="mt-4 space-y-2">
-                <ListIngredientsByDisheId propDishId={item.id} />
-                <ListTagsByDisheId propDishId={item.id} />
+                <ListIngredientsByDisheId 
+                  propDishId={item.id}  
+                  refreshTable = {refreshListsAux}
+                />
+                <ListTagsByDisheId propDishId={item.id} refreshTable = {refreshListsAux} />
               </div>
             </div>
 
             <div className="flex md:flex-col justify-end gap-2">
               <button
-                onClick={() => clickButtonEdit(item.id)}
+                onClick={() => {clickButtonEdit(item.id), setControlPopup(true)}}
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-sm rounded"
               >
                 Edit
@@ -89,13 +96,19 @@ export default function ListAllDishes() {
             </div>
           </div>
         </div>
-      ))}
+        ))}</>
+      :
+          <p> No items registered </p>
+
+      }
+      
+     
     </div>
 
     {controlPopup && (
       <AddDishes
         propDishID={dishEditId}
-        handletoggleControlPopup={toggleControlPopup}
+        handleToggleControlPopup={toggleControlPopup}
         controlPopup={controlPopup}
       />
     )}

@@ -32,8 +32,10 @@ const editIngredient = (id) => {
 };
 
 useEffect(() => {
-  fetchIngredient(); 
-}, []);
+  if (!controlPopup) {
+    fetchIngredient(); 
+  }
+}, [fetchIngredient]);
 
   return (
   <div className="">
@@ -49,7 +51,7 @@ useEffect(() => {
             showInList ? 'bg-gray-50' : 'hover:bg-gray-100'
           } transition`}
         >
-          <span className="text-sm text-gray-800 font-medium">{item.name}</span>
+          <span className="text-sm text-gray-800 font-medium break-all">{item.name}</span>
           <span className="text-sm text-gray-500 hidden md:block">
            Created:  {new Date(item.createdAt).toLocaleDateString('pt-BR')}
           </span>

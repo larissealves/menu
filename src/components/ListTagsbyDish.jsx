@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 
-export default function ListTagsByDisheId({ propDishId }) {
+export default function ListTagsByDisheId({ propDishId, refreshTable }) {
   const [listTags, setListTags] = useState([]);
 
+
+  const fetchDishes = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/get/filterTagByDishId/${propDishId}`);
+      const data = await res.json();
+      setListTags(data);
+    } catch (error) {
+      console.log('Erro ao buscar a lista de tags', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchDishes = async () => {
-      try {
-        const res = await fetch(`http://localhost:5000/api/get/filterTagByDishId/${propDishId}`);
-        const data = await res.json();
-        setListTags(data);
-      } catch (error) {
-        console.log('Erro ao buscar a lista de tags', error);
-      }
-    };
     fetchDishes();
-  }, [propDishId]);
+  }, [propDishId, refreshTable]);
+
 
   return (
     <div className="flex flex-wrap gap-2 mt-1">
