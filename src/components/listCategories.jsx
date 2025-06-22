@@ -1,12 +1,16 @@
+/* ==== IMPORTS ==== */
 import React, { useEffect, useState } from 'react';
 import AddCategory from './NewCategory';
 import BtnDeleteCategory from './BtnDeleteCategory';
 
 export default function ListCategories() {
+  /* ==== STATES ==== */
+  const [filters, setFilters] = useState({ option: '' });
   const [listCategories, setCategories] = useState([]);
   const [categoryEditID, setCategoryEditID] = useState(null);
   const [controlPopup, setControlPopup] = useState(false);
 
+  /* ==== HANDLERS ==== */
   const toggleControlPopup = () => {
     setControlPopup(!controlPopup);
     fetchCategories();
@@ -17,55 +21,93 @@ export default function ListCategories() {
     setControlPopup(true);
   };
 
+  /* ==== FETCH DATA ==== */
   const fetchCategories = async () => {
     try {
       const res = await fetch('http://localhost:5000/api/get/categoryList');
       const data = await res.json();
       setCategories(data);
     } catch (error) {
-      console.log('Erro ao buscar a lista de categorias', error);
+      console.log('Error fetching category list:', error);
     }
   };
 
+  /* ==== FILTER ==== */
+  const filteredList = listCategories.filter((item) => {
+    const matchIsActive =
+      filters.option !== ''
+        ? item.isActive === (filters.option === 'true')
+        : true;
+    return matchIsActive;
+  });
+
+  /* ==== EFFECT ==== */
   useEffect(() => {
     if (!controlPopup) {
       fetchCategories();
     }
-  }, [fetchCategories]);
+  }, [controlPopup]);
 
+  /* ==== RENDER ==== */
   return (
-    <div className="">
-      <h2 className="text-xl font-semibold mb-6 border-b pb-3 text-gray-700">Categories</h2>
-      <p className='text-orange-600 font-bold mb-4'> Alert: <br></br>
-        All dishes linked to categories with 'Disabled' status
-        will become unavailable on the menu. <br></br>
-        Before deactivating a category,
-        make sure to refresh the dish list.</p>
+    <div>
+      {/* ==== TITLE ==== */}
+      <h2 className="text-xl font-semibold mb-6 border-b pb-3 text-gray-700">
+        Categories
+      </h2>
+
+      {/* ==== ALERT ==== */}
+      <p className="text-orange-600 font-bold mb-4">
+        Alert: <br />
+        All dishes linked to categories with 'Disabled' status will become
+        unavailable on the menu. <br />
+        Before deactivating a category, make sure to refresh the dish list.
+      </p>
+
+      {/* ==== FILTER ==== */}
+      <div className="mb-4">
+        <select
+          value={filters.option}
+          onChange={(e) =>
+            setFilters((prev) => ({ ...prev, option: e.target.value }))
+          }
+          className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm"
+        >
+          <option value="">All items</option>
+          <option value="true">Active items</option>
+          <option value="false">Disabled items</option>
+        </select>
+      </div>
+
+      {/* ==== LIST ==== */}
       <div className="space-y-3">
-        {listCategories.map((item) => (
+        {filteredList.map((item) => (
           <div
             key={item.id}
             className="grid grid-cols-1 md:grid-cols-5 items-center border rounded px-4 py-3 bg-gray-50 hover:bg-gray-100 transition"
           >
-            <span className="font-medium text-gray-800 break-all">{item.name}</span>
-            <span className="text-sm text-gray-500">
-              Created: {new Date(item.createdAt).toLocaleDateString('pt-BR')}
+            <span className="font-medium text-gray-800 break-all">
+              {item.name}
             </span>
             <span className="text-sm text-gray-500">
-              Last update:  {new Date(item.updatedAt).toLocaleDateString('pt-BR')}
+              Created: {new Date(item.createdAt).toLocaleDateString('en-US')}
+            </span>
+            <span className="text-sm text-gray-500">
+              Last update:{' '}
+              {new Date(item.updatedAt).toLocaleDateString('en-US')}
             </span>
 
-            <span className={
-              `text-sm font-medium px-2.5 py-0.5 rounded-full w-fit
-                ${item.isActive ? 'bg-green-100 text-green-800'
-                :
-                'bg-orange-100 text-orange-800'
-              }`
-            }>
-
+            <span
+              className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit ${
+                item.isActive
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-orange-100 text-orange-800'
+              }`}
+            >
               {item.isActive ? 'Active' : 'Disabled'}
             </span>
 
+            {/* ==== ACTIONS ==== */}
             <div className="flex justify-end gap-4 mt-2 md:mt-0">
               <button
                 onClick={() => editCategory(item.id)}
@@ -82,6 +124,7 @@ export default function ListCategories() {
         ))}
       </div>
 
+      {/* ==== POPUP ==== */}
       {controlPopup && (
         <AddCategory
           propsCategoryID={categoryEditID}
@@ -90,6 +133,5 @@ export default function ListCategories() {
         />
       )}
     </div>
-
   );
 }
