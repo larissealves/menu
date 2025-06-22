@@ -10,7 +10,7 @@ import ListImagesByDish from './ListImagesbyDish';
 import '../styles/base.css';
 
 export default function HeroSection() {
-  const [filters, setFilters] = useState({ name: '', category: '', tag: '' });
+  const [filters, setFilters] = useState({ name: '', category: '', tag: '', ingredients: ''});
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -44,7 +44,7 @@ export default function HeroSection() {
           fetch('http://localhost:5000/api/get/categoryList/active'),
           fetch('http://localhost:5000/api/get/tagList/active'),
           fetch('http://localhost:5000/api/get/ingredientList/active'),
-          fetch('http://localhost:5000/api/get/dishes-id-relations')
+          fetch(`http://localhost:5000/api/get/dishes-id-relations/${true}`)
         ]);
         setCategories(await catRes.json());
         setTags(await tagRes.json());
@@ -67,7 +67,7 @@ export default function HeroSection() {
       : true;
     
     const matchesIngredients = filters.ingredients 
-      ? dish.ingredients?.some(ing => ing.ingredientsId === + filters.ingredients)
+      ? dish.ingredients?.some(ing => ing.ingredientId === + filters.ingredients)
       : true;
     return matchesName && matchesCategory && matchesTag && matchesIngredients;
   });
@@ -168,7 +168,7 @@ export default function HeroSection() {
                     className="flex flex-col w-full gap-4 border border-gray-200 rounded-lg p-4 bg-white mb-4"
                   >
                     <div className="flex-1 flex flex-col gap-1">
-                      <p className="font-semibold text-lg text-gray-800">{dish.name}</p>
+                      <p className="font-semibold text-lg text-gray-800 break-all">{dish.name}</p>
                       <p className="text-gray-500 text-lg">R$ {dish.price}</p>
                       <p className="text-gray-500 text-lg">{dish.description}</p>
                       <p> 

@@ -413,15 +413,17 @@ router.get('/get/filterIngredientsByDishId/:id', async (req, res) => {
 });
 
 //=============== FILTERS FRONT-END ==========
-router.get('/get/dishes-id-relations', async (req, res) => {
+router.get('/get/dishes-id-relations/:filterOnlyActives', async (req, res) => {
   try {
+    const filterOnlyActives = req.params.filterOnlyActives === 'true';
+
+    const where = filterOnlyActives ? { isActive: true } : {};
+
     const dishes = await prisma.dish.findMany({
-      where: {
-        isActive: true,
-      },
+      where: where,
       orderBy: [
-        { name: 'asc' },
-        { isActive: 'asc' }
+        { isActive: 'desc' },
+        { name: 'asc' }
       ],
       select: {
         id: true,
@@ -429,6 +431,12 @@ router.get('/get/dishes-id-relations', async (req, res) => {
         price: true,
         categoryId: true,
         description: true,
+        isActive: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
         tags: {
           select: {
             tagId: true,
@@ -448,6 +456,7 @@ router.get('/get/dishes-id-relations', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar os pratos simplificados' });
   }
 });
+
 
 /* ============== GET IMAGE BY DISH ID ================= */
 router.get('/get/imagesByDishId/:id', async (req, res) => {

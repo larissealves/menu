@@ -58,14 +58,16 @@ useEffect(() => {
           <span className="text-sm text-gray-500 hidden md:block">
            Last update:   {new Date(item.updatedAt).toLocaleDateString('pt-BR')}
           </span>
-          <span
-            className={`text-sm font-semibold ${
-              item.isActive ? 'text-green-600' : 'text-red-500'
-            }`}
-          >
-            {item.isActive ? 'Active' : 'Disabled'}
-          </span>
+           <span className={
+              `text-sm font-medium px-2.5 py-0.5 rounded-full w-fit
+                ${item.isActive ? 'bg-green-100 text-green-800'
+                :
+                'bg-orange-100 text-orange-800'
+              }`
+            }>
 
+              {item.isActive ? 'Active' : 'Disabled'}
+            </span>
           {!showInList && (
             <div className="flex gap-2 justify-end mt-2 md:mt-0">
               <button

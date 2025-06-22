@@ -54,12 +54,18 @@ export default function ListCategories() {
             <span className="text-sm text-gray-500">
               Last update:  {new Date(item.updatedAt).toLocaleDateString('pt-BR')}
             </span>
-            <span
-              className={`text-sm font-semibold ${item.isActive ? 'text-green-600' : 'text-red-500'
-                }`}
-            >
+
+            <span className={
+              `text-sm font-medium px-2.5 py-0.5 rounded-full w-fit
+                ${item.isActive ? 'bg-green-100 text-green-800'
+                :
+                'bg-orange-100 text-orange-800'
+              }`
+            }>
+
               {item.isActive ? 'Active' : 'Disabled'}
             </span>
+
             <div className="flex justify-end gap-4 mt-2 md:mt-0">
               <button
                 onClick={() => editCategory(item.id)}
