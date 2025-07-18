@@ -52,7 +52,6 @@ model DishIngredient {
 model DishImage {
   id          Int              @id @default(autoincrement())
   dishId      Int
-  imageUrl    String
   imageName   String
   imageType   String
   isPrimary   Boolean          @default(false)

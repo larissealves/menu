@@ -1,17 +1,17 @@
-import express from 'express'
-import { PrismaClient } from '@prisma/client'
-
-import multer from 'multer'
-import path from 'path'
+import express from 'express';
+import { PrismaClient } from '@prisma/client';
+import multer from 'multer';
+import path from 'path';
+import os from 'os';
 import fs from 'fs/promises';
 
-const router = express.Router()
-const prisma = new PrismaClient()
+const router = express.Router();
+const prisma = new PrismaClient();
 
-/* Configuração do Multer - Imagens  */
+/* Configuração do Multer - Imagens */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads'); // ou outro caminho onde deseja salvar
+    cb(null, os.tmpdir()); // usa diretório temporário do sistema
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -19,9 +19,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
-
-
+const upload = multer({ storage }); // correto!
 /* ============== CREATE DISH ================= */
 router.post('/new/addDishes', upload.array('images'), async (req, res) => {
   const { name, price, description, categoryId, isActive } = req.body;
@@ -65,21 +63,20 @@ router.post('/new/addDishes', upload.array('images'), async (req, res) => {
 
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
-        // 1. Salva os metadados na tabela DishImage
+        //const binary = await fs.readFile(file.path);
+        const binary = await fs.readFile(file.path);
+
+        // 1. Cria DishImage sem imageUrl
         const dishImage = await prisma.dishImage.create({
           data: {
             dishId: newDishId,
-            imageUrl: `/uploads/${file.filename}`,
             imageName: file.originalname,
             imageType: file.mimetype,
             isPrimary: false,
           },
         });
 
-        // 2. Lê o binário do arquivo salvo
-        const binary = await fs.readFile(file.path); // lê como Buffer
-
-        // 3. Salva o binário na tabela DishImageBinary
+        // 2. Armazena o binário
         await prisma.dishImageBinary.create({
           data: {
             dishImageId: dishImage.id,
@@ -88,6 +85,7 @@ router.post('/new/addDishes', upload.array('images'), async (req, res) => {
         });
       }
     }
+
 
     res.status(201).json(newDish);
   } catch (error) {
@@ -122,7 +120,7 @@ router.put('/update/editDishes/:id', upload.array('images'), async (req, res) =>
 
     // Atualiza tags: apaga e recria
     await prisma.dishTag.deleteMany({ where: { dishId: dishID } });
-    
+
     if (tags.length > 0) {
       const validTags = tags.filter(tagId => tagId !== null && tagId !== undefined && tagId !== 0)
       if (validTags.length > 0) {
@@ -141,15 +139,16 @@ router.put('/update/editDishes/:id', upload.array('images'), async (req, res) =>
     await prisma.dishIngredient.deleteMany({ where: { dishId: dishID } });
     if (ingredients.length > 0) {
       const validIngredients = ingredients.filter(ingredientId => ingredientId !== null && ingredientId !== undefined && ingredientId !== 0)
-      if (validIngredients.length > 0 ){
+      if (validIngredients.length > 0) {
         await prisma.dishIngredient.createMany({
-        data: validIngredients.map(ingredientId => ({
-          dishId: dishID,
-          ingredientId,
-          // updatedAt: new Date(),
-        })),
-      });
-    }}
+          data: validIngredients.map(ingredientId => ({
+            dishId: dishID,
+            ingredientId,
+            // updatedAt: new Date(),
+          })),
+        });
+      }
+    }
 
     // Se houver novas imagens, salva
     if (req.files && req.files.length > 0) {
@@ -157,7 +156,6 @@ router.put('/update/editDishes/:id', upload.array('images'), async (req, res) =>
         const newImage = await prisma.dishImage.create({
           data: {
             dishId: dishID,
-            imageUrl: `/uploads/${file.filename}`,
             imageName: file.originalname,
             imageType: file.mimetype,
             isPrimary: false,
