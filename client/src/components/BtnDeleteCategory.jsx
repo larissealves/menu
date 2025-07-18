@@ -7,7 +7,7 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
   useEffect(() => {
     const fetchDishes = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/get/filterDishesByCategoryId/${categoryID}`);
+        const res = await fetch(`${API_BASE_URL}/api/get/filterDishesByCategoryId/${categoryID}`);
         const data = await res.json();
         console.log('AAAAAAAAAAAAAAAA', res.json)
         setHasDishesLinked(data.length > 0);
@@ -19,7 +19,7 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
   }, [categoryID]);
 
   const handleDeleteSubmit = async () => {
-    const endpoint = `http://localhost:5000/api/delete/category/${categoryID}`;
+    const endpoint = `${API_BASE_URL}/api/delete/category/${categoryID}`;
 
     try {
       const res = await fetch(endpoint, {

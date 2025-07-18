@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 export default function AddDishes({ propDishID,  handleToggleControlPopup, controlPopup }) {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const [categories, setCategories] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [tags, setTags] = useState([]);
@@ -23,7 +25,7 @@ export default function AddDishes({ propDishID,  handleToggleControlPopup, contr
     if (propDishID) {
       const fetchDish = async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/get/disheID/${propDishID}`);
+          const res = await fetch(`${API_BASE_URL}/api/get/disheID/${propDishID}`);
           const data = await res.json();
           setFormDishes((prev) => ({
             ...prev,
@@ -40,7 +42,7 @@ export default function AddDishes({ propDishID,  handleToggleControlPopup, contr
 
       const fetchDishTags = async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/get/filterTagByDishId/${propDishID}`);
+          const res = await fetch(`${API_BASE_URL}/api/get/filterTagByDishId/${propDishID}`);
           const data = await res.json();
           const tags = data.map((item) => item.tagId);
           setFormDishes((prev) => ({ ...prev, tags }));
@@ -51,7 +53,7 @@ export default function AddDishes({ propDishID,  handleToggleControlPopup, contr
 
       const fetchDishIngredients = async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/get/filterIngredientsByDishId/${propDishID}`);
+          const res = await fetch(`${API_BASE_URL}/api/get/filterIngredientsByDishId/${propDishID}`);
           const data = await res.json();
           const ingredients = data.map((item) => item.ingredient.id);
           setFormDishes((prev) => ({ ...prev, ingredients }));
@@ -112,8 +114,8 @@ export default function AddDishes({ propDishID,  handleToggleControlPopup, contr
     });
 
     const endpoint = propDishID
-      ? `http://localhost:5000/api/update/editDishes/${propDishID}`
-      : `http://localhost:5000/api/new/addDishes`;
+      ? `${API_BASE_URL}/api/update/editDishes/${propDishID}`
+      : `${API_BASE_URL}/api/new/addDishes`;
     const method = propDishID ? 'PUT' : 'POST';
 
     try {
@@ -152,9 +154,9 @@ export default function AddDishes({ propDishID,  handleToggleControlPopup, contr
     const fetchAll = async () => {
       try {
         const [catRes, ingRes, tagRes] = await Promise.all([
-          fetch('http://localhost:5000/api/get/categoryList/active'),
-          fetch('http://localhost:5000/api/get/ingredientList/active'),
-          fetch('http://localhost:5000/api/get/tagList/active'),
+          fetch('${API_BASE_URL}/api/get/categoryList/active'),
+          fetch('${API_BASE_URL}/api/get/ingredientList/active'),
+          fetch('${API_BASE_URL}/api/get/tagList/active'),
         ]);
         setCategories(await catRes.json());
         setIngredients(await ingRes.json());
@@ -173,7 +175,7 @@ export default function AddDishes({ propDishID,  handleToggleControlPopup, contr
 
     const fetchImagesEditDish = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/get/imagesByDishId/${propDishID}`);
+        const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${propDishID}`);
         const data = await res.json();
 
         if (Array.isArray(data)) {
@@ -201,7 +203,7 @@ export default function AddDishes({ propDishID,  handleToggleControlPopup, contr
 
   const handleDeleteImage = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/delete/imageByDishId/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/delete/imageByDishId/${id}`, {
         method: 'DELETE',
       });
 

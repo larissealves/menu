@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 import blankimage from '../assets/images/blank-image.png'
 
 export default function ListImagesByDish({ dishId }) {
-    const [imagesEditDish, setImagesEditDish] = useState([]);
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+  
+  const [imagesEditDish, setImagesEditDish] = useState([]);
     
     useEffect(() => {
       if (!dishId) return;
     
       const fetchImagesEditDish = async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/get/imagesByDishId/${dishId}`);
+          const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${dishId}`);
           const data = await res.json();
     
           if (Array.isArray(data)) {

@@ -10,6 +10,8 @@ import ListImagesByDish from './ListImagesbyDish';
 import '../styles/base.css';
 
 export default function HeroSection() {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const [filters, setFilters] = useState({ name: '', category: '', tag: '', ingredients: ''});
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
@@ -41,10 +43,10 @@ export default function HeroSection() {
     const fetchInitialData = async () => {
       try {
         const [catRes, tagRes, ingredientsRes, dishRes] = await Promise.all([
-          fetch('http://localhost:5000/api/get/categoryList/active'),
-          fetch('http://localhost:5000/api/get/tagList/active'),
-          fetch('http://localhost:5000/api/get/ingredientList/active'),
-          fetch(`http://localhost:5000/api/get/dishes-id-relations/${true}`)
+          fetch('${API_BASE_URL}/api/get/categoryList/active'),
+          fetch('${API_BASE_URL}/api/get/tagList/active'),
+          fetch('${API_BASE_URL}/api/get/ingredientList/active'),
+          fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}`)
         ]);
         setCategories(await catRes.json());
         setTags(await tagRes.json());

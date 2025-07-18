@@ -7,7 +7,7 @@ export default function BtnDeleteDish({ dishID, onDelete }) {
     const confirmDelete = window.confirm("Are you sure you want to delete this dish?");
     if (!confirmDelete) return;
 
-    const endpoint = `http://localhost:5000/api/delete/dish/${dishID}`;
+    const endpoint = `${API_BASE_URL}/api/delete/dish/${dishID}`;
     setLoading(true);
 
     try {

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
 export default function ListTagsByDisheId({ propDishId, refreshTable }) {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const [listTags, setListTags] = useState([]);
 
 
   const fetchDishes = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/get/filterTagByDishId/${propDishId}`);
+      const res = await fetch(`${API_BASE_URL}/api/get/filterTagByDishId/${propDishId}`);
       const data = await res.json();
       setListTags(data);
     } catch (error) {

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import BtnDeleteCategory from './BtnDeleteCategory'
 
 export default function AddCategory({ propsCategoryID, handleToggleControlPopup, controlPopup }) {
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
 
     const [formNewCategory, setFormNewCategory] = useState({
         name: '',
@@ -13,7 +14,7 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
         if (propsCategoryID) {
             const fetchCategory = async () => {
                 try {
-                    const res = await fetch(`http://localhost:5000/api/get/categoryID/${propsCategoryID}`)
+                    const res = await fetch(`${API_BASE_URL}/api/get/categoryID/${propsCategoryID}`)
                     const data = await res.json()
                     setFormNewCategory({
                         name: data.name || '',
@@ -40,8 +41,8 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
     const handleSubmit = async (e) => {
         e.preventDefault()
         const endpoint = propsCategoryID
-            ? `http://localhost:5000/api/update/category/${propsCategoryID}`
-            : `http://localhost:5000/api/new/category`
+            ? `${API_BASE_URL}/api/update/category/${propsCategoryID}`
+            : `${API_BASE_URL}/api/new/category`
 
         const method = propsCategoryID ? 'PUT' : 'POST'
 

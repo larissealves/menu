@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 
 export default function AddIngredient({ propsTagID, handletoggleControlPopup, controlPopup }) {
+    
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
 
     const [formNewTag, setFormNewTag] = useState({
         name: '',
@@ -11,7 +13,7 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
         if (propsTagID) {
             const fetchTag = async () => {
                 try {
-                    const res = await fetch(`http://localhost:5000/api/get/tagID/${propsTagID}`)
+                    const res = await fetch(`${API_BASE_URL}/api/get/tagID/${propsTagID}`)
                     const data = await res.json()
                     setFormNewTag({
                         name: data.name || '',
@@ -38,8 +40,8 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
     const handleSubmit = async (e) => {
         e.preventDefault()
         const endpoint = propsTagID
-            ? `http://localhost:5000/api/update/tag/${propsTagID}`
-            : `http://localhost:5000/api/new/tag`
+            ? `${API_BASE_URL}/api/update/tag/${propsTagID}`
+            : `${API_BASE_URL}/api/new/tag`
 
         const method = propsTagID ? 'PUT' : 'POST'
 

@@ -4,6 +4,8 @@ import AddIngredient from './NewIngredient';
 import BtnDeleteIngredient from './BtnDeleteIngredient';
 
 export default function ListIngredient({ showInList }) {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({ option: '' });
   const [listIngredient, setIngredient] = useState([]);
@@ -13,7 +15,7 @@ export default function ListIngredient({ showInList }) {
   /* ==== FETCH DATA ==== */
   const fetchIngredient = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/get/ingredientList');
+      const res = await fetch('${API_BASE_URL}/api/get/ingredientList');
       const data = await res.json();
       setIngredient(data);
     } catch (error) {

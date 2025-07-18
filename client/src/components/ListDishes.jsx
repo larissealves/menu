@@ -6,6 +6,8 @@ import ListIngredientsByDisheId from './ListIngredientsbyDish';
 import BtnDeleteDish from './BtnDeleteDish';
 
 export default function ListAllDishes() {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({
     name: '',
@@ -42,10 +44,10 @@ export default function ListAllDishes() {
   const fetchDishes = async () => {
     try {
       const [dishRes, catRes, tagRes, ingredientsRes] = await Promise.all([
-        fetch(`http://localhost:5000/api/get/dishes-id-relations/${false}`),
-        fetch('http://localhost:5000/api/get/categoryList/active'),
-        fetch('http://localhost:5000/api/get/tagList/active'),
-        fetch('http://localhost:5000/api/get/ingredientList/active'),
+        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${false}`),
+        fetch('${API_BASE_URL}/api/get/categoryList/active'),
+        fetch('${API_BASE_URL}/api/get/tagList/active'),
+        fetch('${API_BASE_URL}/api/get/ingredientList/active'),
       ]);
 
       setCategories(await catRes.json());

@@ -4,6 +4,8 @@ import AddTag from './NewTag';
 import BtnDeleteTag from './BtnDeleteTag';
 
 export default function ListTags({ showInList }) {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({ option: '' });
   const [listTags, setTags] = useState([]);
@@ -26,7 +28,7 @@ export default function ListTags({ showInList }) {
   /* ==== FETCH DATA ==== */
   const fetchTag = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/get/tagList');
+      const res = await fetch('${API_BASE_URL}/api/get/tagList');
       const data = await res.json();
       setTags(data);
     } catch (error) {

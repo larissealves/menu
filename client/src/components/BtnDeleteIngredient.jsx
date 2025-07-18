@@ -7,7 +7,7 @@ export default function BtnDeleteIngredient({ ingredientID, onDelete }) {
   useEffect(() => {
     const fetchDishes = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/get/filterDishesByIngredientId/${ingredientID}`);
+        const res = await fetch(`${API_BASE_URL}/api/get/filterDishesByIngredientId/${ingredientID}`);
         const data = await res.json();
         setHasDishesLinked(data.length > 0);
       } catch (error) {
@@ -18,7 +18,7 @@ export default function BtnDeleteIngredient({ ingredientID, onDelete }) {
   }, [ingredientID]);
 
   const handleDeleteSubmit = async () => {
-    const endpoint = `http://localhost:5000/api/delete/ingredient/${ingredientID}`;
+    const endpoint = `${API_BASE_URL}/api/delete/ingredient/${ingredientID}`;
 
     try {
       const res = await fetch(endpoint, {

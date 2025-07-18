@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 export default function AddIngredient({ propsIngredientID, handletoggleControlPopup, controlPopup }) {
+    const API_BASE_URL = import.meta.env.VITE_API_URL;
 
     const [formNewIngredient, setFormNewIngredient] = useState({
         name: '',
@@ -11,7 +12,7 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
         if (propsIngredientID) {
             const fetchIngredient = async () => {
                 try {
-                    const res = await fetch(`http://localhost:5000/api/get/ingredientID/${propsIngredientID}`)
+                    const res = await fetch(`${API_BASE_URL}/api/get/ingredientID/${propsIngredientID}`)
                     const data = await res.json()
                     setFormNewIngredient({
                         name: data.name || '',
@@ -38,8 +39,8 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
     const handleSubmit = async (e) => {
         e.preventDefault()
         const endpoint = propsIngredientID
-            ? `http://localhost:5000/api/update/ingredient/${propsIngredientID}`
-            : `http://localhost:5000/api/new/ingredient`
+            ? `${API_BASE_URL}/api/update/ingredient/${propsIngredientID}`
+            : `${API_BASE_URL}/api/new/ingredient`
 
         const method = propsIngredientID ? 'PUT' : 'POST'
 

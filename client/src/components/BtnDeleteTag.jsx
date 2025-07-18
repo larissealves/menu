@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 
 export default function BtnDeleteTag({ tagID, onDelete }) {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   const [hasDishesLinked, setHasDishesLinked] = useState(false)
 
   // Buscar pratos com tag
   useEffect(() => {
     const fetchDishes = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/get/filterDishesByTag/${tagID}}`);
+        const res = await fetch(`${API_BASE_URL}/api/get/filterDishesByTag/${tagID}}`);
         const data = await res.json();
         setHasDishesLinked(data.length > 0);
         console.log('aaa', hasDishesLinked)
@@ -19,7 +21,7 @@ export default function BtnDeleteTag({ tagID, onDelete }) {
   }, [tagID]);
 
   const handleDeleteSubmit = async () => {
-    const endpoint = `http://localhost:5000/api/delete/tag/${tagID}`;
+    const endpoint = `${API_BASE_URL}/api/delete/tag/${tagID}`;
 
     try {
       const res = await fetch(endpoint, {

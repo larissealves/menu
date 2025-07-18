@@ -4,6 +4,8 @@ import AddCategory from './NewCategory';
 import BtnDeleteCategory from './BtnDeleteCategory';
 
 export default function ListCategories() {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
+
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({ option: '' });
   const [listCategories, setCategories] = useState([]);
@@ -24,7 +26,7 @@ export default function ListCategories() {
   /* ==== FETCH DATA ==== */
   const fetchCategories = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/get/categoryList');
+      const res = await fetch('${API_BASE_URL}/api/get/categoryList');
       const data = await res.json();
       setCategories(data);
     } catch (error) {
