@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
 export default function BtnDeleteCategory({ categoryID, onDelete }) {
+  const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+
+  
   const [hasDishesLinked, setHasDishesLinked] = useState(false)
 
   // Buscar pratos com base na categoryID

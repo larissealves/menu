@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
 export default function ListIngredientsByDisheId({ propDishId, refreshTable }) {
-    const API_BASE_URL = import.meta.env.VITE_API_URL;
+  const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+
 
     const [listIngredients, setListIngredients] = useState([])
     

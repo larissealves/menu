@@ -4,7 +4,9 @@ import AddIngredient from './NewIngredient';
 import BtnDeleteIngredient from './BtnDeleteIngredient';
 
 export default function ListIngredient({ showInList }) {
-  const API_BASE_URL = import.meta.env.VITE_API_URL;
+  const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+
 
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({ option: '' });

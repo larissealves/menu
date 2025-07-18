@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
 export default function BtnDeleteDish({ dishID, onDelete }) {
+  const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+
+
   const [loading, setLoading] = useState(false);
 
   const handleDeleteSubmit = async () => {
