@@ -1,6 +1,7 @@
 {
   "name": "client",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -8,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.11",
     "framer-motion": "^12.15.0",
     "lucide-react": "^0.514.0",
     "react": "^19.1.0",
