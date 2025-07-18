@@ -4,8 +4,6 @@ import { PrismaClient } from '@prisma/client'
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs/promises';
-import { filter } from 'framer-motion/client';
-
 
 const router = express.Router()
 const prisma = new PrismaClient()
