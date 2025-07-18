@@ -66,7 +66,6 @@ router.post('/new/addDishes', upload.array('images'), async (req, res) => {
         //const binary = await fs.readFile(file.path);
         const binary = await fs.readFile(file.path);
 
-        // 1. Cria DishImage sem imageUrl
         const dishImage = await prisma.dishImage.create({
           data: {
             dishId: newDishId,

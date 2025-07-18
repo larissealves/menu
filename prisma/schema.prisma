@@ -45,8 +45,8 @@ model DishIngredient {
   ingredientId Int
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
-  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   dish         Dish       @relation("DishToDishIngredients", fields: [dishId], references: [id])
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
 }
 
 model DishImage {
@@ -84,6 +84,6 @@ model DishTag {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  tag       Tag      @relation(fields: [tagId], references: [id])
   dish      Dish     @relation("DishToDishTags", fields: [dishId], references: [id])
+  tag       Tag      @relation(fields: [tagId], references: [id])
 }
