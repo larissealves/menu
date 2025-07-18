@@ -31,12 +31,12 @@ app.use('/api', tagRoutes)
 app.use('/api', imageRoutes)
 
 // Serve arquivos da build do React
-app.use(express.static(path.join(__dirname, '..', 'dist')));
+//app.use(express.static(path.join(__dirname, '..', 'dist')));
 
 // Fallback: envia index.html para rotas desconhecidas (SPA)
-app.get('/{*any}', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
-});
+//app.get('/{*any}', (req, res) => {
+// res.sendFile(path.join(__dirname, '..', 'dist', '../client/index.html'));
+//});
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`)
