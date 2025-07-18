@@ -14,14 +14,14 @@ const app = express()
 const PORT = 5000
 
 // setup para __dirname com ESModules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+//const __filename = fileURLToPath(import.meta.url);
+//const __dirname = path.dirname(__filename);
 
 app.use(cors())
 app.use(express.json())
 
 // Servir imagens da pasta uploads (se ainda usar isso)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+//app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Suas rotas de API
 app.use('/api', categoryRoutes)
