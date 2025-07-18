@@ -185,8 +185,8 @@ export default function AddDishes({ propDishID,  handleToggleControlPopup, contr
             const byteArray = Object.values(img.binaryData);
             const uint8 = new Uint8Array(byteArray);
             const blob = new Blob([uint8], { type: img.imageType });
-            const previewUrl = URL.createObjectURL(blob);
-            return { ...img, previewUrl };
+            //const previewUrl = URL.createObjectURL(blob);
+            return { ...img };
           });
 
           setImagesEditDish(imagesWithPreview);
@@ -283,7 +283,7 @@ export default function AddDishes({ propDishID,  handleToggleControlPopup, contr
                   <div className="grid grid-cols-2 gap-4">
                     {[...imagesEditDish, ...listTempImages].map((item, index) => (
                       <div key={index} className="relative border p-2 rounded">
-                        <img src={item.preview || item.previewUrl} alt={`img-${index}`} className="w-full h-32 object-cover rounded" />
+                        <img src={item.preview } alt={`img-${index}`} className="w-full h-32 object-cover rounded" />
                         <button type="button" onClick={() => item.id ? handleDeleteImage(item.id) : handleRemoveTempImage(index)} className="absolute top-1 right-1 text-white bg-red-500 rounded-full px-2">×</button>
                       </div>
                     ))}

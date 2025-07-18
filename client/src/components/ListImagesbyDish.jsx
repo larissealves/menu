@@ -21,8 +21,8 @@ export default function ListImagesByDish({ dishId }) {
               const byteArray = Object.values(img.binaryData); // transforma objeto em array de bytes
               const uint8 = new Uint8Array(byteArray);
               const blob = new Blob([uint8], { type: img.imageType });
-              const previewUrl = URL.createObjectURL(blob);
-              return { ...img, previewUrl };
+              //const previewUrl = URL.createObjectURL(blob);
+              return { ...img};
             });
     
             setImagesEditDish(imagesWithPreview);
@@ -54,7 +54,6 @@ export default function ListImagesByDish({ dishId }) {
                     {imagesEditDish.map((img) => (
                     <img
                         key={img.id}
-                        src={img.previewUrl}
                         alt={img.imageName}
                         className="w-32 h-32 object-cover rounded border"
                     />
