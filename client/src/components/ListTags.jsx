@@ -28,7 +28,7 @@ export default function ListTags({ showInList }) {
   /* ==== FETCH DATA ==== */
   const fetchTag = async () => {
     try {
-      const res = await fetch('${API_BASE_URL}/api/get/tagList');
+      const res = await fetch(`${API_BASE_URL}/api/get/tagList`);
       const data = await res.json();
       setTags(data);
     } catch (error) {

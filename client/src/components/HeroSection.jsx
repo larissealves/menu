@@ -43,9 +43,9 @@ export default function HeroSection() {
     const fetchInitialData = async () => {
       try {
         const [catRes, tagRes, ingredientsRes, dishRes] = await Promise.all([
-          fetch('${API_BASE_URL}/api/get/categoryList/active'),
-          fetch('${API_BASE_URL}/api/get/tagList/active'),
-          fetch('${API_BASE_URL}/api/get/ingredientList/active'),
+          fetch(`${API_BASE_URL}/api/get/categoryList/active`),
+          fetch(`${API_BASE_URL}/api/get/tagList/active`),
+          fetch(`${API_BASE_URL}/api/get/ingredientList/active`),
           fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}`)
         ]);
         setCategories(await catRes.json());

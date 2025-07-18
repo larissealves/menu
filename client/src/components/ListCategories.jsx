@@ -26,7 +26,7 @@ export default function ListCategories() {
   /* ==== FETCH DATA ==== */
   const fetchCategories = async () => {
     try {
-      const res = await fetch('${API_BASE_URL}/api/get/categoryList');
+      const res = await fetch(`${API_BASE_URL}/api/get/categoryList`);
       const data = await res.json();
       setCategories(data);
     } catch (error) {

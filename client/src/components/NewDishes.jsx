@@ -154,9 +154,9 @@ export default function AddDishes({ propDishID,  handleToggleControlPopup, contr
     const fetchAll = async () => {
       try {
         const [catRes, ingRes, tagRes] = await Promise.all([
-          fetch('${API_BASE_URL}/api/get/categoryList/active'),
-          fetch('${API_BASE_URL}/api/get/ingredientList/active'),
-          fetch('${API_BASE_URL}/api/get/tagList/active'),
+          fetch(`${API_BASE_URL}/api/get/categoryList/active`),
+          fetch(`${API_BASE_URL}/api/get/ingredientList/active`),
+          fetch(`${API_BASE_URL}/api/get/tagList/active`),
         ]);
         setCategories(await catRes.json());
         setIngredients(await ingRes.json());

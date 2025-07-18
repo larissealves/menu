@@ -15,7 +15,7 @@ export default function ListIngredient({ showInList }) {
   /* ==== FETCH DATA ==== */
   const fetchIngredient = async () => {
     try {
-      const res = await fetch('${API_BASE_URL}/api/get/ingredientList');
+      const res = await fetch(`${API_BASE_URL}/api/get/ingredientList`);
       const data = await res.json();
       setIngredient(data);
     } catch (error) {
