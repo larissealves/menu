@@ -48,7 +48,6 @@ CREATE TABLE "DishIngredient" (
 CREATE TABLE "DishImage" (
     "id" SERIAL NOT NULL,
     "dishId" INTEGER NOT NULL,
-    "imageUrl" TEXT NOT NULL,
     "imageName" TEXT NOT NULL,
     "imageType" TEXT NOT NULL,
     "isPrimary" BOOLEAN NOT NULL DEFAULT false,
