@@ -5,6 +5,8 @@
 
 Complete application for menu management with a **React + Vite** frontend, **Express + Prisma** backend, and **PostgreSQL (NeonDB)** database.
 
+> ⚠️ This is a **personal study project** and does **not include any authentication or authorization** flows — neither in the API nor in the admin interface.
+
 ## 📁 Project Structure
 
 ```
