@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate, Link } from "react-router-dom";
 
-import image01 from '../../public/app-images/img-01.png'
-import image02 from '../../public/app-images/img-02.png'
-import image03 from '../../public/app-images/img-03.png'
-import image04 from '../../public/app-images/img-04.png'
-import image05 from '../../public/app-images/img-05.png'
-import image06 from '../../public/app-images/img-06.png'
+import image01 from '../assets/app-images/img-01.png'
+import image02 from '../assets/app-images/img-02.png'
+import image03 from '../assets/app-images/img-03.png'
+import image04 from '../assets/app-images/img-04.png'
+import image05 from '../assets/app-images/img-05.png'
+import image06 from '../assets/app-images/img-06.png'
 
 
 export default function ProjectDocumentation() {

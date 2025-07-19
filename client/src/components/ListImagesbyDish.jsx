@@ -10,19 +10,18 @@ export default function ListImagesByDish({ dishId }) {
     
     useEffect(() => {
       if (!dishId) return;
-    
       const fetchImagesEditDish = async () => {
         try {
           const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${dishId}`);
           const data = await res.json();
-    
+          console.log('teste imagem', data)
           if (Array.isArray(data)) {
             const imagesWithPreview = data.map((img) => {
               const byteArray = Object.values(img.binaryData); // transforma objeto em array de bytes
               const uint8 = new Uint8Array(byteArray);
               const blob = new Blob([uint8], { type: img.imageType });
-              //const previewUrl = URL.createObjectURL(blob);
-              return { ...img};
+              const previewUrl = URL.createObjectURL(blob);
+              return { ...img, previewUrl};
             });
     
             setImagesEditDish(imagesWithPreview);
@@ -53,6 +52,7 @@ export default function ListImagesByDish({ dishId }) {
                 <>*/}
                     {imagesEditDish.map((img) => (
                     <img
+                        src={img.previewUrl}
                         key={img.id}
                         alt={img.imageName}
                         className="w-32 h-32 object-cover rounded border"
