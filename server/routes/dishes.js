@@ -473,29 +473,30 @@ router.get('/get/imagesByDishId/:id', async (req, res) => {
     // Buscar binário para cada imagem
     const imagesWithBinary = await Promise.all(
       images.map(async (img) => {
-        
+
         const binary = await prisma.dishImageBinary.findUnique({
           where: { dishImageId: img.id },
         });
 
         return {
           ...img,
-           binaryData: binary?.binaryData ? Array.from(binary.binaryData) : null,
+          binaryData: binary?.binaryData ? Array.from(binary.binaryData) : null,
         };
       })
     );
 
     res.status(200).json(imagesWithBinary);
   } catch (error) {
-      console.error('Erro ao buscar imagens:', {
+    console.error('Erro ao buscar imagens:', {
       message: error?.message,
       stack: error?.stack,
     });
-    res.status(500).json({ error: 'Erro interno ao buscar imagens.' });
+    res.status(500).json({
+      error: 'Erro interno ao buscar imagens.',
+      detail: error?.message,
+      stack: error?.stack
+    });
   }
 });
-
-
-
 
 export default router
