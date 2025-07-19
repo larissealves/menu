@@ -487,15 +487,12 @@ router.get('/get/imagesByDishId/:id', async (req, res) => {
 
     res.status(200).json(imagesWithBinary);
   } catch (error) {
-    console.error('Erro ao buscar imagens:', {
-      message: error?.message,
-      stack: error?.stack,
-    });
+    console.error('Erro ao buscar imagens:', error);
     res.status(500).json({
-      error: 'Erro interno ao buscar imagens.',
-      detail: error?.message,
-      stack: error?.stack
-    });
+    error: 'Erro interno ao buscar imagens.',
+    detail: error?.message,
+    stack: error?.stack,
+  });
   }
 });
 
