@@ -40,25 +40,16 @@ export default function ListImagesByDish({ dishId }) {
     }, [dishId]);
     
 
-
-    return (
-        <div className="flex gap-4 w-full flex-row ">
-           {/* {imagesEditDish.length === 0 ? (
-                <img
-                    src={blankimage}
-                    alt={'blank image'}
-                    className="w-32 h-32 object-cover rounded border"
-                />
-                ) : 
-                <>*/}
-                    {imagesEditDish.map((img) => (
-                    <img
-                        src={img.previewUrl}
-                        key={img.id}
-                        alt={img.imageName}
-                        className="w-32 h-32 object-cover rounded border"
-                    />
-                    ))} 
-        </div>
-    );
+  return (
+    <div className="w-full flex flex-wrap sm:flex-nowrap gap-4">
+      {imagesEditDish.map((img) => (
+        <img
+          key={img.id}
+          src={img.previewUrl}
+          alt={img.imageName}
+          className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded border"
+        />
+      ))}
+    </div>
+  );
 }

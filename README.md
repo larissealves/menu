@@ -76,6 +76,7 @@ npm install
 ```
 DATABASE_URL="postgresql://..."
 ```
+Database schema: https://github.com/larissealves/menu/blob/master/zz_personal%20notes/DATABASE_SCHEMA.md
 
 ### Useful Prisma commands:
 

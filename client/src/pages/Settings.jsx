@@ -28,6 +28,10 @@ export default function Settings() {
    
   ];
 
+  const toggleControlPopup = () => {
+    setControlPopupDish((prev) => !prev);
+  };
+
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8">
       <Link to="/" target="_blank" className="text-blue-600 underline font-bold"> ← BACK TO HOME </Link>
@@ -77,7 +81,7 @@ export default function Settings() {
       </div>
 
       {/* Popups */}
-      <AddDishes togglePopup={() => setControlPopupDish(false)} controlPopup={controlPopupDish} />
+      <AddDishes handleToggleControlPopup ={ toggleControlPopup} controlPopup={controlPopupDish} />
       <AddCategory handleToggleControlPopup={() => setControlPopupCategory(false)} controlPopup={controlPopupCategory} />
       <AddIngredient handletoggleControlPopup={() => setControlPopupIngredient(false)} controlPopup={controlPopupIngredient} />
       <AddTag handletoggleControlPopup={() => setControlPopupTag(false)} controlPopup={controlPopupTag} />

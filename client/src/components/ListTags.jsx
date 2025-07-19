@@ -84,7 +84,7 @@ export default function ListTags({ showInList }) {
         {filteredList.map((item) => (
           <div
             key={item.id}
-            className={`grid grid-cols-1 md:grid-cols-5 items-center border px-4 py-3 rounded-md ${
+            className={`grid grid-cols-1 md:grid-cols-5 items-center border px-4 py-3 rounded-md capitalize ${
               showInList ? 'bg-gray-50' : 'hover:bg-gray-100'
             } transition`}
           >
