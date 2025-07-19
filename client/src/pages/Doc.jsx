@@ -11,129 +11,209 @@ import image06 from '../assets/app-images/img-06.png'
 
 export default function ProjectDocumentation() {
   return (
-    <div className="max-w-4xl mx-auto p-8 text-gray-800 space-y-8 ">
-        <Link to="/" target="_blank" className="text-blue-600 underline font-bold"> ← BACK TO HOME </Link>
-        <br></br>
-      <h1 className="text-3xl font-bold mt-8">Project Documentation - "Menu"</h1>
+    <div className="prose max-w-4xl mx-auto px-4 py-10">
+      <Link to="/" target="_blank" className="text-blue-600 underline font-bold"> ← BACK TO HOME </Link>
+      <br></br>
+      <h1 className="text-4xl font-bold mb-4">🍽️ Menu - Restaurant Menu Management System</h1>
 
-      <section>
-        <h2 className="text-2xl font-semibold">📌 Overview</h2>
-        <p>
-          The <strong>Menu</strong> project is a full-stack application for restaurant menu management. It allows users to create, list, edit, and delete dishes, ingredients, and tags. It includes an admin panel and a public section with filters for name, category, ingredients, and tags.
-        </p>
-      </section>
+      <p>
+        <strong>Menu</strong> is a full-stack application designed to manage restaurant menus. It supports the creation, listing, editing, and deletion of dishes, ingredients, and tags. The project includes an admin interface and a public-facing view with filtering features.
+      </p>
+      <br></br>
+      <p>
+        Complete application for menu management with a <strong>React + Vite</strong> frontend, <strong>Express + Prisma</strong> backend, and <strong>PostgreSQL (NeonDB)</strong> database.
+      </p>
+      <br></br>
+      <blockquote className="border-l-4 border-yellow-400 pl-4 italic text-sm">
+        ⚠️ This is a <strong>personal study project</strong> and does <strong>not include any authentication or authorization</strong> flows — neither in the API nor in the admin interface.
+      </blockquote>
 
-      <section>
-        <h2 className="text-2xl font-semibold">🛠️ Technologies Used</h2>
-        <ul className="list-disc list-inside">
-          <li><strong>Frontend:</strong> React, Tailwind CSS, Framer Motion</li>
-          <li><strong>Backend:</strong> Node.js, Express</li>
-          <li><strong>Database:</strong> SQLite with Prisma ORM</li>
-          <li><strong>File Upload:</strong> Multer</li>
-        </ul>
-      </section>
+      <h2 className="text-2xl font-semibold mt-10">📁 Project Structure</h2>
+      <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+        <code>
+          {`menu/
+├── client/              # Frontend (React + Vite)
+│   ├── public/
+│   ├── src/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── Router.jsx
+│   │   └── styles/
+│   │       └── base.css
+│   ├── index.html
+│   ├── vite.config.js
+│   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   └── vercel.json
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+├── server/
+│   ├── routes/
+│   ├── uploads/
+│   └── index.js
+├── .env
+├── package.json
+└── README.md`}
+        </code>
+      </pre>
 
-      <section>
-        <h2 className="text-2xl font-semibold">📦 Installation and Running</h2>
+      <h2 className="text-2xl font-semibold mt-10">🧠 Tech Stack</h2>
+      <table className="table-auto border border-collapse border-gray-300">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="border px-4 py-2 text-left">Layer</th>
+            <th className="border px-4 py-2 text-left">Stack</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className="border px-4 py-2">Frontend</td>
+            <td className="border px-4 py-2">React 19, Vite, TailwindCSS, React Router</td>
+          </tr>
+          <tr>
+            <td className="border px-4 py-2">Backend</td>
+            <td className="border px-4 py-2">Express, Prisma ORM, Multer</td>
+          </tr>
+          <tr>
+            <td className="border px-4 py-2">Database</td>
+            <td className="border px-4 py-2">PostgreSQL (NeonDB)</td>
+          </tr>
+          <tr>
+            <td className="border px-4 py-2">Hosting</td>
+            <td className="border px-4 py-2">Render (Backend), Vercel (Frontend)</td>
+          </tr>
+        </tbody>
+      </table>
 
-        <h3 className="text-xl font-semibold mt-4">Requirements:</h3>
-        <ul className="list-disc list-inside">
-          <li>Node.js 18 or higher</li>
-          <li>NPM or Yarn</li>
-        </ul>
+      <h2 className="text-2xl font-semibold mt-10">🛠️ Local Installation</h2>
+      <h3 className="text-xl font-medium mt-4">1. Clone the repository</h3>
+      <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+        <code>{`git clone https://github.com/your-user/menu.git
+cd menu`}</code>
+      </pre>
 
-        <h3 className="text-xl font-semibold mt-4">Steps:</h3>
-        <ol className="list-decimal list-inside space-y-2">
-          <li>Clone the repository</li>
-          <li>Install dependencies:
-            <pre><code>npm install</code></pre>
-          </li>
-          <li>Configure environment variables in the <code>.env</code> file</li>
-          <li>Run database migrations:
-            <pre><code>npx prisma migrate dev --name init</code></pre>
-            <pre><code>npx prisma studio</code></pre>
-          </li>
-          <li>Start the backend server:
-            <pre><code>npm run server</code></pre>
-            <pre><code>node server/index.js</code></pre>
-          </li>
-          <li>Start the frontend:
-            <pre><code>npm run dev</code></pre>
-          </li>
-        </ol>
-      </section>
+      <h3 className="text-xl font-medium mt-4">2. Install dependencies</h3>
+      <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+        <code>{`# Root
+npm install
 
-      <section>
-        <h2 className="text-2xl font-semibold">✨ Features</h2>
-        <ul className="list-disc list-inside">
-          <li>✅ Create dishes with name, price, description, category, images, ingredients, and tags</li>
-          <li>✅ General listing with filters by name, category, tags, and ingredients</li>
-          <li>✅ Edit dishes with image, tag, and ingredient updates</li>
-          <li>✅ Upload and delete images (stored as binary using Prisma)</li>
-          <li>✅ Full CRUD for Ingredients and Tags</li>
-          <li>✅ Active/Inactive status control for dishes</li>
-        </ul>
-      </section>
+# Frontend
+cd client
+npm install`}</code>
+      </pre>
 
-      <section>
-        <h2 className="text-2xl font-semibold">🧩 Directory Structure</h2>
-        <ul className="list-disc list-inside">
-          <li><code>/client</code>: React frontend</li>
-          <li><code>/server</code>: Express API backend</li>
-          <li><code>/uploads</code>: stored images</li>
-          <li><code>/prisma</code>: database schema and migrations</li>
-        </ul>
-      </section>
+      <h2 className="text-2xl font-semibold mt-10">🗃️ Database</h2>
+      <p>Uses <strong>Prisma ORM</strong> with <strong>PostgreSQL</strong> (NeonDB)</p>
+      <br></br>
+      <p><code className="bg-gray-200 px-2 py-1 rounded">.env</code> configuration:</p>
+      <br></br>
+      <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+        <code>{`DATABASE_URL="postgresql://..."`}</code>
+      </pre>
 
-      <section>
-        <h2 className="text-2xl font-semibold">📁 Key Components</h2>
-        <ul className="list-disc list-inside">
-          <li><code>HeroSection.jsx</code>: main page with filters</li>
-          <li><code>ListAllDishes.jsx</code>: displays and edits dishes</li>
-          <li><code>AddDishes.jsx</code>: modal to create/edit dishes</li>
-          <li><code>ListIngredientsByDisheId.jsx</code>: displays ingredients of a dish</li>
-          <li><code>ListTagsByDisheId.jsx</code>: displays tags of a dish</li>
-        </ul>
-      </section>
+      <h3 className="text-xl font-medium mt-4">Useful Prisma commands</h3>
+      <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+        <code>{`npx prisma generate
+npx prisma migrate dev --name init
+npx prisma studio`}</code>
+      </pre>
 
-      <section>
-        <h2 className="text-2xl font-semibold">🖼️ Screenshots</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <img src={image01} alt="Screenshot 1" className="rounded shadow" />
-          <img src={image02} alt="Screenshot 2" className="rounded shadow" />
-          <img src={image03} alt="Screenshot 3" className="rounded shadow" />
-          <img src={image04} alt="Screenshot 4" className="rounded shadow" />
-          <img src={image05} alt="Screenshot 5" className="rounded shadow" />
-          <img src={image06} alt="Screenshot 6" className="rounded shadow" />
-        </div>
-      </section>
+      <h2 className="text-2xl font-semibold mt-10">▶️ Running the Project</h2>
+      <h3 className="text-xl font-medium mt-4">Backend</h3>
+      <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+        <code>{`npm run start`}</code>
+      </pre>
+      <br></br><p>Access: <code className="bg-gray-200 px-2 py-1 rounded">http://localhost:5000/api/categories</code></p>
 
-      <section>
-        <h2 className="text-2xl font-semibold">🚀 Future Improvements</h2>
-        <ul className="list-disc list-inside">
-          <li>🔒 Authentication for admin panel access</li>
-          <li>🖼️ Define a primary image for dishes</li>
-          <li>📱 Improved responsive design</li>
-          <li>🌐 Production deployment (e.g., Vercel/Render)</li>
-        </ul>
-      </section>
+      <h3 className="text-xl font-medium mt-4">Frontend</h3>
+      <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+        <code>{`cd client
+npm run dev`}</code>
+      </pre>
+      <br></br>
+      <p>Access: <code className="bg-gray-200 px-2 py-1 rounded">http://localhost:5173</code></p>
 
-      <section>
+      <h2 className="text-2xl font-semibold mt-10">🚀 Deployment Overview</h2>
+
+      <h3 className="text-xl font-medium mt-4">🗄️ Online Database (NeonDB)</h3>
+      <ul className="list-disc pl-6">
+        <li><strong>Type:</strong> PostgreSQL</li>
+        <li><strong>Provider:</strong> <a className="text-blue-600 underline" href="https://neon.tech">NeonDB</a></li>
+        <li><strong>Env Var:</strong> <code className="bg-gray-200 px-2 py-1 rounded">DATABASE_URL</code></li>
+      </ul>
+
+      <h3 className="text-xl font-medium mt-4">🛠️ Backend (Render)</h3>
+      <ul className="list-disc pl-6">
+        <li><strong>Provider:</strong> <a className="text-blue-600 underline" href="https://render.com">render.com</a></li>
+        <li><strong>URL:</strong> https://menu-backend.onrender.com</li>
+        <li><strong>Start:</strong> <code className="bg-gray-200 px-2 py-1 rounded">npm run start</code></li>
+        <li><strong>Build:</strong> <code className="bg-gray-200 px-2 py-1 rounded">npm install</code></li>
+        <li><strong>Env:</strong> <code className="bg-gray-200 px-2 py-1 rounded">DATABASE_URL</code></li>
+      </ul>
+
+      <h3 className="text-xl font-medium mt-4">🌐 Frontend (Vercel)</h3>
+      <ul className="list-disc pl-6">
+        <li><strong>Provider:</strong> <a className="text-blue-600 underline" href="https://vercel.com">vercel.com</a></li>
+        <li><strong>URL:</strong> https://menu.vercel.app</li>
+        <li><strong>Build:</strong> <code className="bg-gray-200 px-2 py-1 rounded">npm run build</code></li>
+        <li><strong>Output:</strong> <code className="bg-gray-200 px-2 py-1 rounded">dist</code></li>
+        <li><strong>Env:</strong> <code className="bg-gray-200 px-2 py-1 rounded">VITE_API_URL=https://menu-backend.onrender.com</code></li>
+      </ul>
+
+      <h3 className="text-xl font-medium mt-4">Vercel Routing (SPA)</h3>
+      <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+        <code>{`{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}`}</code>
+      </pre>
+
+      <h2 className="text-2xl font-semibold mt-10">✅ Deployment Summary</h2>
+      <table className="table-auto border border-collapse border-gray-300">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="border px-4 py-2">Layer</th>
+            <th className="border px-4 py-2">URL</th>
+            <th className="border px-4 py-2">Platform</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className="border px-4 py-2">Backend</td>
+            <td className="border px-4 py-2">https://menu-backend.onrender.com</td>
+            <td className="border px-4 py-2">Render</td>
+          </tr>
+          <tr>
+            <td className="border px-4 py-2">Frontend</td>
+            <td className="border px-4 py-2">https://menu.vercel.app</td>
+            <td className="border px-4 py-2">Vercel</td>
+          </tr>
+          <tr>
+            <td className="border px-4 py-2">Database</td>
+            <td className="border px-4 py-2">PostgreSQL (Neon)</td>
+            <td className="border px-4 py-2">NeonDB</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <section className="mt-10">
         <h2 className="text-2xl font-semibold">👨‍💻 Author</h2>
         <p>
           Developed by <strong>Larisse Alves</strong> — intended for culinary projects and digital menu management.
-          <br></br>
+          <br />
           <a
-            className="highlighted-link"
+            className="text-blue-600 underline"
             href="https://linktr.ee/larisseralves"
             target="_blank"
             rel="noopener noreferrer"
           >
             🌐 Larisse Alves – Linktree
           </a>
-          <br></br>
+          <br />
           <a
-            className="highlighted-link"
+            className="text-blue-600 underline"
             href="https://github.com/larissealves/"
             target="_blank"
             rel="noopener noreferrer"

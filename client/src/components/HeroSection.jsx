@@ -91,7 +91,12 @@ export default function HeroSection() {
                 <p className="text-1xl font-bold text-gray-700">MENU</p>
             </div>
         </div>
-        <Link to="/settings" target="_blank" className="text-blue-600 underline font-bold">SETTINGS</Link>
+        <Link to="https://github.com/larissealves/" target="_blank" className="text-blue-600 underline font-bold"> 
+        Github - Larisse Alves → </Link>
+        <Link to="/ProjectDocumentation" target="_blank" className="text-blue-600 underline font-bold"> 
+        Project Documentation → </Link>
+        <Link to="/settings" target="_blank" className="text-blue-600 underline font-bold">
+        SETTINGS  → </Link>
       </section>
 
       {/* Filtros */}
