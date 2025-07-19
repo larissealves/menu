@@ -15,6 +15,7 @@ export default function ListImagesByDish({ dishId }) {
           const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${dishId}`);
           const data = await res.json();
           console.log('teste imagem', data)
+          console.log('api link', API_BASE_URL)
           if (Array.isArray(data)) {
             const imagesWithPreview = data.map((img) => {
               const byteArray = Object.values(img.binaryData); // transforma objeto em array de bytes
