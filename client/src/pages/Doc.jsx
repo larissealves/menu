@@ -14,6 +14,10 @@ export default function ProjectDocumentation() {
     <div className="prose max-w-4xl mx-auto px-4 py-10">
       <Link to="/" target="_blank" className="text-blue-600 underline font-bold"> ← BACK TO HOME </Link>
       <br></br>
+      <br></br>
+      <Link to="/DataBaseSchema" target="_blank" className="text-blue-600 underline font-bold"> Data base Schema  → </Link>
+      <br></br>
+      <br></br>
       <h1 className="text-4xl font-bold mb-4">🍽️ Menu - Restaurant Menu Management System</h1>
 
       <p>

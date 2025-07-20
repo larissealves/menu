@@ -36,6 +36,7 @@ export default function Settings() {
     <div className="p-6 max-w-6xl mx-auto space-y-8">
       <Link to="/" target="_blank" className="text-blue-600 underline font-bold"> ← BACK TO HOME </Link>
       <br></br>
+      <br></br>
       <Link to="/ProjectDocumentation" target="_blank" className="text-blue-600 underline font-bold"> 
         Project Documentation → </Link>
       {/* Ações */}
