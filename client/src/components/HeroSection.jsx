@@ -6,6 +6,7 @@ import mainImage from '../assets/images/sakura.png';
 import ListTagsByDisheId from './ListTagsbyDish';
 import ListIngredientsByDisheId from './ListIngredientsbyDish';
 import ListImagesByDish from './ListImagesbyDish';
+import Tooltip from "../components/tooltip/Tooltip"
 
 import '../styles/base.css';
 
