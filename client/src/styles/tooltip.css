@@ -1,0 +1,22 @@
+.tooltip {
+  position: relative;
+  display: inline-block; 
+}
+
+.tooltip .tooltip-title {
+  visibility: hidden;
+  min-width: 120px;
+  max-width: 30%;
+  text-align: center;
+  justify-self: center;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%; 
+  opacity: 0; 
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-title {
+  visibility: visible;
+  opacity: 1;
+}
