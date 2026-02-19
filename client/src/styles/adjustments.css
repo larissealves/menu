@@ -1,0 +1,8 @@
+.dish-name {
+    text-transform: lowercase;
+}
+
+.dish-name.capitalize,
+.capitalize {
+    text-transform: capitalize;
+}
