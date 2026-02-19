@@ -1,2 +1,3 @@
 @import "tailwindcss";
-@import "./tooltip.css"
+@import "./adjustments.css";
+@import "./tooltip.css";
