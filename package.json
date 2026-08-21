@@ -4,10 +4,15 @@
   "type": "module",
   "main": "server/index.js",
   "scripts": {
-    "start": "node server/index.js",
+    "dev": "dotenv -e .env.development -- node server/index.js",
+    "start": "dotenv -e .env.production -- node server/index.js",
+
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate deploy"
+    "prisma:migrate:dev": "dotenv -e .env.development -- prisma migrate deploy",
+    "prisma:migrate:test": "dotenv -e .env.development -- prisma migrate deploy",
+    "prisma:migrate:production": "dotenv -e .env.production -- prisma migrate deploy",
+    "prisma:studio:dev": "dotenv -e .env.development -- prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^6.10.1",
@@ -16,6 +21,7 @@
     "multer": "^2.0.1"
   },
   "devDependencies": {
+    "dotenv-cli": "^11.0.0",
     "prisma": "^6.10.1"
   }
 }

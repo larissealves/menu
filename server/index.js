@@ -13,6 +13,7 @@ import imageRoutes from './routes/images.js'
 const app = express()
 const PORT = 5000
 
+
 // setup para __dirname com ESModules
 //const __filename = fileURLToPath(import.meta.url);
 //const __dirname = path.dirname(__filename);
