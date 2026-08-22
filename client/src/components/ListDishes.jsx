@@ -7,7 +7,7 @@ import BtnDeleteDish from './BtnDeleteDish';
 
 export default function ListAllDishes() {
   const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
 
   /* ==== STATES ==== */
@@ -45,8 +45,16 @@ export default function ListAllDishes() {
   /* ==== FETCH DATA ==== */
   const fetchDishes = async () => {
     try {
+      const token = import.meta.env.VITE_API_SECRET;
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+
       const [dishRes, catRes, tagRes, ingredientsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${false}`),
+        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${false}`, {
+          headers
+        }),
         fetch(`${API_BASE_URL}/api/get/categoryList/active`),
         fetch(`${API_BASE_URL}/api/get/tagList/active`),
         fetch(`${API_BASE_URL}/api/get/ingredientList/active`),
