@@ -1,5 +1,4 @@
-# =================== BACK END =========================
-
+# ==== BACK END ====
 * Instalar: `dotenv-cli`
 
 * Criar os seguintes arquivos `.env` na raiz da aplicação:
@@ -63,7 +62,7 @@ process.env.API_SECRET
 
 ---
 
-# =================== FRONT END /client =========================
+# === FRONT END /client ===
 
 Nenhum fluxo de autenticação foi adicionado.
 
