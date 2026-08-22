@@ -214,7 +214,7 @@ npm run dev`}</code>
       <section className="mt-10">
         <h2 className="text-2xl font-semibold">👨‍💻 Author</h2>
         <p>
-          Developed by <strong>Larisse Alves</strong> — intended for culinary projects and digital menu management.
+          Developed by <strong>Larisse Alves</strong> 
           <br />
           <a
             className="text-blue-600 underline"
