@@ -1,59 +1,84 @@
- =================== BACK END =========================
+# =================== BACK END =========================
 
-- instalar: dotenv-cli
+* Instalar: `dotenv-cli`
 
-- criar arquivos no .env  no root da aplicação 
+* Criar os seguintes arquivos `.env` na raiz da aplicação:
 
+```text
 .env.development
 .env.production
-.env.test (n usado) 
-.env.exemple 
+.env.test (não usado)
+.env.example
+```
 
-Incluir todos excerto .env.exemplo no .gitignore
+Incluir todos, **exceto `.env.example`**, no `.gitignore`.
 
-- para cada arquivo incluir suas variaveis de ambiente. Neste caso:
+* Para cada arquivo, incluir suas respectivas variáveis de ambiente. Neste caso:
 
-.env.development e .env.exemple:
-    DATABASE_URL = 'postgresql://..'
-    
-    API_SECRET = valor-da_sua_apikey
+`.env.development` e `.env.example`:
 
-.env.production e .env.test (n usado)
+```env
+DATABASE_URL='postgresql://..'
 
-    DATABASE_URL = ''
+API_SECRET=valor-da-sua-apikey
+```
 
-No package.json do root é necessário informar qual .env deve ser acessado quando o DB ou a aplicão for executada.
+`.env.production` e `.env.test` (não usado):
 
- "scripts": {
-    "dev": "dotenv -e .env.development -- node server/index.js",
-    "start": "dotenv -e .env.production -- node server/index.js",
+```env
+DATABASE_URL=''
+```
 
-    "postinstall": "prisma generate",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate:dev": "dotenv -e .env.development -- prisma migrate deploy",
-    "prisma:migrate:test": "dotenv -e .env.development -- prisma migrate deploy",
-    "prisma:migrate:production": "dotenv -e .env.production -- prisma migrate deploy",
-    "prisma:studio:dev": "dotenv -e .env.development -- prisma studio"
-  },
+No `package.json` da raiz é necessário informar qual arquivo `.env` deve ser acessado quando o banco de dados ou a aplicação for executada.
 
-ao rodar `npm run dev` o script  "dev" ira acessar  o .env.development e disponibilizar as  variaveis de ambiente deste arquivo via process.env.NOME_DA_VARIAVEL.
+```json
+"scripts": {
+  "dev": "dotenv -e .env.development -- node server/index.js",
+  "start": "dotenv -e .env.production -- node server/index.js",
 
+  "postinstall": "prisma generate",
+  "prisma:generate": "prisma generate",
+  "prisma:migrate:dev": "dotenv -e .env.development -- prisma migrate deploy",
+  "prisma:migrate:test": "dotenv -e .env.development -- prisma migrate deploy",
+  "prisma:migrate:production": "dotenv -e .env.production -- prisma migrate deploy",
+  "prisma:studio:dev": "dotenv -e .env.development -- prisma studio"
+}
+```
 
-o mesmo para os outros comandos de DB e executar aplicação.
+Ao rodar `npm run dev`, o script `"dev"` irá acessar o `.env.development` e disponibilizar as variáveis de ambiente desse arquivo via `process.env.NOME_DA_VARIAVEL`.
 
-Para acessar as variaveis criadas use: process.env.NOME_DA_VARIAVEL
-exemplo: process.env.API_SECRET
+O mesmo se aplica aos outros comandos relacionados ao banco de dados e à execução da aplicação.
 
+Para acessar as variáveis criadas, use:
 
-=================== FRONT END /client =========================
+```js
+process.env.NOME_DA_VARIAVEL
+```
 
-Nenhum fluxo adicionado
+Exemplo:
 
-Criar file .env dentro da raiz da pasta /client
+```js
+process.env.API_SECRET
+```
 
-para acessar via vite: import.meta.env.VITE_API_URL
+---
 
-Variaveis do arquivo:
-    VITE_API_URL=http://localhost:5000
+# =================== FRONT END /client =========================
 
-    VITE_API_SECRET=
+Nenhum fluxo de autenticação foi adicionado.
+
+Criar o arquivo `.env` dentro da raiz da pasta `/client`.
+
+Para acessar as variáveis via Vite:
+
+```js
+import.meta.env.VITE_API_URL
+```
+
+Variáveis do arquivo:
+
+```env
+VITE_API_URL=http://localhost:5000
+
+VITE_API_SECRET=
+```
