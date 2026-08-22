@@ -5,7 +5,11 @@
 
 Complete application for menu management with a **React + Vite** frontend, **Express + Prisma** backend, and **PostgreSQL (NeonDB)** database.
 
+The project also includes the deployment process and configuration for Render (Backend) and Vercel (Frontend).
+
 > ⚠️ This is a **personal study project** and does **not include any authentication or authorization** flows — neither in the API nor in the admin interface.
+
+> 📌 Personal Notes & Documentation **For updates regarding the project structure, new features, or deployment configurations**, refer to the personal notes / documentation updates folder in the git repository. (https://github.com/larissealves/menu)
 
 ## 📁 Project Structure
 
