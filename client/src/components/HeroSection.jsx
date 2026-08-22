@@ -84,15 +84,22 @@ export default function HeroSection() {
 
       {/* Header */}
       <section className=" justify-between gap-16 ">
-        <div className="flex  gap-16 mb-4 items-center" ref={headerRef}>
-          <img
-            src={mainImage}
-            alt="main image"
-            className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-lg"
-          />
-          <div className="sm:items-center sm:text-center " >
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-700">Saboré</h1>
-            <p className="text-1xl font-bold text-gray-700">MENU</p>
+        <div className="flex flex-row items-center gap-6 mb-4 max-sm:flex-col max-sm:text-center">
+          <div>
+            <img
+              src={mainImage}
+              alt="main image"
+              className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-lg"
+            />
+          </div>
+
+          <div>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-700">
+              Saboré
+            </h1>
+            <p className="text-xl font-bold text-gray-700">
+              MENU
+            </p>
           </div>
         </div>
 
@@ -104,7 +111,6 @@ export default function HeroSection() {
           <Link to="/settings" target="_blank" className="text-blue-600 underline font-bold">
             SETTINGS  → </Link>
         </div>
-
       </section>
 
       {/* ======================
