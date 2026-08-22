@@ -24,9 +24,12 @@ export default function HeroSection() {
 
   const [loading, setLoading] = useState();
 
-  const headerRef = useRef(null);
-  const controls = useAnimation();
+  // ========== PAGINATION =============
+  const [limitItemsPerPage, setLimitPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
+  
   // Busca inicial de categorias, tags e pratos
   useEffect(() => {
     setLoading(true);
@@ -44,16 +47,23 @@ export default function HeroSection() {
           fetch(`${API_BASE_URL}/api/get/categoryList/active`),
           fetch(`${API_BASE_URL}/api/get/tagList/active`),
           fetch(`${API_BASE_URL}/api/get/ingredientList/active`),
-          fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}`,
+          fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}
+            /${limitItemsPerPage}/${currentPage}`,
             {
               headers,
             })
         ]);
+
         setCategories(await catRes.json());
         setTags(await tagRes.json());
         setIngredients(await ingredientsRes.json());
+
         const data = await dishRes.json();
-        setDishes(Array.isArray(data) ? data : []);
+        setDishes(Array.isArray(data.dishes) ? data.dishes : []);
+        setCurrentPage(data.paginationDetais.currentPage);
+        setTotalPages(data.paginationDetais.totalPages);
+        setLimitPerPage(data.paginationDetais.ItemsPerPage);
+
       } catch (error) {
         console.error('Erro ao buscar dados iniciais:', error);
       } finally {
@@ -61,7 +71,7 @@ export default function HeroSection() {
       }
     };
     fetchInitialData();
-  }, []);
+  }, [currentPage]);
 
   // LOCAL FILTERS
   const filtered = dishes.filter(dish => {
@@ -253,6 +263,27 @@ export default function HeroSection() {
         {/* ==================================================
           END - SECTION LIST DISH
         =======================================================*/}
+
+        
+        {/* ==== PAGINATION ==== */}
+        <div className="flex gap-2 mt-4 justify-end items-center ">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+          >
+            Previous
+          </button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+          >
+            Next
+          </button>
+        </div>
+
       </section>
     </div >
   );

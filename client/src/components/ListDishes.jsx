@@ -30,7 +30,8 @@ export default function ListAllDishes() {
 
   /* ==== PAGINATION STATES ==== */
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Quantos itens por página
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
 
   /* ==== HANDLERS ==== */
   const toggleControlPopup = () => {
@@ -52,7 +53,8 @@ export default function ListAllDishes() {
       };
 
       const [dishRes, catRes, tagRes, ingredientsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${false}`, {
+        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${false}
+          /${itemsPerPage}/${currentPage}`, {
           headers
         }),
         fetch(`${API_BASE_URL}/api/get/categoryList/active`),
@@ -65,7 +67,12 @@ export default function ListAllDishes() {
       setIngredients(await ingredientsRes.json());
 
       const data = await dishRes.json();
-      setListAllDishes(Array.isArray(data) ? data : []);
+      setListAllDishes(Array.isArray(data.dishes) ? data.dishes : []);
+      setCurrentPage(data.paginationDetais.currentPage);
+      setItemsPerPage(data.paginationDetais.ItemsPerPage);
+      setTotalPages(data.paginationDetais.totalPages);
+
+
     } catch (error) {
       console.log('Error fetching dish list:', error);
     }
@@ -76,7 +83,7 @@ export default function ListAllDishes() {
       fetchDishes();
       setRefreshListAux((prev) => prev + 1);
     }
-  }, [controlPopup]);
+  }, [controlPopup, currentPage]);
 
   /* ==== LOCAL FILTER ==== */
   const filteredList = listAllDishes.filter((dish) => {
@@ -95,12 +102,12 @@ export default function ListAllDishes() {
     return matchesName && matchesCategory && matchesTag && matchesIngredients && matchesDishIsActive;
   });
 
-  /* ==== PAGINATE ==== */
+  /* ==== PAGINATE ==== 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredList.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage); */
 
   /* ==== RENDER ==== */
   return (
@@ -214,9 +221,9 @@ export default function ListAllDishes() {
 
       {/* ==== LIST ==== */}
       <div className="space-y-4">
-        {currentItems.length > 0 ? (
+        {listAllDishes.length > 0 ? (
           <>
-            {currentItems.map((item) => (
+            {listAllDishes.map((item) => (
               <div
                 key={item.id}
                 className="border rounded-lg p-4 shadow-sm hover:shadow-md hover:bg-gray-50 transition"

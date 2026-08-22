@@ -28,8 +28,17 @@ export default function ProjectDocumentation() {
         Complete application for menu management with a <strong>React + Vite</strong> frontend, <strong>Express + Prisma</strong> backend, and <strong>PostgreSQL (NeonDB)</strong> database.
       </p>
       <br></br>
+      <p>
+        The project also includes the deployment process and configuration for Render (Backend) and Vercel (Frontend).
+      </p>
+      <br></br>
       <blockquote className="border-l-4 border-yellow-400 pl-4 italic text-sm">
         ⚠️ This is a <strong>personal study project</strong> and does <strong>not include any authentication or authorization</strong> flows — neither in the API nor in the admin interface.
+      </blockquote>
+      <br></br>
+      <blockquote className="border-l-4 border-yellow-400 pl-4 italic text-sm">
+        📌<strong> For updates regarding the project structure, new features, or deployment configurations</strong>,
+        refer to the personal notes / documentation updates folder in the git repository.
       </blockquote>
 
       <h2 className="text-2xl font-semibold mt-10">📁 Project Structure</h2>
@@ -205,7 +214,7 @@ npm run dev`}</code>
       <section className="mt-10">
         <h2 className="text-2xl font-semibold">👨‍💻 Author</h2>
         <p>
-          Developed by <strong>Larisse Alves</strong> — intended for culinary projects and digital menu management.
+          Developed by <strong>Larisse Alves</strong> 
           <br />
           <a
             className="text-blue-600 underline"
