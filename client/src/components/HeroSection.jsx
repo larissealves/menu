@@ -11,6 +11,7 @@ import Loading from './loading/Loading';
 import '../styles/base.css';
 
 export default function HeroSection() {
+
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
@@ -29,13 +30,24 @@ export default function HeroSection() {
   // Busca inicial de categorias, tags e pratos
   useEffect(() => {
     setLoading(true);
+
     const fetchInitialData = async () => {
       try {
+
+        const token = import.meta.env.VITE_API_SECRET;
+
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+
         const [catRes, tagRes, ingredientsRes, dishRes] = await Promise.all([
           fetch(`${API_BASE_URL}/api/get/categoryList/active`),
           fetch(`${API_BASE_URL}/api/get/tagList/active`),
           fetch(`${API_BASE_URL}/api/get/ingredientList/active`),
-          fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}`)
+          fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}`,
+            {
+              headers,
+            })
         ]);
         setCategories(await catRes.json());
         setTags(await tagRes.json());
@@ -45,8 +57,8 @@ export default function HeroSection() {
       } catch (error) {
         console.error('Erro ao buscar dados iniciais:', error);
       } finally {
-      setLoading(false);
-    }
+        setLoading(false);
+      }
     };
     fetchInitialData();
   }, []);
@@ -68,34 +80,38 @@ export default function HeroSection() {
   return (
     <div className="flex flex-col items-center px-4 py-8 md:px-8 md:py-12 max-w-6xl mx-auto gap-12">
 
-      <Loading loadingIsActive={loading}/>
+      <Loading loadingIsActive={loading} />
 
       {/* Header */}
-      <section className="w-full flex flex-row justify-between gap-16">
-        <div className="flex flex-col sm:flex-row items-center   gap-16" ref={headerRef}>
+      <section className=" justify-between gap-16 ">
+        <div className="flex  gap-16 mb-4 items-center" ref={headerRef}>
           <img
             src={mainImage}
             alt="main image"
             className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-lg"
           />
-          <div>
+          <div className="sm:items-center sm:text-center " >
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-700">Saboré</h1>
             <p className="text-1xl font-bold text-gray-700">MENU</p>
           </div>
         </div>
-        <Link to="https://github.com/larissealves/" target="_blank" className="text-blue-600 underline font-bold">
-          Github - Larisse Alves → </Link>
-        <Link to="/ProjectDocumentation" target="_blank" className="text-blue-600 underline font-bold">
-          Project Documentation → </Link>
-        <Link to="/settings" target="_blank" className="text-blue-600 underline font-bold">
-          SETTINGS  → </Link>
+
+        <div className="w-full flex flex-wrap gap-4  sm:flex-1 justify-center">
+          <Link to="https://github.com/larissealves/" target="_blank" className="text-blue-600 underline font-bold">
+            Github - Larisse Alves → </Link>
+          <Link to="/ProjectDocumentation" target="_blank" className="text-blue-600 underline font-bold">
+            Project Documentation → </Link>
+          <Link to="/settings" target="_blank" className="text-blue-600 underline font-bold">
+            SETTINGS  → </Link>
+        </div>
+
       </section>
 
       {/* ======================
       START - SECTION FILTERS
       ========================= */}
       <section className="w-full flex flex-col gap-6">
-        <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6 w-full">
+        <div className="flex flex-col gap-4 w-full sm:flex-row sm:items-end sm:gap-6 ">
           <input
             type="text"
             placeholder="Search by name"
@@ -106,21 +122,21 @@ export default function HeroSection() {
             className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:max-w-xs"
           />
 
-          <div className="flex flex-wrap gap-4 w-full sm:flex-1">
+          <div className="flex gap-4 w-full items-end sm:flex-1">
             {categories.length > 0 && (
-              <div className="flex items-center gap-2 w-full sm:w-auto">
+              <div className="flex flex-wrap items-center gap-2 w-full sm:flex-row">
                 <label className="text-sm text-gray-700">Category:</label>
                 <select
                   value={filters.category}
                   onChange={(e) =>
                     setFilters((prev) => ({ ...prev, category: e.target.value }))
                   }
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-auto"
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
                 >
                   <option value="">All categories</option>
                   {categories.map((cat) => (
                     <option
-                      className="capitalize"
+                      className="capitalize w-full"
                       key={cat.id}
                       value={cat.id}
                     >
@@ -132,7 +148,7 @@ export default function HeroSection() {
             )}
 
             {ingredients.length > 0 && (
-              <div className="flex items-center gap-2 w-full sm:w-auto">
+              <div className="flex flex-wrap items-center gap-2 w-full sm:flex-row">
                 <label className="text-sm text-gray-700">
                   Ingredients / Side dishes:
                 </label>
@@ -144,12 +160,12 @@ export default function HeroSection() {
                       ingredients: e.target.value,
                     }))
                   }
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-auto"
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
                 >
                   <option value="">All options</option>
                   {ingredients.map((ing) => (
                     <option
-                      className="capitalize"
+                      className="capitalize "
                       key={ing.id}
                       value={ing.id}
                     >
@@ -161,14 +177,14 @@ export default function HeroSection() {
             )}
 
             {tags.length > 0 && (
-              <div className="flex items-center gap-2 w-full sm:w-auto">
+              <div className="flex flex-wrap items-center gap-2 w-full sm:flex-row">
                 <label className="text-sm text-gray-700">Tags:</label>
                 <select
                   value={filters.tag}
                   onChange={(e) =>
                     setFilters((prev) => ({ ...prev, tag: e.target.value }))
                   }
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full sm:w-auto"
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
                 >
                   <option value="">Other highlights</option>
                   {tags.map((tag) => (
@@ -184,52 +200,54 @@ export default function HeroSection() {
               </div>
             )}
           </div>
+
         </div>
-      {/* ====================
-      END - SECTION FILTERS
-      ====================== */}
+        {/* ====================
+            END - SECTION FILTERS
+            ====================== 
+        */}
 
 
-      {/* ==================================================
+        {/* ==================================================
           START - SECTION LIST DISH
         =======================================================*/}
-      <div className="w-full">
-        {categories.map((category) => {
-          const categoryDishes = filtered.filter(d => d.categoryId === category.id);
-          if (categoryDishes.length === 0) return null;
+        <div className="w-full">
+          {categories.map((category) => {
+            const categoryDishes = filtered.filter(d => d.categoryId === category.id);
+            if (categoryDishes.length === 0) return null;
 
-          return (
-            <div key={category.id} className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-600 mb-3 uppercase">{category.name}</h3>
-              {categoryDishes.map((dish) => (
-                <div
-                  key={dish.id}
-                  className="flex flex-col w-full gap-4 border border-gray-200 rounded-lg p-4 bg-white mb-4"
-                >
-                  <div className="flex-1 flex flex-col gap-1">
-                    <p className="font-semibold text-lg text-gray-800 break-all dish-name !capitalize">{dish.name.toLowerCase()}</p>
-                    <p className="text-gray-500 text-lg">R$ {dish.price}</p>
-                    <p className="text-gray-500 text-lg text-justify first-letter:uppercase ">{dish.description}</p>
-                    <p>
-                      <ListIngredientsByDisheId propDishId={dish.id} />
-                    </p>
-                    <ListTagsByDisheId propDishId={dish.id} />
+            return (
+              <div key={category.id} className="mb-6">
+                <h3 className="text-xl font-semibold text-gray-600 mb-3 uppercase">{category.name}</h3>
+                {categoryDishes.map((dish) => (
+                  <div
+                    key={dish.id}
+                    className="flex flex-col w-full gap-4 border border-gray-200 rounded-lg p-4 bg-white mb-4"
+                  >
+                    <div className="flex-1 flex flex-col gap-1">
+                      <p className="font-semibold text-lg text-gray-800 break-all dish-name !capitalize">{dish.name.toLowerCase()}</p>
+                      <p className="text-gray-500 text-lg">R$ {dish.price}</p>
+                      <p className="text-gray-500 text-lg text-justify first-letter:uppercase ">{dish.description}</p>
+                      <>
+                        <ListIngredientsByDisheId propDishId={dish.id} />
+                      </>
+                      <ListTagsByDisheId propDishId={dish.id} />
+                    </div>
+
+                    <div className="w-full  sm:w-36">
+                      <ListImagesByDish dishId={dish.id} />
+                    </div>
+
                   </div>
-
-                  <div className="w-full  sm:w-36">
-                    <ListImagesByDish dishId={dish.id} />
-                  </div>
-
-                </div>
-              ))}
-            </div>
-          );
-        })}
-      </div>
-      {/* ==================================================
+                ))}
+              </div>
+            );
+          })}
+        </div>
+        {/* ==================================================
           END - SECTION LIST DISH
         =======================================================*/}
-    </section>
+      </section>
     </div >
   );
 }
