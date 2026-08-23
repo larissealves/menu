@@ -156,7 +156,7 @@ export default function HeroSection() {
                   }
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
                 >
-                  <option value="">All categories</option>
+                  <option value="0">All categories</option>
                   {categories.map((cat) => (
                     <option
                       className="capitalize w-full"
@@ -185,7 +185,7 @@ export default function HeroSection() {
                   }
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
                 >
-                  <option value="">All options</option>
+                  <option value="0">All options</option>
                   {ingredients.map((ing) => (
                     <option
                       className="capitalize w-full"
@@ -209,7 +209,7 @@ export default function HeroSection() {
                   }
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
                 >
-                  <option value="">Other highlights</option>
+                  <option value="0">Other highlights</option>
                   {tags.map((tag) => (
                     <option
                       className="capitalize"
