@@ -29,7 +29,6 @@ export default function ListImagesByDish({ dishId }) {
             setImagesEditDish([]);
           }
         } catch (error) {
-          console.error('Erro ao buscar imagens:', error);
           setImagesEditDish([]);
         }
       };

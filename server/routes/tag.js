@@ -34,7 +34,6 @@ router.get('/get/tagList', async (req, res) => {
     })
     res.status(200).json(tags)
   } catch (error) {
-    console.error('Erro ao buscar as tags', error)
     res.status(500).json({ error: 'Erro ao buscar as tags' })
   }
 })
@@ -54,7 +53,6 @@ router.get('/get/tagList/active', async (req, res) => {
 
     res.status(200).json(tags)
   } catch (error) {
-    console.error('Erro ao buscar as tags', error)
     res.status(500).json({ error: 'Erro ao buscar as tags' })
   }
 })
