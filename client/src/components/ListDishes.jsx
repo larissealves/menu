@@ -140,12 +140,13 @@ export default function ListAllDishes() {
                 <label className="text-sm w-30 md:w-full text-gray-700">Category:</label>
                 <select
                   value={filters.category}
-                  onChange={(e) =>
+                  onChange={(e) =>{
                     setFilters((prev) => ({
                       ...prev,
                       category: e.target.value,
-                    }))
-                  }
+                    })),
+                  setCurrentPage(1);
+                }}
                   className="
                     capitalize px-3 py-2 border border-gray-300 
                     rounded-md text-sm w-full cursor-pointer "
@@ -192,9 +193,10 @@ export default function ListAllDishes() {
                 <label className="text-sm text-gray-700 w-30  md:w-full ">Highlights:</label>
                 <select
                   value={filters.tag}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, tag: e.target.value }))
-                  }
+                  onChange={(e) =>{
+                    setFilters((prev) => ({ ...prev, tag: e.target.value })),
+                    setCurrentPage(1);
+                  }}
                   className="capitalize px-3 py-2 border border-gray-300 
                   rounded-md text-sm w-full cursor-pointer "
                 >
@@ -218,11 +220,12 @@ export default function ListAllDishes() {
               type="checkbox"
               checked={filters.isActive}
               className='cursor-pointer'
-              onChange={(e) =>
+              onChange={(e) =>{
                 setFilters((prev) => ({
                   ...prev,
                   isActive: e.target.checked,
-                }))
+                })),
+              setCurrentPage(1)}
               }
             />
             {filters.isActive ? 'Yes' : 'No'}
