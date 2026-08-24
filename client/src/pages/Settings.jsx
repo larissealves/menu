@@ -37,6 +37,10 @@ export default function Settings() {
     setControlPopupTag((prev) => !prev);
   }
 
+  const toggleIngredientsPopup = () => {
+    setControlPopupIngredient((prev) => !prev);
+  }
+
   const toggleControlPopup = () => {
     setControlPopupDish((prev) => !prev);
   };
@@ -57,7 +61,7 @@ export default function Settings() {
         <button onClick={() => {setControlPopupTag(true); setActiveTab('tags')}} className="bg-purple-400 hover:bg-purple-700 text-white font-semibold  cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Tag
         </button>
-        <button onClick={() => setControlPopupIngredient(true)} className="bg-purple-400 hover:bg-purple-700 text-white  cursor-pointerfont-semibold px-4 py-2 rounded-lg flex items-center gap-2">
+        <button onClick={() => {setControlPopupIngredient(true), setActiveTab('ingredients')}} className="bg-purple-400 hover:bg-purple-700 text-white  cursor-pointerfont-semibold px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Ingredient
         </button>
         <button onClick={() => setControlPopupDish(true)} className="bg-pink-600 hover:bg-pink-700 text-white font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
@@ -95,16 +99,20 @@ export default function Settings() {
           />
         }
 
+        {activeTab === 'ingredients' && 
+          <ListIngredient ingredientControlPopup={controlPopupIngredient} onClose={toggleIngredientsPopup}
+          />
+        }
+        
         {activeTab === 'dishes' && <ListAllDishes />}
-        {activeTab === 'ingredients' && <ListIngredient />}
 
       </div>
 
       {/* Popups */}
       <AddDishes handleToggleControlPopup={toggleControlPopup} controlPopup={controlPopupDish} />
       {/*<AddCategory handleToggleControlPopup={() => setControlPopupCategory(false)} controlPopup={controlPopupCategory} updateList={OnSavedd}/>
-      <AddTag handletoggleControlPopup={() => setControlPopupTag(false)} controlPopup={controlPopupTag} />*/}
-      <AddIngredient handletoggleControlPopup={() => setControlPopupIngredient(false)} controlPopup={controlPopupIngredient} />
+      <AddTag handletoggleControlPopup={() => setControlPopupTag(false)} controlPopup={controlPopupTag} />*
+      <AddIngredient handletoggleControlPopup={() => setControlPopupIngredient(false)} controlPopup={controlPopupIngredient} />*/}
       
     </div>
   );

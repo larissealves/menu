@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import AddIngredient from './NewIngredient';
 import BtnDeleteIngredient from './BtnDeleteIngredient';
 
-export default function ListIngredient({ showInList }) {
+export default function ListIngredient({ showInList, ingredientControlPopup, onClose  }) {
   const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
@@ -27,15 +27,14 @@ export default function ListIngredient({ showInList }) {
 
   /* ==== HANDLERS ==== */
   const toggleControlPopup = () => {
-    if (controlPopup) {
-      fetchIngredient();
-    }
-    setControlPopup(!controlPopup);
+    fetchIngredient();
+    setIngredientEditID(null);
+    onClose();
   };
 
   const editIngredient = (id) => {
     setIngredientEditID(id);
-    setControlPopup(true);
+    onClose();
   };
 
   /* ==== FILTER ==== */
@@ -49,10 +48,8 @@ export default function ListIngredient({ showInList }) {
 
   /* ==== EFFECT ==== */
   useEffect(() => {
-    if (!controlPopup) {
       fetchIngredient();
-    }
-  }, [controlPopup]);
+  }, []);
 
   /* ==== RENDER ==== */
   return (
@@ -124,11 +121,11 @@ export default function ListIngredient({ showInList }) {
       </div>
 
       {/* ==== POPUP ==== */}
-      {controlPopup && (
+      {ingredientControlPopup && (
         <AddIngredient
           propsIngredientID={ingredientEditID}
           handletoggleControlPopup={toggleControlPopup}
-          controlPopup={controlPopup}
+          controlPopup={ingredientControlPopup}
         />
       )}
     </div>
