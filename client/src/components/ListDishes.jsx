@@ -82,7 +82,7 @@ export default function ListAllDishes() {
       fetchDishes();
       setRefreshListAux((prev) => prev + 1);
     }
-  }, [controlPopup, currentPage]);
+  }, [controlPopup, currentPage, itemsPerPage]);
 
   /* ==== LOCAL FILTER ==== */
   const filteredList = listAllDishes.filter((dish) => {
@@ -125,13 +125,14 @@ export default function ListAllDishes() {
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, name: e.target.value }))
             }
-            className="capitalize flex-1 sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-sm"
+            className="capitalize flex-1 sm:w-auto 
+            px-4 py-2 border border-gray-300 rounded-md text-sm w-full md:w-60"
           />
 
-          <div className="flex gap-4 flex-wrap items-center">
+          <div className="flex flex-wrap gap-4 items-center w-full">
             {listCategories.length > 0 && (
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-700">Category:</label>
+              <div className="flex items-center flex-wrap gap-2 w-full">
+                <label className="text-sm w-30 md:w-full text-gray-700">Category:</label>
                 <select
                   value={filters.category}
                   onChange={(e) =>
@@ -140,7 +141,9 @@ export default function ListAllDishes() {
                       category: e.target.value,
                     }))
                   }
-                  className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="
+                    capitalize px-3 py-2 border border-gray-300 
+                    rounded-md text-sm w-full "
                 >
                   <option value="">All categories</option>
                   {listCategories.map((cat) => (
@@ -153,8 +156,8 @@ export default function ListAllDishes() {
             )}
 
             {listIngredients.length > 0 && (
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-700">
+              <div className="flex items-center flex-wrap gap-2 w-full">
+                <label className="text-sm text-gray-700 w-30 md:w-full ">
                   Ingredients / side dishes:
                 </label>
                 <select
@@ -165,7 +168,9 @@ export default function ListAllDishes() {
                       ingredients: e.target.value,
                     }))
                   }
-                  className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="
+                    capitalize px-3 py-2 border border-gray-300 
+                    rounded-md text-sm w-full"
                 >
                   <option value="">All options</option>
                   {listIngredients.map((ing) => (
@@ -178,14 +183,15 @@ export default function ListAllDishes() {
             )}
 
             {listTags.length > 0 && (
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-700">Highlights:</label>
+              <div className="flex items-center flex-wrap gap-2 w-full">
+                <label className="text-sm text-gray-700 w-30  md:w-full ">Highlights:</label>
                 <select
                   value={filters.tag}
                   onChange={(e) =>
                     setFilters((prev) => ({ ...prev, tag: e.target.value }))
                   }
-                  className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="capitalize px-3 py-2 border border-gray-300 
+                  rounded-md text-sm  w-full "
                 >
                   <option value="">Other highlights</option>
                   {listTags.map((tag) => (
@@ -197,24 +203,24 @@ export default function ListAllDishes() {
               </div>
             )}
           </div>
+        </div>
 
-          {/* ==== FILTER: ACTIVE ONLY ==== */}
-          <div className="flex items-center flex-col md:flex-row justify-between gap-4">
-            <label>Show only active items?</label>
-            <span className="flex items-center flex-col md:flex-row justify-start gap-2">
-              <input
-                type="checkbox"
-                checked={filters.isActive}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    isActive: e.target.checked,
-                  }))
-                }
-              />
-              {filters.isActive ? 'Yes' : 'No'}
-            </span>
-          </div>
+        {/* ==== FILTER: ACTIVE ONLY ==== */}
+        <div className="flex items-center flex-wrap justify-between gap-4 mb-4 w-30 md:w-full ">
+          <label>Show only active items?</label>
+          <span className="flex items-center justify-start gap-2 w-full">
+            <input
+              type="checkbox"
+              checked={filters.isActive}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  isActive: e.target.checked,
+                }))
+              }
+            />
+            {filters.isActive ? 'Yes' : 'No'}
+          </span>
         </div>
       </section>
 
@@ -228,30 +234,9 @@ export default function ListAllDishes() {
                 className="border rounded-lg p-4 shadow-sm hover:shadow-md hover:bg-gray-50 transition"
               >
                 <div className="flex items-start flex-col md:flex-row justify-between gap-6">
-                  <h3 className="flex-2 text-lg uppercase font-bold text-gray-800 break-all">
+                  <h3 className="flex-2 text-lg uppercase font-bold text-gray-800 break-all ">
                     {item.name}
                   </h3>
-                  <div className="flex-1 items-center flex md:flex-col justify-end gap-2 flex-col md:flex-row justify-between gap-6">
-                    <p>
-                      <span
-                        className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit
-                ${item.isActive ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}
-                      >
-                        {item.isActive ? 'Active' : 'Disabled'}
-                      </span>
-                    </p>
-
-                    <button
-                      onClick={() => {
-                        clickButtonEdit(item.id);
-                        setControlPopup(true);
-                      }}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-sm rounded"
-                    >
-                      Edit
-                    </button>
-                    <BtnDeleteDish dishID={item.id} onDelete={fetchDishes} />
-                  </div>
                 </div>
 
                 <p className="text-lg text-gray-700 mt-1">
@@ -262,34 +247,61 @@ export default function ListAllDishes() {
                 </p>
 
                 <div className="mt-2">
-                  <p className="text-lg text-gray-700 font-medium">
+                  <p className="text-lg text-gray-700 font-medium text-wrap break-all ">
                     Description:
                   </p>
-                  <p className="text-lg text-gray-600 mt-1">{item.description}</p>
+                  <p className="text-lg text-gray-600 mt-1 ">{item.description}</p>
                 </div>
 
                 <div className="text-lg text-gray-500 mt-3 space-y-1">
                   <p>Category: {item.category.name}</p>
                   <p>
-                    Created:{' '}
-                    {new Date(item.createdAt).toLocaleDateString('en-US')}
+                    {item.createdAt && !isNaN(new Date(item.createdAt).getTime())
+                      ? 'Created: ' + new Date(item.createdAt).toLocaleDateString('en-US')
+                      : ''}
                   </p>
-                  <p>
-                    Last update:{' '}
-                    {new Date(item.updatedAt).toLocaleDateString('en-US')}
-                  </p>
+
                 </div>
 
-                <div className="mt-4 space-y-2">
+                <div className="mt-4 space-y-2 text-wrap ">
                   <ListIngredientsByDisheId
                     propDishId={item.id}
                     refreshTable={refreshListsAux}
                   />
+
                   <ListTagsByDisheId
                     propDishId={item.id}
                     refreshTable={refreshListsAux}
                   />
                 </div>
+
+                <div className="flex gap-2  justify-end gap-6 items-center flex-wrap ">
+                  <div className='w-full justify-end'>
+                    <span
+                      className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit
+                        ${item.isActive
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-orange-100 text-orange-800'}`
+                      }
+                    >
+                      {item.isActive ? 'Active' : 'Disabled'}
+                    </span>
+                  </div>
+                  <div className='w-70 flex flex-wrap gap-4 md:justify-end justify-center'>
+                    <button
+                      onClick={() => {
+                        clickButtonEdit(item.id);
+                        setControlPopup(true);
+                      }}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-sm rounded md:w-30 w-auto "
+                    >
+                      Edit
+                    </button>
+
+                    <BtnDeleteDish dishID={item.id} onDelete={fetchDishes} />
+                  </div>
+                </div>
+
               </div>
             ))}
           </>
