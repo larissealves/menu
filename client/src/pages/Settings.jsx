@@ -63,14 +63,14 @@ export default function Settings() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b pb-2 text-sm font-medium text-gray-600">
+      <div className="flex gap-4 border-b pb-2 text-sm font-medium text-gray-600  w-full md:w-auto flex-wrap">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-1 px-3 py-1 border-b-2 transition cursor-pointer  ${
+            className={`flex items-center gap-1 px-3 py-1 border-b-2 transition cursor-pointer w-full md:w-auto ${
               activeTab === tab.key
-                ? 'border-fuchsia-600 text-fuchsia-600 font-semibold '
+                ? 'border-fuchsia-600 text-fuchsia-600 font-semibold  '
                 : 'border-transparent hover:text-violet'
             }`}
           >
@@ -81,7 +81,7 @@ export default function Settings() {
       </div>
 
       {/* Conteúdo */}
-      <div className="bg-white rounded-xl shadow p-6">
+      <div className="bg-white rounded-xl shadow p-6 ">
         {activeTab === 'categories' && <ListCategories categoriesControlPopup={controlPopupCategory} onClose={closeCategoryPopup}/>}
         {activeTab === 'dishes' && <ListAllDishes />}
         {activeTab === 'ingredients' && <ListIngredient />}
