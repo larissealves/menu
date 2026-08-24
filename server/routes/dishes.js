@@ -425,7 +425,10 @@ router.get('/get/dishes-id-relations/:filterOnlyActives/:limitItemsPerPage/:curr
   requireAuth,
   async (req, res) => {
     try {
-      const filterOnlyActives = req.params.filterOnlyActives === 'true';
+      const filterOnlyActives = req.params.filterOnlyActives === 'true' 
+    ? true 
+    : req.params.filterOnlyActives === 'false' ? false : null;
+
       const whereCategoryId = Number(req.params.filterCategoryId);
       const whereIngredientId = Number(req.params.filterIngredientID);
       const whereTagId = Number(req.params.filterTagId);
@@ -441,8 +444,8 @@ router.get('/get/dishes-id-relations/:filterOnlyActives/:limitItemsPerPage/:curr
         paginationLimit;
 
       const where = {
-        ...(filterOnlyActives && {
-          isActive: true,
+        ...(filterOnlyActives !== null && {
+          isActive: filterOnlyActives,
         }),
 
         ...(whereCategoryId > 0 && {
