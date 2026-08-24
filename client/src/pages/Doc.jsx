@@ -29,7 +29,7 @@ export default function ProjectDocumentation() {
       </p>
       <br></br>
       <p>
-        The project also includes the deployment process and configuration for Render (Backend) and Vercel (Frontend).
+        The project also includes the deployment process and configuration for <strong> </strong>Render (Backend) and Vercel (Frontend)</strong>.
       </p>
       <br></br>
       <blockquote className="border-l-4 border-yellow-400 pl-4 italic text-sm">
@@ -41,7 +41,7 @@ export default function ProjectDocumentation() {
         refer to the personal notes / documentation updates folder in the git repository.
       </blockquote>
 
-      <h2 className="text-2xl font-semibold mt-10">📁 Project Structure</h2>
+      <h2 className="text-2xl font-semibold mt-10">📁 Project Structure - Resume </h2>
       <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
         <code>
           {`menu/
@@ -55,17 +55,23 @@ export default function ProjectDocumentation() {
 │   │       └── base.css
 │   ├── index.html
 │   ├── vite.config.js
-│   ├── postcss.config.js
-│   ├── tailwind.config.js
+│   ├──
+│   ├── 
 │   └── vercel.json
+|
 ├── prisma/
 │   ├── schema.prisma
 │   └── migrations/
 ├── server/
 │   ├── routes/
-│   ├── uploads/
+│   ├── 
 │   └── index.js
-├── .env
+|
+|--  personal_notes
+├── .env.development           # Environment variables - development
+├── .env.example               # Example environment variables
+├── .env.production            # Environment variables - production
+├── .env.test                  # Environment variables - test
 ├── package.json
 └── README.md`}
         </code>
