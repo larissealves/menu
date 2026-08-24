@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import AddCategory from './NewCategory';
 import BtnDeleteCategory from './BtnDeleteCategory';
 
-export default function ListCategories() {
+export default function ListCategories({ categoriesControlPopup, onClose }) {
   const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
 
   /* ==== STATES ==== */
@@ -15,15 +15,16 @@ export default function ListCategories() {
   const [controlPopup, setControlPopup] = useState(false);
 
   /* ==== HANDLERS ==== */
-  const toggleControlPopup = () => {
-    setControlPopup(!controlPopup);
-    fetchCategories();
-  };
-
   const editCategory = (id) => {
     setCategoryEditID(id);
-    setControlPopup(true);
+    onClose();
   };
+
+  const closePopup = () => {
+    if(categoryEditID) setCategoryEditID(0);
+    onClose();
+  }
+
 
   /* ==== FETCH DATA ==== */
   const fetchCategories = async () => {
@@ -51,6 +52,11 @@ export default function ListCategories() {
       fetchCategories();
     }
   }, [controlPopup]);
+
+  useEffect(() => {
+    setControlPopup(categoriesControlPopup);
+  }, [categoriesControlPopup]);
+  
 
   /* ==== RENDER ==== */
   return (
@@ -90,7 +96,7 @@ export default function ListCategories() {
             key={item.id}
             className="grid grid-cols-1 md:grid-cols-5 items-center border rounded px-4 py-3 bg-gray-50 hover:bg-gray-100 transition"
           >
-            <span className="font-medium text-gray-800 break-all capitalize ">
+            <span className="font-medium text-gray-800 break-all capitalize  ">
               {item.name}
             </span>
             <span className="text-sm text-gray-500">
@@ -102,23 +108,23 @@ export default function ListCategories() {
             </span>
 
             <span
-              className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit ${
-                item.isActive
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-orange-100 text-orange-800'
-              }`}
+              className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit ${item.isActive
+                ? 'bg-green-100 text-green-800'
+                : 'bg-orange-100 text-orange-800'
+                }`}
             >
               {item.isActive ? 'Active' : 'Disabled'}
             </span>
 
             {/* ==== ACTIONS ==== */}
-            <div className="flex justify-end gap-4 mt-2 md:mt-0">
+            <div className="flex justify-end gap-4 mt-2 md:mt-0 ">
               <button
                 onClick={() => editCategory(item.id)}
                 className="px-3 py-1 text-sm bg-fuchsia-600 hover:bg-violet-700 text-white rounded cursor-pointer"
               >
                 Edit
               </button>
+
               <BtnDeleteCategory
                 categoryID={item.id}
                 onDelete={fetchCategories}
@@ -129,11 +135,11 @@ export default function ListCategories() {
       </div>
 
       {/* ==== POPUP ==== */}
-      {controlPopup && (
+      {categoriesControlPopup && (
         <AddCategory
           propsCategoryID={categoryEditID}
-          handleToggleControlPopup={toggleControlPopup}
-          controlPopup={controlPopup}
+          handleToggleControlPopup={closePopup}
+          controlPopup={categoriesControlPopup}
         />
       )}
     </div>

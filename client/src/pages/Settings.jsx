@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PlusCircle, LayoutGrid, Utensils, Tag, List } from 'lucide-react';
 import { useNavigate, Link } from "react-router-dom";
 
@@ -20,6 +20,7 @@ export default function Settings() {
   const [controlPopupIngredient, setControlPopupIngredient] = useState(false);
   const [controlPopupTag, setControlPopupTag] = useState(false);
 
+
   const tabs = [
     { key: 'categories', label: 'Categories', icon: <LayoutGrid size={16} /> },
     { key: 'tags', label: 'Tags', icon: <Tag size={16} /> },
@@ -28,9 +29,15 @@ export default function Settings() {
    
   ];
 
+  const closeCategoryPopup = () => {
+    setControlPopupCategory((prev) => !prev);
+  }
+
+
   const toggleControlPopup = () => {
     setControlPopupDish((prev) => !prev);
   };
+;
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8">
@@ -40,7 +47,7 @@ export default function Settings() {
       <Link to="/ProjectDocumentation" target="_blank" className="text-blue-600 underline font-bold"> 
         Project Documentation → </Link>
       {/* Ações */}
-      <div className="flex flex-wrap gap-4 justify-end">
+      <div className="flex flex-wrap gap-4 justify-end mt-4">
         <button onClick={() => setControlPopupCategory(true)} className="bg-purple-400 hover:bg-purple-700 text-white  font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Category
         </button>
@@ -75,15 +82,15 @@ export default function Settings() {
 
       {/* Conteúdo */}
       <div className="bg-white rounded-xl shadow p-6">
-        {activeTab === 'categories' && <ListCategories />}
+        {activeTab === 'categories' && <ListCategories categoriesControlPopup={controlPopupCategory} onClose={closeCategoryPopup}/>}
         {activeTab === 'dishes' && <ListAllDishes />}
         {activeTab === 'ingredients' && <ListIngredient />}
         {activeTab === 'tags' && <ListTags />}
       </div>
 
       {/* Popups */}
-      <AddDishes handleToggleControlPopup ={ toggleControlPopup} controlPopup={controlPopupDish} />
-      <AddCategory handleToggleControlPopup={() => setControlPopupCategory(false)} controlPopup={controlPopupCategory} />
+      <AddDishes handleToggleControlPopup = { toggleControlPopup} controlPopup={controlPopupDish} />
+      {/*<AddCategory handleToggleControlPopup={() => setControlPopupCategory(false)} controlPopup={controlPopupCategory} updateList={OnSavedd}/>*/}
       <AddIngredient handletoggleControlPopup={() => setControlPopupIngredient(false)} controlPopup={controlPopupIngredient} />
       <AddTag handletoggleControlPopup={() => setControlPopupTag(false)} controlPopup={controlPopupTag} />
     </div>

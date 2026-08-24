@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react'
 
-import BtnDeleteCategory from './BtnDeleteCategory'
-
-export default function AddCategory({ propsCategoryID, handleToggleControlPopup, controlPopup }) {
+export default function AddCategory({ propsCategoryID, handleToggleControlPopup, controlPopup}) {
     const API_BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+        import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
 
     const [formNewCategory, setFormNewCategory] = useState({
         name: '',
         isActive: true,
     })
+
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (propsCategoryID) {
@@ -42,6 +42,7 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setLoading(true);
         const endpoint = propsCategoryID
             ? `${API_BASE_URL}/api/update/category/${propsCategoryID}`
             : `${API_BASE_URL}/api/new/category`
@@ -55,14 +56,14 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
                 body: JSON.stringify(formNewCategory),
             })
 
-            if (res.ok) {
-                setFormNewCategory({ name: '', isActive: true })
-                handleToggleControlPopup()
-            } else {
-                console.error('Erro ao salvar categoria')
-            }
         } catch (error) {
             console.error('Erro na requisição:', error)
+            setLoading(false);
+        }
+        finally {
+            setFormNewCategory({ name: '', isActive: true })
+            handleToggleControlPopup();
+            setLoading(false);
         }
     }
 
@@ -70,7 +71,7 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
 
     return (
         <div className="main-content">
-            
+
             {controlPopup && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md relative">
@@ -78,13 +79,15 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
                             <h2 className="text-xl font-semibold">
                                 {propsCategoryID ? 'Edit' : 'Create'} Category
                             </h2>
-                            <button
-                                onClick={handleToggleControlPopup}
-                                className="text-gray-500 hover:text-gray-800 cursor-pointer text-2xl font-bold leading-none"
-                                aria-label="Close"
-                            >
-                                ×
-                            </button>
+                            {!loading &&
+                                <button
+                                    onClick={handleToggleControlPopup}
+                                    className="text-gray-500 hover:text-gray-800 cursor-pointer text-2xl font-bold leading-none"
+                                    aria-label="Close"
+                                >
+                                    ×
+                                </button>
+                            }
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <input
@@ -106,21 +109,14 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
                                 <span>{formNewCategory.isActive ? 'Active' : 'Disabled'}</span>
                             </label>
                             <div className="flex justify-end pt-4 gap-4 border-t">
+
                                 <button
                                     type="submit"
-                                    className="bg-blue-600  cursor-pointer  text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                                    disabled={loading}
+                                    className={`cursor-pointer text-white px-4 py-2 rounded transition ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                                 >
-                                    {propsCategoryID ? 'Update' : 'Create'}
+                                    {loading ? "savando..." : propsCategoryID ? 'Update' : 'Create'}
                                 </button>
-
-                                {/*propsCategoryID && (
-                                    <BtnDeleteCategory
-                                        categoryID={propsCategoryID}
-                                        onDelete={() => {
-                                            toggleControlPopup();
-                                        }}
-                                    />
-                                )*/}
                             </div>
                         </form>
                     </div>

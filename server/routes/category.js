@@ -109,10 +109,9 @@ router.delete('/delete/category/:id', async (req, res) => {
     const res = await prisma.category.delete({
       where: { id: categoryId},
     })
-    res.status(200).end()
+    res.status(200).json()
   }catch (error) {
-    console.error('Error ao atualizar a categoria', error)
-    res.status(500).json({error: 'Erro ao atualizar a categoria'})
+    res.status(500).json({error: 'Erro ao atualizar a categoria id ', categoryId})
   }
 })
 
