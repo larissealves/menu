@@ -8,8 +8,6 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
     const isEdit =( propsTagID != null);
     const [loading, setLoading] = useState(false);
 
-    console.log("aaaaaaaaaaaaaaaaa =>>>" ,propsTagID, isEdit);
-
     const [formNewTag, setFormNewTag] = useState({
         name: '',
         isActive: true,
@@ -74,7 +72,7 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
     return (
         <div className="main-content">
             {controlPopup && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center  p-4">
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md relative">
                         <div className="flex justify-between items-center mb-4 border-b pb-2">
                             <h2 className="text-xl font-semibold">
@@ -116,7 +114,7 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
                                     disabled={loading}
                                     className={`cursor-pointer text-white px-4 py-2 rounded transition ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                                 >
-                                    {loading ? 'Salvando...'
+                                    {loading ? 'Loading......'
                                         : isEdit ? 'Update' : 'Create'
                                     }
                                 </button>

@@ -4,6 +4,8 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
+  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+
   const [categories, setCategories] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [tags, setTags] = useState([]);
@@ -118,35 +120,42 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
       ? `${API_BASE_URL}/api/update/editDishes/${propDishID}`
       : `${API_BASE_URL}/api/new/addDishes`;
     const method = propDishID ? 'PUT' : 'POST';
+    const headers = {
+      Authorization: `Bearer ${TOKEN_FOR_API}`,
+    };
+
 
     try {
       setLoading(true);
       const res = await fetch(endpoint, {
         method,
+        headers,
         body: formData,
       });
 
-      if (res.ok) {
-        setStatus('Prato salvo com sucesso!');
-        setListImageTemp([]);
-        setFormDishes({
-          name: '',
-          price: '',
-          description: '',
-          categoryId: '',
-          isActive: true,
-          ingredients: [],
-          tags: [],
-          listImages: [],
-        });
+      setStatus(propDishID ? "Prato editado com sucesso!" : 'Prato salvo com sucesso!');
+      setListImageTemp([]);
+      setFormDishes({
+        name: '',
+        price: '',
+        description: '',
+        categoryId: '',
+        isActive: true,
+        ingredients: [],
+        tags: [],
+        listImages: [],
+      });
+
+      if (!res.ok) {
+        setStatus('Erro ao salvar o prato.', res.status);
         handleToggleControlPopup();
-      } else {
-        setStatus('Erro ao salvar o prato.');
       }
     } catch (error) {
       console.error('Erro na requisição:', error);
       setStatus('Erro na requisição.');
     } finally {
+      setStatus("");
+      handleToggleControlPopup();
       setLoading(false);
     }
   };
@@ -213,15 +222,13 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
         method: 'DELETE',
       });
 
-      if (res.ok) {
-        setImagesEditDish((prev) => prev.filter((img) => img.id !== id));
-      } else {
-        console.error('Erro ao deletar imagem');
-      }
+      setImagesEditDish((prev) => prev.filter((img) => img.id !== id));
+      
     } catch (error) {
       console.error('Erro ao deletar imagem:', error);
     }
     finally {
+      handleToggleControlPopup();
       setLoading(false);
     }
   };
@@ -229,8 +236,8 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
   return (
     <div>
       {controlPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-5xl max-h-[90vh] p-6 relative flex flex-col">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-5xl max-h-[90vh] p-6 relative flex flex-col ">
             <div className="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 pb-2">
               <h2 className="text-xl font-semibold">{propDishID ? 'Edit Dish' : 'New Dish'}</h2>
 
@@ -302,7 +309,7 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
                       <input type="checkbox" name="isActive"
                         checked={formDishes.isActive}
                         onChange={handleChange} />
-                      <span>{formDishes.isActive ? 'Ativo' : 'Inativo'}</span>
+                      <span>{formDishes.isActive ? 'Ativo' : 'Dish disabled'}</span>
                     </label>
                   </div>
 
@@ -316,10 +323,12 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
                           onChange={handleTempImage} className="hidden" />
                       </label>
                     )}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-4 gap-2">
                       {[...imagesEditDish, ...listTempImages].map((item, index) => (
-                        <div key={index} className="relative border p-2 rounded">
-                          <img src={item.id ? item.previewUrl : item.preview} alt={`img-${index}`} className="w-full h-32 object-cover rounded" />
+                        <div key={index} className="relative border p-2 rounded w-fit">
+                          <img src={item.id ? item.previewUrl : item.preview} alt={`img-${index}`} 
+                            className=" h-fit object-cover rounded  w-fit" />
+                          {!loading && (
                           <button type="button"
                             disabled={loading}
                             onClick={() => item.id
@@ -330,6 +339,7 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
                               bg-red-500 rounded-full px-2">
                             ×
                           </button>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -339,7 +349,7 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
                     <button type="submit" disabled={loading}
                       className={`w-full cursor-pointer py-2 rounded text-white 
                       ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}>
-                      {loading ? 'Loading...' : propDishID ? 'Edit' : 'Add'}
+                      {loading ? 'Loading...' : propDishID ? 'Update' : 'Create'}
                     </button>
                     {status && <p className="text-red-600 text-center mt-2">{status}</p>}
                   </div>

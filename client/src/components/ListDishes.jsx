@@ -5,10 +5,9 @@ import ListTagsByDisheId from './ListTagsbyDish';
 import ListIngredientsByDisheId from './ListIngredientsbyDish';
 import BtnDeleteDish from './BtnDeleteDish';
 
-export default function ListAllDishes() {
+export default function ListAllDishes({dishcontrolPopup, onClose}) {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
-
 
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({
@@ -20,7 +19,6 @@ export default function ListAllDishes() {
   });
 
   const [dishEditId, setDishEditId] = useState(null);
-  const [controlPopup, setControlPopup] = useState(false);
   const [refreshListsAux, setRefreshListAux] = useState(false);
 
   const [listAllDishes, setListAllDishes] = useState([]);
@@ -35,12 +33,13 @@ export default function ListAllDishes() {
 
   /* ==== HANDLERS ==== */
   const toggleControlPopup = () => {
-    setControlPopup((prev) => !prev);
+    setDishEditId(null);
+    onClose();
   };
 
   const clickButtonEdit = (id) => {
     setDishEditId(id);
-    setControlPopup((prev) => !prev);
+    onClose();
   };
 
 
@@ -81,14 +80,13 @@ export default function ListAllDishes() {
   };
 
   useEffect(() => {
-    if (!controlPopup) {
       fetchDishes();
-      setRefreshListAux((prev) => prev + 1);
-    }
-  }, [controlPopup ,filters, currentPage, itemsPerPage]);
+      //setRefreshListAux((prev) => prev + 1);
+  }, [dishcontrolPopup ,filters, currentPage, itemsPerPage]);
 
+  
   /* ==== LOCAL FILTER ==== */
-  const filteredList = listAllDishes.filter((dish) => {
+  /*const filteredList = listAllDishes.filter((dish) => {
     const matchesName = dish.name.toLowerCase().includes(filters.name.toLowerCase());
     const matchesCategory = filters.category ? dish.categoryId === +filters.category : true;
     const matchesTag = filters.tag
@@ -104,7 +102,7 @@ export default function ListAllDishes() {
     return matchesName && matchesCategory && matchesTag && matchesIngredients && matchesDishIsActive;
   });
 
-  /* ==== PAGINATE ==== 
+ ==== PAGINATE ==== 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredList.slice(indexOfFirstItem, indexOfLastItem);
@@ -299,8 +297,7 @@ export default function ListAllDishes() {
                   <div className='w-70 flex flex-wrap gap-4 md:justify-end justify-center'>
                     <button
                       onClick={() => {
-                        clickButtonEdit(item.id);
-                        setControlPopup(true);
+                        clickButtonEdit(item.id)
                       }}
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-sm rounded md:w-30 w-auto "
                     >
@@ -339,11 +336,11 @@ export default function ListAllDishes() {
       </div>
 
       {/* ==== POPUP ==== */}
-      {controlPopup && (
+      {dishcontrolPopup && (
         <AddDishes
           propDishID={dishEditId}
           handleToggleControlPopup={toggleControlPopup}
-          controlPopup={controlPopup}
+          controlPopup={dishcontrolPopup}
         />
       )}
     </div>
