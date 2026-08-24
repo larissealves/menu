@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import AddDishes from './NewDishes';
 import ListTagsByDisheId from './ListTagsbyDish';
 import ListIngredientsByDisheId from './ListIngredientsbyDish';
+import ListImagesByDish from './ListImagesbyDish';
 import BtnDeleteDish from './BtnDeleteDish';
 
 export default function ListAllDishes({dishcontrolPopup, onClose}) {
@@ -285,8 +286,7 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
                   />
                 </div>
 
-                <div className="flex gap-2  justify-end gap-6 items-center flex-wrap ">
-                  <div className='w-full justify-end'>
+                <div className='w-full justify-end mb-2'>
                     <span
                       className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit
                         ${item.isActive
@@ -297,6 +297,12 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
                       {item.isActive ? 'Active' : 'Disabled'}
                     </span>
                   </div>
+
+                <div className="w-full  sm:w-36">
+                  <ListImagesByDish dishId={item.id} refresh={dishcontrolPopup}/>
+                </div>
+
+                <div className="flex gap-2  justify-end gap-6 items-center flex-wrap ">
                   <div className='w-70 flex flex-wrap gap-4 md:justify-end justify-center'>
                     <button
                       onClick={() => {

@@ -128,7 +128,6 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
       console.error('Erro ao deletar imagem:', error);
     }
     finally {
-      handleToggleControlPopup();
       setLoading(false);
     }
   };
@@ -138,13 +137,24 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
   /* ================= FLOW IMAGES - ONLY FORM =========================== */
   const handleTempImage = (e) => {
     const files = Array.from(e.target.files);
-    files.forEach((file) => {
+
+    const sizeAvaliable = 4 - listTempImages.length;
+    const selectedFiles = files.slice(0, sizeAvaliable);
+
+    if (sizeAvaliable <= 0 ) {
+      e.target.value = "";
+      return; 
+    }
+
+    selectedFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setListImageTemp((prev) => [...prev, { name: file.name, file, preview: reader.result }]);
       };
       reader.readAsDataURL(file);
     });
+
+    e.target.value = "";
   };
 
   const handleRemoveTempImage = (index) => {
@@ -325,14 +335,16 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
 
 
                   <div className="flex-1">
-                    {!loading && (
+                    {[...imagesEditDish, ...listTempImages].length < 4 && !loading && (
                       <label htmlFor="image-upload"
-                        className="cursor-pointer inline-block px-4 py-2 mb-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition w-auto text-center">
+                        className="cursor-pointer inline-block px-4 py-2 mb-4 bg-blue-600 text-white rounded 
+                        hover:bg-blue-700 transition w-auto text-center">
                         Anexar Imagens
                         <input id="image-upload" type="file" multiple accept="image/*"
                           onChange={handleTempImage} className="hidden" />
                       </label>
                     )}
+                    
                     <div className="grid grid-cols-4 gap-2">
                       {[...imagesEditDish, ...listTempImages].map((item, index) => (
                         <div key={index} className="relative border p-2 rounded w-fit">

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import blankimage from '../assets/images/blank-image.png'
 
-export default function ListImagesByDish({ dishId }) {
+export default function ListImagesByDish({ dishId, refresh }) {
   const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
@@ -39,7 +39,7 @@ export default function ListImagesByDish({ dishId }) {
       };
     
       fetchImagesEditDish();
-    }, [dishId]);
+    }, [dishId, refresh]);
     
 
   return (
@@ -49,7 +49,7 @@ export default function ListImagesByDish({ dishId }) {
           key={img.id}
           src={img.previewUrl}
           alt={img.imageName}
-          className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded border transition duration-300 hover:scale-210"
+          className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded border transition duration-300 hover:scale-200"
         />
       ))}
     </div>
