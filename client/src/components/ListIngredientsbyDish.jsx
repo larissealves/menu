@@ -25,7 +25,7 @@ export default function ListIngredientsByDisheId({ propDishId, refreshTable }) {
         <div>
             <p> Ingredients / side dishes: </p>
             {listIngredients.length > 0 && (
-                <span className='text-gray-500 capitalize'>
+                <span className='text-gray-500 capitalize '>
                     {listIngredients
                         .map((item) => item.ingredient?.name)
                         .filter(Boolean)

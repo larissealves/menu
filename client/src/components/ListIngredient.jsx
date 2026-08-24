@@ -78,7 +78,7 @@ export default function ListIngredient({ showInList, ingredientControlPopup, onC
 
             setCurrentPage(1);
           }}
-          className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm"
+          className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm  w-full md:w-[30%] "
         >
           <option value="null">All items</option>
           <option value="true">Active items</option>

@@ -28,7 +28,8 @@ export default function ListTagsByDisheId({ propDishId, refreshTable }) {
       {listTags.length > 0 && listTags.map((item) => (
         <span
           key={item.id}
-          className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full"
+          className="bg-blue-100 text-blue-800 text-center text-sm font-medium px-2.5 py-0.5 rounded-full 
+          w-fit mb-4 lowercase"
         >
           {item.tag?.name}
         </span>
