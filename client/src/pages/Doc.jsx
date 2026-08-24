@@ -29,7 +29,7 @@ export default function ProjectDocumentation() {
       </p>
       <br></br>
       <p>
-        The project also includes the deployment process and configuration for <strong> </strong>Render (Backend) and Vercel (Frontend)</strong>.
+        The project also includes the deployment process and configuration for <strong>Render (Backend) and Vercel (Frontend)</strong>.
       </p>
       <br></br>
       <blockquote className="border-l-4 border-yellow-400 pl-4 italic text-sm">
