@@ -66,20 +66,62 @@ router.put('/update/ingredient/:id', async (req, res) => {
 })
 
 /* ============== GET ALL ITEMS ================= */
-router.get('/get/ingredientList', async (req, res) => {
+router.get('/get/ingredientList/:onlyActivesItems/:limitItemsPerPage/:currentPage', 
+  async (req, res) => {
   try {
-    const ingredients = await prisma.ingredient.findMany({
+
+    const filterOnlyActives = req.params.onlyActivesItems === 'true' 
+    ? true 
+    : req.params.onlyActivesItems === 'false' ? false : null;
+
+    const paginationLimit = Number(req.params.limitItemsPerPage) || 6;
+    const paginationCurrentPage = Number(req.params.currentPage) || 1;
+
+    const skip =
+      (paginationCurrentPage - 1) * paginationLimit;
+
+    const take =
+      paginationLimit;
+
+    const where = {
+      ...(filterOnlyActives !== null && {
+        isActive: filterOnlyActives,
+      }),
+    }
+
+    const [ingredients, totalItems ]= await Promise.all([
+    prisma.ingredient.findMany({
+      where,
+      skip,
+      take,
+
       orderBy: [
         {isActive:'desc'},
         {name:'asc'},
-      ]
+      ],
+    }),
+
+    prisma.ingredient.count({
+      where,
+    }),
+    ])
+
+    const paginationDetails = {
+      totalPages: Math.ceil(totalItems / paginationLimit),
+      currentPage: paginationCurrentPage,
+      itemsPerPage: paginationLimit,
+    }
+
+
+     res.status(200).json({
+      data: ingredients,
+      paginationDetails,
     })
-    res.status(200).json(ingredients)
+
   } catch (error) {
-    console.error('Erro ao buscar os ingredientes:', error)
     res.status(500).json({ error: 'Erro ao buscar os ingredientes' })
   }
-})
+}),
 
 /* ============== GET ALL ITEMS - Active ================= */
 router.get('/get/ingredientList/active', async (req, res) => {
