@@ -30,12 +30,8 @@ export default function BtnDeleteIngredient({ ingredientID, onDelete }) {
         method: 'DELETE',
       });
 
-      if (res.ok) {
-        console.log('Ingrediente deletado com sucesso');
-        if (onDelete) onDelete();
-      } else {
-        console.error('Erro ao deletar ingrediente');
-      }
+      onDelete();
+      
     } catch (error) {
       console.error('Erro ao deletar esta ingrediente', error);
     }

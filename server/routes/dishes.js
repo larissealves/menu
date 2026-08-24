@@ -421,81 +421,123 @@ router.get('/get/filterIngredientsByDishId/:id', async (req, res) => {
 });
 
 //=============== FILTERS FRONT-END ==========
-router.get('/get/dishes-id-relations/:filterOnlyActives/:limitItemsPerPage/:currentPage', 
-  requireAuth, 
+router.get('/get/dishes-id-relations/:filterOnlyActives/:limitItemsPerPage/:currentPage/:filterCategoryId/:filterIngredientID/:filterTagId',
+  requireAuth,
   async (req, res) => {
-  try {
-    const filterOnlyActives = req.params.filterOnlyActives === 'true';
+    try {
+      const filterOnlyActives = req.params.filterOnlyActives === 'true' 
+    ? true 
+    : req.params.filterOnlyActives === 'false' ? false : null;
 
-    const where = filterOnlyActives ? { isActive: true } : {};
+      const whereCategoryId = Number(req.params.filterCategoryId);
+      const whereIngredientId = Number(req.params.filterIngredientID);
+      const whereTagId = Number(req.params.filterTagId);
+      //const whereSearchByName = req.params.searchByName;
 
-    const paginationLimitItemsPerPage = Number(req.params.limitItemsPerPage) || 6;
-    const paginationCurrentPage = Number(req.params.currentPage) || 1;
+      const paginationLimit = Number(req.params.limitItemsPerPage) || 6;
+      const paginationCurrentPage = Number(req.params.currentPage) || 1;
 
-    const skip =
-      (paginationCurrentPage - 1) * paginationLimitItemsPerPage;
+      const skip =
+        (paginationCurrentPage - 1) * paginationLimit;
 
-    const take = 
-      paginationLimitItemsPerPage;
+      const take =
+        paginationLimit;
 
-    const [dishes, totalItems] = await Promise.all([
-      prisma.dish.findMany({
-        where: where,
-        skip,
-        take,
-        orderBy: [
-          { isActive: 'desc' },
-          { name: 'asc' }
-        ],
-        select: {
-          id: true,
-          name: true,
-          price: true,
-          categoryId: true,
-          description: true,
-          isActive: true,
+      const where = {
+        ...(filterOnlyActives !== null && {
+          isActive: filterOnlyActives,
+        }),
 
-          category: {
-            select: {
-              name: true,
-            },
-          },
+        ...(whereCategoryId > 0 && {
+          categoryId: whereCategoryId,
+        }),
 
-          tags: {
-            select: {
-              tagId: true,
-            },
-          },
-
+        ...(whereIngredientId > 0 && {
           ingredients: {
-            select: {
-              ingredientId: true,
+            some: {
+              ingredientId: whereIngredientId,
             },
           },
+        }),
 
-        },
-      }),
+        ...(whereTagId > 0 && {
+          tags: {
+            some: {
+              tagId: whereTagId,
+            },
+          },
+        }),
 
-      prisma.dish.count({
-        where,
-      }),
-    ]);
+        /*...(whereSearchByName &&
+          whereSearchByName !== 'null' &&
+          whereSearchByName !== 'undefined' && {
+          name: {
+            contains: whereSearchByName,
+            mode: 'insensitive',
+          },
+        }),*/
+      };
 
-    const paginationDetais = {
-      totalPages: Math.ceil(totalItems / paginationLimitItemsPerPage),
-      currentPage: paginationCurrentPage,
-      ItemsPerPage: paginationLimitItemsPerPage,
+      const [dishes, totalItems] = await Promise.all([
+        prisma.dish.findMany({
+          where,
+          skip,
+          take,
+
+          orderBy: [
+            { isActive: 'desc' },
+            { name: 'asc' }
+          ],
+
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            categoryId: true,
+            description: true,
+            isActive: true,
+
+            category: {
+              select: {
+                name: true,
+              },
+            },
+
+            tags: {
+              select: {
+                tagId: true,
+              },
+            },
+
+            ingredients: {
+              select: {
+                ingredientId: true,
+              },
+            },
+
+          },
+        }),
+
+        prisma.dish.count({
+          where,
+        }),
+      ]);
+
+      const paginationDetais = {
+        totalPages: Math.ceil(totalItems / paginationLimit),
+        currentPage: paginationCurrentPage,
+        ItemsPerPage: paginationLimit,
+      }
+
+      res.status(200).json({
+        dishes: dishes,
+        paginationDetais,
+      })
+
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
     }
-
-    res.status(200).json({
-      dishes: dishes,
-      paginationDetais,
-    })
-    
-  } catch (error) {
-    return res.status(500).json({ error: 'Erro ao buscar os pratos paginados' });
-  }
-});
+  });
 
 
 /* ============== GET IMAGE BY DISH ID ================= */

@@ -7,18 +7,25 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
 
-  const [hasDishesLinked, setHasDishesLinked] = useState(false)
+  const [hasDishesLinked, setHasDishesLinked] = useState(false);
+  const [loading, setLoading] = useState();
 
   // Buscar pratos com base na categoryID
   useEffect(() => {
     const fetchDishes = async () => {
       try {
+        setLoading(true);
         const res = await fetch(`${API_BASE_URL}/api/get/filterDishesByCategoryId/${categoryID}`);
         const data = await res.json();
-        console.log('AAAAAAAAAAAAAAAA', res.json)
         setHasDishesLinked(data.length > 0);
-      } catch (error) {
+      }
+
+      catch (error) {
         console.error('Erro ao buscar pratos vinculados à categoria:', error);
+      }
+
+      finally {
+        setLoading(false);
       }
     };
     if (categoryID) fetchDishes();
@@ -32,11 +39,8 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
         method: 'DELETE',
       });
 
-      if (res.ok) {
-        if (onDelete) onDelete();
-      } else {
-        console.error('Erro ao deletar categoria');
-      }
+      onDelete();
+
     } catch (error) {
       console.error('Erro ao deletar esta categoria', error);
     }
@@ -44,34 +48,30 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
 
   return (
     <div>
-      {hasDishesLinked ? (
-        <Tooltip className={'disabled'} tooltipContent={'Not allowed. There are dishes linked to this category'}>
+      {!loading && (
+        <>{hasDishesLinked ? (
+          <Tooltip className={'disabled'} tooltipContent={'Not allowed. There are dishes linked to this category'}>
+            <button type="button"
+              disabled={true}
+              className={
+                `px-4 py-2 rounded text-white cursor-pointer bg-gray-400 cursor-not-allowed'`
+              }
+            >
+              Delete
+            </button>
+          </Tooltip>
+
+        ) : (
           <button type="button"
             disabled={hasDishesLinked}
             onClick={handleDeleteSubmit}
             className={
-              `px-4 py-2 rounded text-white cursor-pointer 
-              ${hasDishesLinked ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'
-              }`
+              `px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white cursor-pointer`
             }
           >
             Delete
           </button>
-        </Tooltip>
-
-      ) : (
-
-        <button type="button"
-          disabled={hasDishesLinked}
-          onClick={handleDeleteSubmit}
-          className={
-            `px-4 py-2 rounded text-white cursor-pointer 
-              ${hasDishesLinked ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'
-            }`
-          }
-        >
-          Delete
-        </button>
+        )}</>
       )}
     </div>
   );

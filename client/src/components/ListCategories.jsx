@@ -3,34 +3,42 @@ import React, { useEffect, useState } from 'react';
 import AddCategory from './NewCategory';
 import BtnDeleteCategory from './BtnDeleteCategory';
 
-export default function ListCategories() {
+export default function ListCategories({ categoriesControlPopup, onClose }) {
   const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
 
   /* ==== STATES ==== */
-  const [filters, setFilters] = useState({ option: '' });
+  const [filters, setFilters] = useState({ option: 'null' });
   const [listCategories, setCategories] = useState([]);
   const [categoryEditID, setCategoryEditID] = useState(null);
   const [controlPopup, setControlPopup] = useState(false);
 
-  /* ==== HANDLERS ==== */
-  const toggleControlPopup = () => {
-    setControlPopup(!controlPopup);
-    fetchCategories();
-  };
 
+  const itemsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
+  console.log(filters.option);
+  /* ==== HANDLERS ==== */
   const editCategory = (id) => {
     setCategoryEditID(id);
-    setControlPopup(true);
+    onClose();
   };
+
+  const closePopup = () => {
+    if (categoryEditID) setCategoryEditID(0);
+    onClose();
+  }
 
   /* ==== FETCH DATA ==== */
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/get/categoryList`);
+      const res = await fetch(`${API_BASE_URL}/api/get/categoryList/${filters.option}/${itemsPerPage}/${currentPage}`);
       const data = await res.json();
-      setCategories(data);
+      setCategories(data.categories);
+      setCurrentPage(data.paginationDetails.currentPage);
+      setTotalPages(data.paginationDetails.totalPages);
     } catch (error) {
       console.log('Error fetching category list:', error);
     }
@@ -50,7 +58,12 @@ export default function ListCategories() {
     if (!controlPopup) {
       fetchCategories();
     }
-  }, [controlPopup]);
+  }, [controlPopup, currentPage, filters]);
+
+  useEffect(() => {
+    setControlPopup(categoriesControlPopup);
+  }, [categoriesControlPopup]);
+
 
   /* ==== RENDER ==== */
   return (
@@ -73,11 +86,12 @@ export default function ListCategories() {
         <select
           value={filters.option}
           onChange={(e) =>
-            setFilters((prev) => ({ ...prev, option: e.target.value }))
+            setFilters((prev) => ({ ...prev, option: e.target.value }),
+            setCurrentPage(1))
           }
-          className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm"
+          className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm  w-full md:w-[30%] "
         >
-          <option value="">All items</option>
+          <option value="null">All items</option>
           <option value="true">Active items</option>
           <option value="false">Disabled items</option>
         </select>
@@ -85,12 +99,12 @@ export default function ListCategories() {
 
       {/* ==== LIST ==== */}
       <div className="space-y-3">
-        {filteredList.map((item) => (
+        {listCategories.map((item) => (
           <div
             key={item.id}
             className="grid grid-cols-1 md:grid-cols-5 items-center border rounded px-4 py-3 bg-gray-50 hover:bg-gray-100 transition"
           >
-            <span className="font-medium text-gray-800 break-all capitalize ">
+            <span className="font-medium text-gray-800 break-all capitalize  ">
               {item.name}
             </span>
             <span className="text-sm text-gray-500">
@@ -102,23 +116,23 @@ export default function ListCategories() {
             </span>
 
             <span
-              className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit ${
-                item.isActive
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-orange-100 text-orange-800'
-              }`}
+              className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit ${item.isActive
+                ? 'bg-green-100 text-green-800'
+                : 'bg-orange-100 text-orange-800'
+                }`}
             >
               {item.isActive ? 'Active' : 'Disabled'}
             </span>
 
             {/* ==== ACTIONS ==== */}
-            <div className="flex justify-end gap-4 mt-2 md:mt-0">
+            <div className="flex justify-center md:justify-end gap-4 mt-2 md:mt-0 ">
               <button
                 onClick={() => editCategory(item.id)}
                 className="px-3 py-1 text-sm bg-fuchsia-600 hover:bg-violet-700 text-white rounded cursor-pointer"
               >
                 Edit
               </button>
+
               <BtnDeleteCategory
                 categoryID={item.id}
                 onDelete={fetchCategories}
@@ -128,12 +142,33 @@ export default function ListCategories() {
         ))}
       </div>
 
+
+        {/* ==== PAGINATION ==== */}
+        <div className="flex gap-2 mt-4 justify-center items-center md:justify-end  ">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+          >
+            Previous
+          </button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+          >
+            Next
+          </button>
+        </div>
+
+
       {/* ==== POPUP ==== */}
-      {controlPopup && (
+      {categoriesControlPopup && (
         <AddCategory
           propsCategoryID={categoryEditID}
-          handleToggleControlPopup={toggleControlPopup}
-          controlPopup={controlPopup}
+          handleToggleControlPopup={closePopup}
+          controlPopup={categoriesControlPopup}
         />
       )}
     </div>

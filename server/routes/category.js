@@ -6,9 +6,9 @@ const prisma = new PrismaClient()
 
 /* ============== CREATE ================= */
 router.post('/new/category', async (req, res) => {
-  const { name, isActive} = req.body
+  const { name, isActive } = req.body
   try {
-    const newCategory = await prisma.category.create ({
+    const newCategory = await prisma.category.create({
       data: {
         name,
         isActive: isActive === 'true' || isActive === true,
@@ -18,24 +18,65 @@ router.post('/new/category', async (req, res) => {
     res.status(201).json(newCategory)
   } catch (error) {
     console.error('Error ao criar nova categoria', error)
-    res.status(500).json({ error: 'Error ao criar categoria'})
+    res.status(500).json({ error: 'Error ao criar categoria' })
   }
 })
 
 
 /* ============== GET ALL ITEMS ================= */
-router.get('/get/categoryList', async (req, res) => {
+router.get('/get/categoryList/:onlyActivesItems/:limitItemsPerPage/:currentPage', async (req, res) => {
   try {
-    const categories = await prisma.category.findMany({
-      orderBy: [
-        {isActive:'desc'},
-        {name:'asc'},
-      ]
+    const filterOnlyActives = req.params.onlyActivesItems === 'true' 
+    ? true 
+    : req.params.onlyActivesItems === 'false' ? false : null;
+
+    const paginationLimit = Number(req.params.limitItemsPerPage) || 6;
+    const paginationCurrentPage = Number(req.params.currentPage) || 1;
+
+    const skip =
+      (paginationCurrentPage - 1) * paginationLimit;
+
+    const take =
+      paginationLimit;
+
+    const where = {
+      ...(filterOnlyActives !== null && {
+        isActive: filterOnlyActives,
+      }),
+    }
+
+    const [categories, totalItems] = await Promise.all([
+      prisma.category.findMany({
+        where,
+        skip,
+        take,
+
+        orderBy: [
+          { isActive: 'desc' },
+          { name: 'asc' },
+        ],
+      }),
+
+      prisma.category.count({
+        where,
+      }),
+    ])
+
+    const paginationDetails = {
+      totalPages: Math.ceil(totalItems / paginationLimit),
+      currentPage: paginationCurrentPage,
+      itemsPerPage: paginationLimit,
+    }
+
+    res.status(200).json({
+      categories: categories,
+      paginationDetails,
     })
-    res.status(200).json(categories)
+
   } catch (error) {
-    console.error('Erro ao buscar categorias:', error)
-    res.status(500).json({ error: 'Erro ao buscar categorias' })
+    res.status(500).json({
+      error: 'Erro ao buscar categorias'
+    })
   }
 })
 
@@ -44,7 +85,7 @@ router.get('/get/categoryList', async (req, res) => {
 router.get('/get/categoryList/active', async (req, res) => {
   try {
     const categories = await prisma.category.findMany({
-      where:{
+      where: {
         isActive: true,
       },
       orderBy: {
@@ -83,11 +124,11 @@ router.get('/get/categoryID/:id', async (req, res) => {
 /* ============== UPDATE ================= */
 router.put('/update/category/:id', async (req, res) => {
   const categoryId = parseInt(req.params.id)
-  const { name, isActive} =  req.body
+  const { name, isActive } = req.body
 
   try {
     const updated = await prisma.category.update({
-      where: { id: categoryId},
+      where: { id: categoryId },
       data: {
         name,
         isActive: isActive === 'true' || isActive === true,
@@ -95,9 +136,9 @@ router.put('/update/category/:id', async (req, res) => {
       },
     })
     res.status(200).json(updated)
-  }catch (error) {
+  } catch (error) {
     console.error('Error ao atualizar a categoria', error)
-    res.status(500).json({error: 'Erro ao atualizar a categoria'})
+    res.status(500).json({ error: 'Erro ao atualizar a categoria' })
   }
 })
 
@@ -107,12 +148,11 @@ router.delete('/delete/category/:id', async (req, res) => {
   const categoryId = parseInt(req.params.id)
   try {
     const res = await prisma.category.delete({
-      where: { id: categoryId},
+      where: { id: categoryId },
     })
-    res.status(200).end()
-  }catch (error) {
-    console.error('Error ao atualizar a categoria', error)
-    res.status(500).json({error: 'Erro ao atualizar a categoria'})
+    res.status(200).json()
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atualizar a categoria id ', categoryId })
   }
 })
 

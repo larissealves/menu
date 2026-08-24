@@ -53,8 +53,7 @@ export default function ListAllDishes() {
       };
 
       const [dishRes, catRes, tagRes, ingredientsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${false}
-          /${itemsPerPage}/${currentPage}`, {
+        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${null}/${itemsPerPage}/${currentPage}/${0}/${0}/${0}`, {
           headers
         }),
         fetch(`${API_BASE_URL}/api/get/categoryList/active`),

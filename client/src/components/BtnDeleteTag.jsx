@@ -31,12 +31,8 @@ export default function BtnDeleteTag({ tagID, onDelete }) {
         method: 'DELETE',
       });
 
-      if (res.ok) {
-        console.log('tag deletada com sucesso');
-        if (onDelete) onDelete(); // callback opcional para atualizar a lista
-      } else {
-        console.error('Erro ao deletar tag');
-      }
+      onDelete();
+      
     } catch (error) {
       console.error('Erro ao deletar esta tag', error);
     }

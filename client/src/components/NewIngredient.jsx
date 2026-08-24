@@ -4,7 +4,7 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
   const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
-
+    const [loading, setLoading ] = useState(false);
     const [formNewIngredient, setFormNewIngredient] = useState({
         name: '',
         isActive: true,
@@ -14,6 +14,7 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
         if (propsIngredientID) {
             const fetchIngredient = async () => {
                 try {
+                    setLoading(true);
                     const res = await fetch(`${API_BASE_URL}/api/get/ingredientID/${propsIngredientID}`)
                     const data = await res.json()
                     setFormNewIngredient({
@@ -22,6 +23,9 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
                     })
                 } catch (error) {
                     console.error('Failed to fetch ingredient:', error)
+                }
+                finally {
+                    setLoading(false);
                 }
             }
             fetchIngredient()
@@ -40,6 +44,7 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setLoading(true);
         const endpoint = propsIngredientID
             ? `${API_BASE_URL}/api/update/ingredient/${propsIngredientID}`
             : `${API_BASE_URL}/api/new/ingredient`
@@ -52,15 +57,13 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formNewIngredient),
             })
-
-            if (res.ok) {
-                setFormNewIngredient({ name: '', isActive: true })
-                handletoggleControlPopup()
-            } else {
-                console.error('Erro ao cadastrar o ingrediente')
-            }
         } catch (error) {
             console.error('Erro na requisição:', error)
+        }
+        finally {
+            setFormNewIngredient({ name: '', isActive: true })
+            handletoggleControlPopup()
+            setLoading(false);
         }
     }
 
@@ -75,6 +78,7 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
                             <h2 className="text-xl font-semibold">
                                 {propsIngredientID ? 'Edit' : 'Create'} Ingredient
                             </h2>
+                            {!loading && (
                             <button
                                 onClick={handletoggleControlPopup}
                                 className="text-gray-500 cursor-pointer  hover:text-gray-800 text-2xl font-bold leading-none"
@@ -82,6 +86,7 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
                             >
                                 ×
                             </button>
+                            )}
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <input
@@ -105,9 +110,10 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
                             <div className="flex justify-end pt-4 border-t">
                                 <button
                                     type="submit"
-                                    className="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                                    disabled={loading}
+                                    className={`cursor-pointer text-white px-4 py-2 rounded transition ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                                 >
-                                    {propsIngredientID ? 'Update' : 'Create'}
+                                    {loading ? "loading..." : propsIngredientID ? 'Update' : 'Create'}
                                 </button>
                             </div>
                         </form>

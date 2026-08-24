@@ -3,56 +3,62 @@ import React, { useEffect, useState } from 'react';
 import AddTag from './NewTag';
 import BtnDeleteTag from './BtnDeleteTag';
 
-export default function ListTags({ showInList }) {
+export default function ListTags({ showInList, tagControlPopup, onClose }) {
   const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
 
   /* ==== STATES ==== */
-  const [filters, setFilters] = useState({ option: '' });
+  const [filters, setFilters] = useState({ option: 'null' });
   const [listTags, setTags] = useState([]);
   const [tagsEditID, setTagsEditID] = useState(null);
-  const [controlPopup, setControlPopup] = useState(false);
+
+  const itemsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   /* ==== HANDLERS ==== */
-  const toggleControlPopup = () => {
-    if (controlPopup) {
-      fetchTag();
-    }
-    setControlPopup(!controlPopup);
-  };
-
   const editTag = (id) => {
     setTagsEditID(id);
-    setControlPopup(true);
+    onClose();
+  };
+
+  const toggleControlPopup = () => {
+    setTagsEditID(null);
+    onClose();
   };
 
   /* ==== FETCH DATA ==== */
   const fetchTag = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/get/tagList`);
+      const res = await fetch(`${API_BASE_URL}/api/get/tagList/${filters.option}/${itemsPerPage}/${currentPage}`);
       const data = await res.json();
-      setTags(data);
+      setTags(data.data);
+      setCurrentPage(data.paginationDetails.currentPage);
+      setTotalPages(data.paginationDetails.totalPages);
     } catch (error) {
       console.log('Error fetching tag list:', error);
     }
   };
 
   /* ==== FILTER ==== */
-  const filteredList = listTags.filter((item) => {
+  /* const filteredList = listTags.filter((item) => {
     const matchIsActive =
       filters.option !== ''
         ? item.isActive === (filters.option === 'true')
         : true;
     return matchIsActive;
-  });
+  }); */
 
   /* ==== EFFECT ==== */
   useEffect(() => {
-    if (!controlPopup) {
+    if (!tagControlPopup) {
       fetchTag();
     }
-  }, [controlPopup]);
+  }, [tagControlPopup, currentPage, filters]);
+
+  useEffect(() => {
+  }, [tagControlPopup])
 
   /* ==== RENDER ==== */
   return (
@@ -68,12 +74,13 @@ export default function ListTags({ showInList }) {
       <div className="mb-4">
         <select
           value={filters.option}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, option: e.target.value }))
-          }
+          onChange={(e) =>{
+            setFilters((prev) => ({ ...prev, option: e.target.value }));
+            setCurrentPage(1)
+          }}
           className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm"
         >
-          <option value="">All items</option>
+          <option value="null">All items</option>
           <option value="true">Active items</option>
           <option value="false">Disabled items</option>
         </select>
@@ -81,12 +88,11 @@ export default function ListTags({ showInList }) {
 
       {/* ==== LIST ==== */}
       <div className="space-y-2">
-        {filteredList.map((item) => (
+        {listTags.map((item) => (
           <div
             key={item.id}
-            className={`grid grid-cols-1 md:grid-cols-5 items-center border px-4 py-3 rounded-md capitalize ${
-              showInList ? 'bg-gray-50' : 'hover:bg-gray-100'
-            } transition`}
+            className={`grid grid-cols-1 md:grid-cols-5 items-center border px-4 py-3 rounded-md capitalize ${showInList ? 'bg-gray-50' : 'hover:bg-gray-100'
+              } transition`}
           >
             <span className="text-sm font-medium break-all text-gray-800">
               {item.name}
@@ -100,11 +106,10 @@ export default function ListTags({ showInList }) {
               {new Date(item.updatedAt).toLocaleDateString('en-US')}
             </span>
             <span
-              className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit ${
-                item.isActive
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-orange-100 text-orange-800'
-              }`}
+              className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit ${item.isActive
+                ? 'bg-green-100 text-green-800'
+                : 'bg-orange-100 text-orange-800'
+                }`}
             >
               {item.isActive ? 'Active' : 'Disabled'}
             </span>
@@ -118,19 +123,38 @@ export default function ListTags({ showInList }) {
                 >
                   Edit
                 </button>
-                <BtnDeleteTag tagID={item.id} />
+                <BtnDeleteTag tagID={item.id} onDelete={fetchTag}/>
               </div>
             )}
           </div>
         ))}
       </div>
 
+      {/* ==== PAGINATION ==== */}
+      <div className="flex gap-2 mt-4 justify-center items-center md:justify-end  ">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+        >
+          Previous
+        </button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+        >
+          Next
+        </button>
+      </div>
+
       {/* ==== POPUP ==== */}
-      {controlPopup && (
+      {tagControlPopup && (
         <AddTag
           propsTagID={tagsEditID}
           handletoggleControlPopup={toggleControlPopup}
-          controlPopup={controlPopup}
+          controlPopup={tagControlPopup}
         />
       )}
     </div>

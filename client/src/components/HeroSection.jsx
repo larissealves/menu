@@ -16,7 +16,13 @@ export default function HeroSection() {
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
 
-  const [filters, setFilters] = useState({ name: '', category: '', tag: '', ingredients: '' });
+  const [filters, setFilters] = useState({ 
+    name: '', 
+    category: 0, 
+    tag: 0, 
+    ingredients: 0 
+  });
+
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -47,8 +53,7 @@ export default function HeroSection() {
           fetch(`${API_BASE_URL}/api/get/categoryList/active`),
           fetch(`${API_BASE_URL}/api/get/tagList/active`),
           fetch(`${API_BASE_URL}/api/get/ingredientList/active`),
-          fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}
-            /${limitItemsPerPage}/${currentPage}`,
+          fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}/${limitItemsPerPage}/${currentPage}/${filters.category}/${filters.ingredients}/${filters.tag}`,
             {
               headers,
             })
@@ -61,6 +66,7 @@ export default function HeroSection() {
         const data = await dishRes.json();
         setDishes(Array.isArray(data.dishes) ? data.dishes : []);
         setCurrentPage(data.paginationDetais.currentPage);
+        console.log(data.paginationDetais.currentPage);
         setTotalPages(data.paginationDetais.totalPages);
         setLimitPerPage(data.paginationDetais.ItemsPerPage);
 
@@ -71,12 +77,12 @@ export default function HeroSection() {
       }
     };
     fetchInitialData();
-  }, [currentPage]);
+  }, [currentPage, filters]);
 
   // LOCAL FILTERS
   const filtered = dishes.filter(dish => {
     const matchesName = dish.name.toLowerCase().includes(filters.name.toLowerCase());
-    const matchesCategory = filters.category ? dish.categoryId === +filters.category : true;
+    /*const matchesCategory = filters.category ? dish.categoryId === +filters.category : true;
     const matchesTag = filters.tag
       ? dish.tags?.some(tag => tag.tagId === +filters.tag)
       : true;
@@ -84,7 +90,8 @@ export default function HeroSection() {
     const matchesIngredients = filters.ingredients
       ? dish.ingredients?.some(ing => ing.ingredientId === + filters.ingredients)
       : true;
-    return matchesName && matchesCategory && matchesTag && matchesIngredients;
+      */
+    return matchesName;
   });
 
   return (
@@ -133,8 +140,8 @@ export default function HeroSection() {
             placeholder="Search by name"
             value={filters.name}
             onChange={(e) =>
-              setFilters((prev) => ({ ...prev, name: e.target.value }))
-            }
+              setFilters((prev) => ({ ...prev, name: e.target.value }), setCurrentPage(1))
+              }
             className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:max-w-xs"
           />
 
@@ -145,11 +152,11 @@ export default function HeroSection() {
                 <select
                   value={filters.category}
                   onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, category: e.target.value }))
+                    setFilters((prev) => ({ ...prev, category: e.target.value }), setCurrentPage(1))
                   }
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
                 >
-                  <option value="">All categories</option>
+                  <option value="0">All categories</option>
                   {categories.map((cat) => (
                     <option
                       className="capitalize w-full"
@@ -174,14 +181,14 @@ export default function HeroSection() {
                     setFilters((prev) => ({
                       ...prev,
                       ingredients: e.target.value,
-                    }))
+                    }), setCurrentPage(1))
                   }
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
                 >
-                  <option value="">All options</option>
+                  <option value="0">All options</option>
                   {ingredients.map((ing) => (
                     <option
-                      className="capitalize "
+                      className="capitalize w-full"
                       key={ing.id}
                       value={ing.id}
                     >
@@ -198,11 +205,11 @@ export default function HeroSection() {
                 <select
                   value={filters.tag}
                   onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, tag: e.target.value }))
+                    setFilters((prev) => ({ ...prev, tag: e.target.value }), setCurrentPage(1))
                   }
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
                 >
-                  <option value="">Other highlights</option>
+                  <option value="0">Other highlights</option>
                   {tags.map((tag) => (
                     <option
                       className="capitalize"
