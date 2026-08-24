@@ -4,8 +4,19 @@ import { PrismaClient } from '@prisma/client'
 const router = express.Router()
 const prisma = new PrismaClient()
 
+const requireAuth = (req, res, next) => {
+  const auth = req.headers.authorization;
+  const api_secret = `Bearer ${process.env.API_SECRET}`;
+  if (!auth || auth !== api_secret) {
+    return res.status(401).json({
+      error: "Não autorizado :D ;D",
+    });
+  }
+  next();
+};
+
 /* ============== DELETE ================= */
-router.delete('/delete/imageByDishId/:id', async (req, res) => {
+router.delete('/delete/imageByDishId/:id', requireAuth, async (req, res) => {
   const imageId = parseInt(req.params.id);
 
   try {

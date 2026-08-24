@@ -7,6 +7,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
+  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
 
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({ option: 'null' });
@@ -34,7 +35,11 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
   /* ==== FETCH DATA ==== */
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/get/categoryList/${filters.option}/${itemsPerPage}/${currentPage}`);
+      const headers = {
+        Authorization: `Bearer ${TOKEN_FOR_API}`,
+      };
+
+      const res = await fetch(`${API_BASE_URL}/api/get/categoryList/${filters.option}/${itemsPerPage}/${currentPage}`, {headers,});
       const data = await res.json();
       setCategories(data.categories);
       setCurrentPage(data.paginationDetails.currentPage);
@@ -44,14 +49,14 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
     }
   };
 
-  /* ==== FILTER ==== */
+  /* ==== FILTER ==== 
   const filteredList = listCategories.filter((item) => {
     const matchIsActive =
       filters.option !== ''
         ? item.isActive === (filters.option === 'true')
         : true;
     return matchIsActive;
-  });
+  }); */
 
   /* ==== EFFECT ==== */
   useEffect(() => {
@@ -87,7 +92,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
           value={filters.option}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, option: e.target.value }),
-            setCurrentPage(1))
+              setCurrentPage(1))
           }
           className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm  w-full md:w-[30%] "
         >
@@ -143,24 +148,24 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
       </div>
 
 
-        {/* ==== PAGINATION ==== */}
-        <div className="flex gap-2 mt-4 justify-center items-center md:justify-end  ">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
-          >
-            Previous
-          </button>
-          <span>Page {currentPage} of {totalPages}</span>
-          <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
-          >
-            Next
-          </button>
-        </div>
+      {/* ==== PAGINATION ==== */}
+      <div className="flex gap-2 mt-4 justify-center items-center md:justify-end  ">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+        >
+          Previous
+        </button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+        >
+          Next
+        </button>
+      </div>
 
 
       {/* ==== POPUP ==== */}

@@ -541,7 +541,7 @@ router.get('/get/dishes-id-relations/:filterOnlyActives/:limitItemsPerPage/:curr
 
 
 /* ============== GET IMAGE BY DISH ID ================= */
-router.get('/get/imagesByDishId/:id', async (req, res) => {
+router.get('/get/imagesByDishId/:id', requireAuth, async (req, res) => {
   const dishId = parseInt(req.params.id);
 
   if (isNaN(dishId)) {

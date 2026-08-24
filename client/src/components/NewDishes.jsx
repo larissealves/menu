@@ -5,13 +5,18 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
   const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const headers = {
+      Authorization: `Bearer ${TOKEN_FOR_API}`,
+    };
 
   const [categories, setCategories] = useState([]);
   const [ingredients, setIngredients] = useState([]);
   const [tags, setTags] = useState([]);
-  const [listTempImages, setListImageTemp] = useState([]);
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const [listTempImages, setListImageTemp] = useState([]);
+  const [imagesEditDish, setImagesEditDish] = useState([]);
 
   const [formDishes, setFormDishes] = useState({
     name: '',
@@ -24,6 +29,7 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
     listImages: [],
   });
 
+  
   useEffect(() => {
     if (propDishID) {
       const fetchDish = async () => {
@@ -71,15 +77,84 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
     }
   }, [propDishID]);
 
+  
+
+  /* ================= FLOW IMAGES - FOR DATA BASE =========================== */
+  useEffect(() => {
+    if (!propDishID) return;
+
+    const fetchImagesEditDish = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${propDishID}`, {headers,});
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+          const imagesWithPreview = data.map((img) => {
+            const byteArray = Object.values(img.binaryData);
+            const uint8 = new Uint8Array(byteArray);
+            const blob = new Blob([uint8], { type: img.imageType });
+            const previewUrl = URL.createObjectURL(blob);
+            return { ...img, previewUrl };
+          });
+
+          setImagesEditDish(imagesWithPreview);
+        } else {
+          setImagesEditDish([]);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar imagens:', error);
+        setImagesEditDish([]);
+      }
+      finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImagesEditDish();
+  }, [propDishID]);
+
+  const handleDeleteImage = async (id) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/api/delete/imageByDishId/${id}`, {
+        headers,
+        method: 'DELETE',
+      });
+
+      setImagesEditDish((prev) => prev.filter((img) => img.id !== id));
+      
+    } catch (error) {
+      console.error('Erro ao deletar imagem:', error);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= (END) FLOW IMAGES - FOR DATA BASE =========================== */
+
+  /* ================= FLOW IMAGES - ONLY FORM =========================== */
   const handleTempImage = (e) => {
     const files = Array.from(e.target.files);
-    files.forEach((file) => {
+
+    const sizeAvaliable = 4 - listTempImages.length;
+    const selectedFiles = files.slice(0, sizeAvaliable);
+
+    if (sizeAvaliable <= 0 ) {
+      e.target.value = "";
+      return; 
+    }
+
+    selectedFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setListImageTemp((prev) => [...prev, { name: file.name, file, preview: reader.result }]);
       };
       reader.readAsDataURL(file);
     });
+
+    e.target.value = "";
   };
 
   const handleRemoveTempImage = (index) => {
@@ -94,6 +169,27 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
+
+  /* ================= (END) FLOW IMAGES- ONLY FORM =========================== */
+  
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const [catRes, ingRes, tagRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/get/categoryList/active`, {headers,}),
+          fetch(`${API_BASE_URL}/api/get/ingredientList/active`, {headers,}),
+          fetch(`${API_BASE_URL}/api/get/tagList/active`, {headers,}),
+        ]);
+        setCategories(await catRes.json());
+        setIngredients(await ingRes.json());
+        setTags(await tagRes.json());
+      } catch (error) {
+        console.error('Erro ao buscar dados iniciais:', error);
+      }
+    };
+    fetchAll();
+  }, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -120,10 +216,6 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
       ? `${API_BASE_URL}/api/update/editDishes/${propDishID}`
       : `${API_BASE_URL}/api/new/addDishes`;
     const method = propDishID ? 'PUT' : 'POST';
-    const headers = {
-      Authorization: `Bearer ${TOKEN_FOR_API}`,
-    };
-
 
     try {
       setLoading(true);
@@ -160,78 +252,6 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
     }
   };
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        const [catRes, ingRes, tagRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/get/categoryList/active`),
-          fetch(`${API_BASE_URL}/api/get/ingredientList/active`),
-          fetch(`${API_BASE_URL}/api/get/tagList/active`),
-        ]);
-        setCategories(await catRes.json());
-        setIngredients(await ingRes.json());
-        setTags(await tagRes.json());
-      } catch (error) {
-        console.error('Erro ao buscar dados iniciais:', error);
-      }
-    };
-    fetchAll();
-  }, []);
-
-  const [imagesEditDish, setImagesEditDish] = useState([]);
-
-  useEffect(() => {
-    if (!propDishID) return;
-
-    const fetchImagesEditDish = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${propDishID}`);
-        const data = await res.json();
-
-        if (Array.isArray(data)) {
-          const imagesWithPreview = data.map((img) => {
-            const byteArray = Object.values(img.binaryData);
-            const uint8 = new Uint8Array(byteArray);
-            const blob = new Blob([uint8], { type: img.imageType });
-            const previewUrl = URL.createObjectURL(blob);
-            return { ...img, previewUrl };
-          });
-
-          setImagesEditDish(imagesWithPreview);
-        } else {
-          console.warn('Resposta inesperada:', data);
-          setImagesEditDish([]);
-        }
-      } catch (error) {
-        console.error('Erro ao buscar imagens:', error);
-        setImagesEditDish([]);
-      }
-      finally {
-        setLoading(false);
-      }
-    };
-
-    fetchImagesEditDish();
-  }, [propDishID]);
-
-  const handleDeleteImage = async (id) => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/api/delete/imageByDishId/${id}`, {
-        method: 'DELETE',
-      });
-
-      setImagesEditDish((prev) => prev.filter((img) => img.id !== id));
-      
-    } catch (error) {
-      console.error('Erro ao deletar imagem:', error);
-    }
-    finally {
-      handleToggleControlPopup();
-      setLoading(false);
-    }
-  };
 
   return (
     <div>
@@ -315,14 +335,16 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
 
 
                   <div className="flex-1">
-                    {!loading && (
+                    {[...imagesEditDish, ...listTempImages].length < 4 && !loading && (
                       <label htmlFor="image-upload"
-                        className="cursor-pointer inline-block px-4 py-2 mb-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition w-auto text-center">
+                        className="cursor-pointer inline-block px-4 py-2 mb-4 bg-blue-600 text-white rounded 
+                        hover:bg-blue-700 transition w-auto text-center">
                         Anexar Imagens
                         <input id="image-upload" type="file" multiple accept="image/*"
                           onChange={handleTempImage} className="hidden" />
                       </label>
                     )}
+                    
                     <div className="grid grid-cols-4 gap-2">
                       {[...imagesEditDish, ...listTempImages].map((item, index) => (
                         <div key={index} className="relative border p-2 rounded w-fit">

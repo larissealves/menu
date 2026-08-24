@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import blankimage from '../assets/images/blank-image.png'
 
-export default function ListImagesByDish({ dishId }) {
+export default function ListImagesByDish({ dishId, refresh }) {
   const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+
+  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const headers = {
+      Authorization: `Bearer ${TOKEN_FOR_API}`,
+    };
 
   
   const [imagesEditDish, setImagesEditDish] = useState([]);
@@ -12,7 +17,7 @@ export default function ListImagesByDish({ dishId }) {
       if (!dishId) return;
       const fetchImagesEditDish = async () => {
         try { 
-          const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${dishId}`);
+          const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${dishId}`, {headers,});
           const data = await res.json();
           if (Array.isArray(data)) {
             const imagesWithPreview = data.map((img) => {
@@ -34,7 +39,7 @@ export default function ListImagesByDish({ dishId }) {
       };
     
       fetchImagesEditDish();
-    }, [dishId]);
+    }, [dishId, refresh]);
     
 
   return (
@@ -44,7 +49,7 @@ export default function ListImagesByDish({ dishId }) {
           key={img.id}
           src={img.previewUrl}
           alt={img.imageName}
-          className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded border transition duration-300 hover:scale-210"
+          className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded border transition duration-300 hover:scale-200"
         />
       ))}
     </div>
