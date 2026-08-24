@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import AddTag from './NewTag';
 import BtnDeleteTag from './BtnDeleteTag';
 
-export default function ListTags({ showInList }) {
+export default function ListTags({ showInList, tagControlPopup, onClose }) {
   const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
@@ -12,19 +12,16 @@ export default function ListTags({ showInList }) {
   const [filters, setFilters] = useState({ option: '' });
   const [listTags, setTags] = useState([]);
   const [tagsEditID, setTagsEditID] = useState(null);
-  const [controlPopup, setControlPopup] = useState(false);
 
   /* ==== HANDLERS ==== */
-  const toggleControlPopup = () => {
-    if (controlPopup) {
-      fetchTag();
-    }
-    setControlPopup(!controlPopup);
-  };
-
   const editTag = (id) => {
     setTagsEditID(id);
-    setControlPopup(true);
+    onClose();
+  };
+
+  const toggleControlPopup = () => {
+    setTagsEditID(null);
+    onClose();
   };
 
   /* ==== FETCH DATA ==== */
@@ -49,10 +46,13 @@ export default function ListTags({ showInList }) {
 
   /* ==== EFFECT ==== */
   useEffect(() => {
-    if (!controlPopup) {
+    if (!tagControlPopup) {
       fetchTag();
     }
-  }, [controlPopup]);
+  }, [tagControlPopup]);
+
+  useEffect(() => {
+  }, [tagControlPopup])
 
   /* ==== RENDER ==== */
   return (
@@ -126,11 +126,11 @@ export default function ListTags({ showInList }) {
       </div>
 
       {/* ==== POPUP ==== */}
-      {controlPopup && (
+      {tagControlPopup && (
         <AddTag
           propsTagID={tagsEditID}
           handletoggleControlPopup={toggleControlPopup}
-          controlPopup={controlPopup}
+          controlPopup={tagControlPopup}
         />
       )}
     </div>

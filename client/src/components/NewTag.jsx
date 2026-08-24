@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react'
 
 export default function AddIngredient({ propsTagID, handletoggleControlPopup, controlPopup }) {
-    
-  const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
+    const API_BASE_URL =
+        import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+
+    const isEdit =( propsTagID != null);
+    const [loading, setLoading] = useState(false);
+
+    console.log("aaaaaaaaaaaaaaaaa =>>>" ,propsTagID, isEdit);
 
     const [formNewTag, setFormNewTag] = useState({
         name: '',
@@ -12,7 +16,7 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
     })
 
     useEffect(() => {
-        if (propsTagID) {
+        if (isEdit) {
             const fetchTag = async () => {
                 try {
                     const res = await fetch(`${API_BASE_URL}/api/get/tagID/${propsTagID}`)
@@ -29,7 +33,7 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
         } else {
             setFormNewTag({ name: '', isActive: true })
         }
-    }, [propsTagID])
+    }, [propsTagID, isEdit])
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target
@@ -41,11 +45,12 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        const endpoint = propsTagID
+        setLoading(true);
+        const endpoint = isEdit
             ? `${API_BASE_URL}/api/update/tag/${propsTagID}`
             : `${API_BASE_URL}/api/new/tag`
 
-        const method = propsTagID ? 'PUT' : 'POST'
+        const method = isEdit  ? 'PUT' : 'POST'
 
         try {
             const res = await fetch(endpoint, {
@@ -54,18 +59,17 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
                 body: JSON.stringify(formNewTag),
             })
 
-            if (res.ok) {
-                setFormNewTag({ name: '', isActive: true })
-                handletoggleControlPopup()
-            } else {
-                console.error('Erro ao cadastrar a tag')
-            }
+
         } catch (error) {
             console.error('Erro na requisição:', error)
         }
+        finally {
+            setFormNewTag({ name: '', isActive: true })
+            handletoggleControlPopup();
+            setLoading(false);
+
+        }
     }
-
-
 
     return (
         <div className="main-content">
@@ -74,15 +78,17 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md relative">
                         <div className="flex justify-between items-center mb-4 border-b pb-2">
                             <h2 className="text-xl font-semibold">
-                                {propsTagID ? 'Edit' : 'Create'} Tag
+                                {isEdit ? 'Edit' : 'Create'} Tag
                             </h2>
-                            <button
-                                onClick={handletoggleControlPopup}
-                                className="text-gray-500 cursor-pointer hover:text-gray-800 text-2xl font-bold leading-none"
-                                aria-label="Close"
-                            >
-                                ×
-                            </button>
+                            {!loading && (
+                                <button
+                                    onClick={handletoggleControlPopup}
+                                    className="text-gray-500 cursor-pointer hover:text-gray-800 text-2xl font-bold leading-none"
+                                    aria-label="Close"
+                                >
+                                    ×
+                                </button>
+                            )}
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <input
@@ -104,12 +110,17 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
                                 <span>{formNewTag.isActive ? 'Active' : 'Disabled'}</span>
                             </label>
                             <div className="flex justify-end pt-4 border-t">
+
                                 <button
                                     type="submit"
-                                    className="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                                    disabled={loading}
+                                    className={`cursor-pointer text-white px-4 py-2 rounded transition ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                                 >
-                                    {propsTagID ? 'Update' : 'Create'}
+                                    {loading ? 'Salvando...'
+                                        : isEdit ? 'Update' : 'Create'
+                                    }
                                 </button>
+
                             </div>
                         </form>
                     </div>
