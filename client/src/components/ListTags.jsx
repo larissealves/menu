@@ -123,7 +123,7 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
                 >
                   Edit
                 </button>
-                <BtnDeleteTag tagID={item.id} />
+                <BtnDeleteTag tagID={item.id} onDelete={fetchTag}/>
               </div>
             )}
           </div>

@@ -121,7 +121,7 @@ export default function ListIngredient({ showInList, ingredientControlPopup, onC
                 >
                   Edit
                 </button>
-                <BtnDeleteIngredient ingredientID={item.id} />
+                <BtnDeleteIngredient ingredientID={item.id} onDelete={fetchIngredient}/>
               </div>
             )}
           </div>
