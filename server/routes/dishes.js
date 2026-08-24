@@ -37,9 +37,9 @@ const requireAuth = (req, res, next) => {
 };
 
 /* ============== CREATE DISH ================= */
-router.post('/new/addDishes', upload.array('images'), async (req, res) => {
+router.post('/new/addDishes', upload.array('images'), requireAuth,
+ async (req, res) => {
   const { name, price, description, categoryId, isActive } = req.body;
-  console.log('AAAA', req.body)
   const tags = JSON.parse(req.body.tags || '[]');
   const ingredients = JSON.parse(req.body.ingredients || '[]');
 

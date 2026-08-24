@@ -5,22 +5,20 @@ import ListTagsByDisheId from './ListTagsbyDish';
 import ListIngredientsByDisheId from './ListIngredientsbyDish';
 import BtnDeleteDish from './BtnDeleteDish';
 
-export default function ListAllDishes() {
+export default function ListAllDishes({dishcontrolPopup, onClose}) {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
-
 
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({
     name: '',
-    category: '',
-    tag: '',
-    ingredients: '',
-    isActive: false,
+    category: '0',
+    tag: '0',
+    ingredients: '0',
+    isActive: null,
   });
 
   const [dishEditId, setDishEditId] = useState(null);
-  const [controlPopup, setControlPopup] = useState(false);
   const [refreshListsAux, setRefreshListAux] = useState(false);
 
   const [listAllDishes, setListAllDishes] = useState([]);
@@ -35,25 +33,29 @@ export default function ListAllDishes() {
 
   /* ==== HANDLERS ==== */
   const toggleControlPopup = () => {
-    setControlPopup((prev) => !prev);
+    setDishEditId(null);
+    onClose();
   };
 
   const clickButtonEdit = (id) => {
     setDishEditId(id);
-    setControlPopup((prev) => !prev);
+    onClose();
   };
+
 
   /* ==== FETCH DATA ==== */
   const fetchDishes = async () => {
     try {
       const token = import.meta.env.VITE_API_SECRET;
 
+      const filterOnlyByActives = filters.isActive === 'true' ? 'true' : null;
+
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-
+      
       const [dishRes, catRes, tagRes, ingredientsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${null}/${itemsPerPage}/${currentPage}/${0}/${0}/${0}`, {
+        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${filterOnlyByActives}/${itemsPerPage}/${currentPage}/${filters.category}/${filters.ingredients}/${filters.tag}`, {
           headers
         }),
         fetch(`${API_BASE_URL}/api/get/categoryList/active`),
@@ -78,14 +80,13 @@ export default function ListAllDishes() {
   };
 
   useEffect(() => {
-    if (!controlPopup) {
       fetchDishes();
-      setRefreshListAux((prev) => prev + 1);
-    }
-  }, [controlPopup, currentPage, itemsPerPage]);
+      //setRefreshListAux((prev) => prev + 1);
+  }, [dishcontrolPopup ,filters, currentPage, itemsPerPage]);
 
+  
   /* ==== LOCAL FILTER ==== */
-  const filteredList = listAllDishes.filter((dish) => {
+  /*const filteredList = listAllDishes.filter((dish) => {
     const matchesName = dish.name.toLowerCase().includes(filters.name.toLowerCase());
     const matchesCategory = filters.category ? dish.categoryId === +filters.category : true;
     const matchesTag = filters.tag
@@ -101,7 +102,7 @@ export default function ListAllDishes() {
     return matchesName && matchesCategory && matchesTag && matchesIngredients && matchesDishIsActive;
   });
 
-  /* ==== PAGINATE ==== 
+ ==== PAGINATE ==== 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredList.slice(indexOfFirstItem, indexOfLastItem);
@@ -120,13 +121,15 @@ export default function ListAllDishes() {
         <div className="flex flex-wrap justify-between gap-8 pb-4">
           <input
             type="text"
-            placeholder="Search by name"
+            placeholder="DISABLE... Search by name"
             value={filters.name}
+            disabled={true}
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, name: e.target.value }))
             }
             className="capitalize flex-1 sm:w-auto 
-            px-4 py-2 border border-gray-300 rounded-md text-sm w-full md:w-60"
+            px-4 py-2 border background-gray-300 border-gray-300 rounded-md 
+            text-sm w-full md:w-60 cursor-not-allowed"
           />
 
           <div className="flex flex-wrap gap-4 items-center w-full">
@@ -135,17 +138,18 @@ export default function ListAllDishes() {
                 <label className="text-sm w-30 md:w-full text-gray-700">Category:</label>
                 <select
                   value={filters.category}
-                  onChange={(e) =>
+                  onChange={(e) =>{
                     setFilters((prev) => ({
                       ...prev,
                       category: e.target.value,
-                    }))
-                  }
+                    })),
+                  setCurrentPage(1);
+                }}
                   className="
                     capitalize px-3 py-2 border border-gray-300 
-                    rounded-md text-sm w-full "
+                    rounded-md text-sm w-full cursor-pointer "
                 >
-                  <option value="">All categories</option>
+                  <option value="0">All categories</option>
                   {listCategories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.name}
@@ -170,9 +174,9 @@ export default function ListAllDishes() {
                   }
                   className="
                     capitalize px-3 py-2 border border-gray-300 
-                    rounded-md text-sm w-full"
+                    rounded-md text-sm w-full cursor-pointer"
                 >
-                  <option value="">All options</option>
+                  <option value="0">All options</option>
                   {listIngredients.map((ing) => (
                     <option key={ing.id} value={ing.id}>
                       {ing.name}
@@ -187,13 +191,14 @@ export default function ListAllDishes() {
                 <label className="text-sm text-gray-700 w-30  md:w-full ">Highlights:</label>
                 <select
                   value={filters.tag}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, tag: e.target.value }))
-                  }
+                  onChange={(e) =>{
+                    setFilters((prev) => ({ ...prev, tag: e.target.value })),
+                    setCurrentPage(1);
+                  }}
                   className="capitalize px-3 py-2 border border-gray-300 
-                  rounded-md text-sm  w-full "
+                  rounded-md text-sm w-full cursor-pointer "
                 >
-                  <option value="">Other highlights</option>
+                  <option value="0">Other highlights</option>
                   {listTags.map((tag) => (
                     <option key={tag.id} value={tag.id}>
                       {tag.name}
@@ -208,15 +213,17 @@ export default function ListAllDishes() {
         {/* ==== FILTER: ACTIVE ONLY ==== */}
         <div className="flex items-center flex-wrap justify-between gap-4 mb-4 w-30 md:w-full ">
           <label>Show only active items?</label>
-          <span className="flex items-center justify-start gap-2 w-full">
+          <span className="flex items-center justify-start gap-2 w-full ">
             <input
               type="checkbox"
               checked={filters.isActive}
-              onChange={(e) =>
+              className='cursor-pointer'
+              onChange={(e) =>{
                 setFilters((prev) => ({
                   ...prev,
                   isActive: e.target.checked,
-                }))
+                })),
+              setCurrentPage(1)}
               }
             />
             {filters.isActive ? 'Yes' : 'No'}
@@ -290,8 +297,7 @@ export default function ListAllDishes() {
                   <div className='w-70 flex flex-wrap gap-4 md:justify-end justify-center'>
                     <button
                       onClick={() => {
-                        clickButtonEdit(item.id);
-                        setControlPopup(true);
+                        clickButtonEdit(item.id)
                       }}
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-sm rounded md:w-30 w-auto "
                     >
@@ -330,11 +336,11 @@ export default function ListAllDishes() {
       </div>
 
       {/* ==== POPUP ==== */}
-      {controlPopup && (
+      {dishcontrolPopup && (
         <AddDishes
           propDishID={dishEditId}
           handleToggleControlPopup={toggleControlPopup}
-          controlPopup={controlPopup}
+          controlPopup={dishcontrolPopup}
         />
       )}
     </div>

@@ -8,23 +8,20 @@ export default function BtnDeleteDish({ dishID, onDelete }) {
   const [loading, setLoading] = useState(false);
 
   const handleDeleteSubmit = async () => {
+    setLoading(true);
     const confirmDelete = window.confirm("Are you sure you want to delete this dish?");
     if (!confirmDelete) return;
 
     const endpoint = `${API_BASE_URL}/api/delete/dish/${dishID}`;
-    setLoading(true);
+    
 
     try {
       const res = await fetch(endpoint, {
         method: 'DELETE',
       });
 
-      if (res.ok) {
-        console.log('Prato deletado com sucesso');
-        if (onDelete) onDelete();
-      } else {
-        console.error('Erro ao deletar prato');
-      }
+      await onDelete();
+      
     } catch (error) {
       console.error('Erro ao deletar prato:', error);
     } finally {

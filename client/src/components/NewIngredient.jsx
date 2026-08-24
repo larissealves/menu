@@ -72,7 +72,7 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
     return (
         <div className="main-content">
             {controlPopup && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50  p-4">
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md relative">
                         <div className="flex justify-between items-center mb-4 border-b pb-2">
                             <h2 className="text-xl font-semibold">

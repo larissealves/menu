@@ -44,7 +44,7 @@ export default function ListImagesByDish({ dishId }) {
           key={img.id}
           src={img.previewUrl}
           alt={img.imageName}
-          className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded border"
+          className="w-28 h-28 sm:w-32 sm:h-32 object-cover rounded border transition duration-300 hover:scale-210"
         />
       ))}
     </div>
