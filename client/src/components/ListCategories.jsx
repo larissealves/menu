@@ -9,11 +9,17 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
 
 
   /* ==== STATES ==== */
-  const [filters, setFilters] = useState({ option: '' });
+  const [filters, setFilters] = useState({ option: 'null' });
   const [listCategories, setCategories] = useState([]);
   const [categoryEditID, setCategoryEditID] = useState(null);
   const [controlPopup, setControlPopup] = useState(false);
 
+
+  const itemsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
+  console.log(filters.option);
   /* ==== HANDLERS ==== */
   const editCategory = (id) => {
     setCategoryEditID(id);
@@ -21,17 +27,18 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
   };
 
   const closePopup = () => {
-    if(categoryEditID) setCategoryEditID(0);
+    if (categoryEditID) setCategoryEditID(0);
     onClose();
   }
-
 
   /* ==== FETCH DATA ==== */
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/get/categoryList`);
+      const res = await fetch(`${API_BASE_URL}/api/get/categoryList/${filters.option}/${itemsPerPage}/${currentPage}`);
       const data = await res.json();
-      setCategories(data);
+      setCategories(data.categories);
+      setCurrentPage(data.paginationDetails.currentPage);
+      setTotalPages(data.paginationDetails.totalPages);
     } catch (error) {
       console.log('Error fetching category list:', error);
     }
@@ -51,12 +58,12 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
     if (!controlPopup) {
       fetchCategories();
     }
-  }, [controlPopup]);
+  }, [controlPopup, currentPage, filters]);
 
   useEffect(() => {
     setControlPopup(categoriesControlPopup);
   }, [categoriesControlPopup]);
-  
+
 
   /* ==== RENDER ==== */
   return (
@@ -79,11 +86,12 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
         <select
           value={filters.option}
           onChange={(e) =>
-            setFilters((prev) => ({ ...prev, option: e.target.value }))
+            setFilters((prev) => ({ ...prev, option: e.target.value }),
+            setCurrentPage(1))
           }
-          className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm"
+          className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm  w-full md:w-[30%] "
         >
-          <option value="">All items</option>
+          <option value="null">All items</option>
           <option value="true">Active items</option>
           <option value="false">Disabled items</option>
         </select>
@@ -91,7 +99,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
 
       {/* ==== LIST ==== */}
       <div className="space-y-3">
-        {filteredList.map((item) => (
+        {listCategories.map((item) => (
           <div
             key={item.id}
             className="grid grid-cols-1 md:grid-cols-5 items-center border rounded px-4 py-3 bg-gray-50 hover:bg-gray-100 transition"
@@ -117,7 +125,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
             </span>
 
             {/* ==== ACTIONS ==== */}
-            <div className="flex justify-end gap-4 mt-2 md:mt-0 ">
+            <div className="flex justify-center md:justify-end gap-4 mt-2 md:mt-0 ">
               <button
                 onClick={() => editCategory(item.id)}
                 className="px-3 py-1 text-sm bg-fuchsia-600 hover:bg-violet-700 text-white rounded cursor-pointer"
@@ -133,6 +141,27 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
           </div>
         ))}
       </div>
+
+
+          {/* ==== PAGINATION ==== */}
+        <div className="flex gap-2 mt-4 justify-center items-center md:justify-end  ">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+          >
+            Previous
+          </button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
+          >
+            Next
+          </button>
+        </div>
+
 
       {/* ==== POPUP ==== */}
       {categoriesControlPopup && (
