@@ -13,10 +13,10 @@ export default function ListAllDishes() {
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({
     name: '',
-    category: '',
-    tag: '',
-    ingredients: '',
-    isActive: false,
+    category: '0',
+    tag: '0',
+    ingredients: '0',
+    isActive: null,
   });
 
   const [dishEditId, setDishEditId] = useState(null);
@@ -43,17 +43,20 @@ export default function ListAllDishes() {
     setControlPopup((prev) => !prev);
   };
 
+
   /* ==== FETCH DATA ==== */
   const fetchDishes = async () => {
     try {
       const token = import.meta.env.VITE_API_SECRET;
 
+      const filterOnlyByActives = filters.isActive === 'true' ? 'true' : null;
+
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-
+      
       const [dishRes, catRes, tagRes, ingredientsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${null}/${itemsPerPage}/${currentPage}/${0}/${0}/${0}`, {
+        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${filterOnlyByActives}/${itemsPerPage}/${currentPage}/${filters.category}/${filters.ingredients}/${filters.tag}`, {
           headers
         }),
         fetch(`${API_BASE_URL}/api/get/categoryList/active`),
@@ -82,7 +85,7 @@ export default function ListAllDishes() {
       fetchDishes();
       setRefreshListAux((prev) => prev + 1);
     }
-  }, [controlPopup, currentPage, itemsPerPage]);
+  }, [controlPopup ,filters, currentPage, itemsPerPage]);
 
   /* ==== LOCAL FILTER ==== */
   const filteredList = listAllDishes.filter((dish) => {
@@ -120,13 +123,15 @@ export default function ListAllDishes() {
         <div className="flex flex-wrap justify-between gap-8 pb-4">
           <input
             type="text"
-            placeholder="Search by name"
+            placeholder="DISABLE... Search by name"
             value={filters.name}
+            disabled={true}
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, name: e.target.value }))
             }
             className="capitalize flex-1 sm:w-auto 
-            px-4 py-2 border border-gray-300 rounded-md text-sm w-full md:w-60"
+            px-4 py-2 border background-gray-300 border-gray-300 rounded-md 
+            text-sm w-full md:w-60 cursor-not-allowed"
           />
 
           <div className="flex flex-wrap gap-4 items-center w-full">
@@ -143,9 +148,9 @@ export default function ListAllDishes() {
                   }
                   className="
                     capitalize px-3 py-2 border border-gray-300 
-                    rounded-md text-sm w-full "
+                    rounded-md text-sm w-full cursor-pointer "
                 >
-                  <option value="">All categories</option>
+                  <option value="0">All categories</option>
                   {listCategories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.name}
@@ -170,9 +175,9 @@ export default function ListAllDishes() {
                   }
                   className="
                     capitalize px-3 py-2 border border-gray-300 
-                    rounded-md text-sm w-full"
+                    rounded-md text-sm w-full cursor-pointer"
                 >
-                  <option value="">All options</option>
+                  <option value="0">All options</option>
                   {listIngredients.map((ing) => (
                     <option key={ing.id} value={ing.id}>
                       {ing.name}
@@ -191,9 +196,9 @@ export default function ListAllDishes() {
                     setFilters((prev) => ({ ...prev, tag: e.target.value }))
                   }
                   className="capitalize px-3 py-2 border border-gray-300 
-                  rounded-md text-sm  w-full "
+                  rounded-md text-sm w-full cursor-pointer "
                 >
-                  <option value="">Other highlights</option>
+                  <option value="0">Other highlights</option>
                   {listTags.map((tag) => (
                     <option key={tag.id} value={tag.id}>
                       {tag.name}
@@ -208,10 +213,11 @@ export default function ListAllDishes() {
         {/* ==== FILTER: ACTIVE ONLY ==== */}
         <div className="flex items-center flex-wrap justify-between gap-4 mb-4 w-30 md:w-full ">
           <label>Show only active items?</label>
-          <span className="flex items-center justify-start gap-2 w-full">
+          <span className="flex items-center justify-start gap-2 w-full ">
             <input
               type="checkbox"
               checked={filters.isActive}
+              className='cursor-pointer'
               onChange={(e) =>
                 setFilters((prev) => ({
                   ...prev,

@@ -61,7 +61,7 @@ export default function Settings() {
         <button onClick={() => {setControlPopupTag(true); setActiveTab('tags')}} className="bg-purple-400 hover:bg-purple-700 text-white font-semibold  cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Tag
         </button>
-        <button onClick={() => {setControlPopupIngredient(true), setActiveTab('ingredients')}} className="bg-purple-400 hover:bg-purple-700 text-white  cursor-pointerfont-semibold px-4 py-2 rounded-lg flex items-center gap-2">
+        <button onClick={() => {setControlPopupIngredient(true), setActiveTab('ingredients')}} className="bg-purple-400 hover:bg-purple-700 text-white  cursor-pointer font-semibold px-4 py-2 rounded-lg flex items-center gap-2">
           <PlusCircle size={18} /> Ingredient
         </button>
         <button onClick={() => setControlPopupDish(true)} className="bg-pink-600 hover:bg-pink-700 text-white font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
