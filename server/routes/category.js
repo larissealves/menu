@@ -4,6 +4,18 @@ import { PrismaClient } from '@prisma/client'
 const router = express.Router()
 const prisma = new PrismaClient()
 
+
+const requireAuth = (req, res, next) => {
+  const auth = req.headers.authorization;
+  const api_secret = `Bearer ${process.env.API_SECRET}`;
+  if (!auth || auth !== api_secret) {
+    return res.status(401).json({
+      error: "Não autorizado :D ;D",
+    });
+  }
+  next();
+};
+
 /* ============== CREATE ================= */
 router.post('/new/category', async (req, res) => {
   const { name, isActive } = req.body
@@ -24,7 +36,9 @@ router.post('/new/category', async (req, res) => {
 
 
 /* ============== GET ALL ITEMS ================= */
-router.get('/get/categoryList/:onlyActivesItems/:limitItemsPerPage/:currentPage', async (req, res) => {
+router.get('/get/categoryList/:onlyActivesItems/:limitItemsPerPage/:currentPage', 
+  requireAuth,
+  async (req, res) => {
   try {
     const filterOnlyActives = req.params.onlyActivesItems === 'true' 
     ? true 
@@ -82,7 +96,7 @@ router.get('/get/categoryList/:onlyActivesItems/:limitItemsPerPage/:currentPage'
 
 
 /* ============== GET ALL ITEMS - Active ================= */
-router.get('/get/categoryList/active', async (req, res) => {
+router.get('/get/categoryList/active', requireAuth, async (req, res) => {
   try {
     const categories = await prisma.category.findMany({
       where: {

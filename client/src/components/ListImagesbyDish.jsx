@@ -5,6 +5,11 @@ export default function ListImagesByDish({ dishId }) {
   const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
+  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const headers = {
+      Authorization: `Bearer ${TOKEN_FOR_API}`,
+    };
+
   
   const [imagesEditDish, setImagesEditDish] = useState([]);
     
@@ -12,7 +17,7 @@ export default function ListImagesByDish({ dishId }) {
       if (!dishId) return;
       const fetchImagesEditDish = async () => {
         try { 
-          const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${dishId}`);
+          const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${dishId}`, {headers,});
           const data = await res.json();
           if (Array.isArray(data)) {
             const imagesWithPreview = data.map((img) => {

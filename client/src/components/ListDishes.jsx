@@ -9,6 +9,9 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
+  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+
+
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({
     name: '',
@@ -58,9 +61,9 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
         fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${filterOnlyByActives}/${itemsPerPage}/${currentPage}/${filters.category}/${filters.ingredients}/${filters.tag}`, {
           headers
         }),
-        fetch(`${API_BASE_URL}/api/get/categoryList/active`),
-        fetch(`${API_BASE_URL}/api/get/tagList/active`),
-        fetch(`${API_BASE_URL}/api/get/ingredientList/active`),
+        fetch(`${API_BASE_URL}/api/get/categoryList/active`,{headers}),
+        fetch(`${API_BASE_URL}/api/get/tagList/active`,{headers}),
+        fetch(`${API_BASE_URL}/api/get/ingredientList/active`,{headers}),
       ]);
 
       setCategories(await catRes.json());

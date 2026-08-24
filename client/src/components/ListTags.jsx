@@ -7,6 +7,7 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
+  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
 
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({ option: 'null' });
@@ -31,7 +32,10 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
   /* ==== FETCH DATA ==== */
   const fetchTag = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/get/tagList/${filters.option}/${itemsPerPage}/${currentPage}`);
+      const headers = {
+        Authorization: `Bearer ${TOKEN_FOR_API}`,
+      };
+      const res = await fetch(`${API_BASE_URL}/api/get/tagList/${filters.option}/${itemsPerPage}/${currentPage}`,{headers});
       const data = await res.json();
       setTags(data.data);
       setCurrentPage(data.paginationDetails.currentPage);

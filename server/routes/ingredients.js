@@ -4,6 +4,18 @@ import { PrismaClient } from '@prisma/client'
 const router = express.Router()
 const prisma = new PrismaClient()
 
+const requireAuth = (req, res, next) => {
+  const auth = req.headers.authorization;
+  const api_secret = `Bearer ${process.env.API_SECRET}`;
+  if (!auth || auth !== api_secret) {
+    return res.status(401).json({
+      error: "Não autorizado :D ;D",
+    });
+  }
+  next();
+};
+
+
 /* ============== CREATE ================= */
 router.post('/new/ingredient', async (req, res) => {
   const { name, isActive} = req.body
@@ -66,7 +78,7 @@ router.put('/update/ingredient/:id', async (req, res) => {
 })
 
 /* ============== GET ALL ITEMS ================= */
-router.get('/get/ingredientList/:onlyActivesItems/:limitItemsPerPage/:currentPage', 
+router.get('/get/ingredientList/:onlyActivesItems/:limitItemsPerPage/:currentPage', requireAuth,
   async (req, res) => {
   try {
 
@@ -124,7 +136,7 @@ router.get('/get/ingredientList/:onlyActivesItems/:limitItemsPerPage/:currentPag
 }),
 
 /* ============== GET ALL ITEMS - Active ================= */
-router.get('/get/ingredientList/active', async (req, res) => {
+router.get('/get/ingredientList/active', requireAuth, async (req, res) => {
   try {
     const ingredients = await prisma.ingredient.findMany
     ({

@@ -15,6 +15,7 @@ export default function HeroSection() {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
+  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
 
   const [filters, setFilters] = useState({ 
     name: '', 
@@ -42,21 +43,23 @@ export default function HeroSection() {
 
     const fetchInitialData = async () => {
       try {
-
-        const token = import.meta.env.VITE_API_SECRET;
-
         const headers = {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${TOKEN_FOR_API}`,
         };
 
         const [catRes, tagRes, ingredientsRes, dishRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/get/categoryList/active`),
-          fetch(`${API_BASE_URL}/api/get/tagList/active`),
-          fetch(`${API_BASE_URL}/api/get/ingredientList/active`),
+          fetch(`${API_BASE_URL}/api/get/categoryList/active`,
+            {headers,}
+          ),
+          fetch(`${API_BASE_URL}/api/get/tagList/active`,
+            {headers,}
+          ),
+          fetch(`${API_BASE_URL}/api/get/ingredientList/active`,
+            {headers,}
+          ),
           fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}/${limitItemsPerPage}/${currentPage}/${filters.category}/${filters.ingredients}/${filters.tag}`,
-            {
-              headers,
-            })
+            {headers,}
+          )
         ]);
 
         setCategories(await catRes.json());
