@@ -11,36 +11,41 @@ The project also includes the deployment process and configuration for Render (B
 
 > 📌 Personal Notes & Documentation **For updates regarding the project structure, new features, or deployment configurations**, refer to the personal notes / documentation updates folder in the git repository. (https://github.com/larissealves/menu)
 
-## 📁 Project Structure
+## 📁 Project Structure - Resume
 
 ```
 menu/
-├── client/              # Frontend (React + Vite)
-│   ├── public/          # Public assets
-│   ├── src/             # Source code
-│   │   ├── pages/       # React pages
-│   │   ├── components/  # Reusable components
-│   │   ├── Router.jsx   # React Router config
+├── client/                    # Frontend (React + Vite)
+│   ├── public/                
+│   ├── src/                   
+│   │   ├── pages/             # React pages
+│   │   ├── components/        # Reusable components
+│   │   ├── assets/            # Frontend assets
+│   │   ├ 
 │   │   └── styles/
-│   │       └── base.css # Tailwind directives
-│   ├── index.html       # Main HTML
-│   ├── vite.config.js   # Vite configuration
-│   ├── postcss.config.js# PostCSS + Tailwind
-│   ├── tailwind.config.js
-│   └── vercel.json      # Rewrites for React Router
+│   │       └── base.css       # Tailwind directives
+│   ├── .env                   # Environment variables do client
+│   ├── index.html             # Main HTML
+│   ├── vite.config.js         # Vite configuration
+│   ├── 
+│   ├── 
+│   └── vercel.json            # Rewrites for React Router
 │
 ├── prisma/
-│   ├── schema.prisma    # Prisma database schema
-│   └── migrations/      # Migration history
+│   ├── schema.prisma          # Prisma database schema
+│   └── migrations/            # Migration history
 │
-├── server/              # Express backend
-│   ├── routes/          # Route files by entity
-│   ├── uploads/         # Image uploads
-│   └── index.js         # Server entry point
+├── server/                    # Express backend
+│   ├── routes/                
+│   ├── 
+│   └── index.js               # Server entry point
 │
-├── .env                 # Environment variables (ignored by Git)
-├── package.json         # Root dependencies and scripts
-└── README.md            # This file
+├── .env.development           # Environment variables - development
+├── .env.example               # Example environment variables
+├── .env.production            # Environment variables - production
+├── .env.test                  # Environment variables - test
+├── package.json               # Root dependencies and scripts
+└── README.md                  # This file
 ```
 
 ## 🧠 Tech Stack
