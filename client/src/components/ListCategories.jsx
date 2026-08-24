@@ -143,7 +143,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
       </div>
 
 
-          {/* ==== PAGINATION ==== */}
+        {/* ==== PAGINATION ==== */}
         <div className="flex gap-2 mt-4 justify-center items-center md:justify-end  ">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}

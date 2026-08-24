@@ -6,9 +6,9 @@ const prisma = new PrismaClient()
 
 /* ============== CREATE ================= */
 router.post('/new/tag', async (req, res) => {
-  const { name, isActive} = req.body
+  const { name, isActive } = req.body
   try {
-    const newTag = await prisma.tag.create ({
+    const newTag = await prisma.tag.create({
       data: {
         name,
         isActive: isActive === 'true' || isActive === true,
@@ -18,36 +18,79 @@ router.post('/new/tag', async (req, res) => {
     res.status(201).json(newTag)
   } catch (error) {
     console.error('Error ao adicionar tag', error)
-    res.status(500).json({ error: 'Error ao adicionar tag'})
+    res.status(500).json({ error: 'Error ao adicionar tag' })
   }
 })
 
 
 /* ============== GET ALL ITEMS ================= */
-router.get('/get/tagList', async (req, res) => {
+router.get('/get/tagList/:onlyActivesItems/:limitItemsPerPage/:currentPage', 
+  async (req, res) => {
   try {
-    const tags = await prisma.tag.findMany({
+
+    const filterOnlyActives = req.params.onlyActivesItems === 'true'
+      ? true
+      : req.params.onlyActivesItems === 'false' ? false : null;
+
+    const paginationLimit = Number(req.params.limitItemsPerPage) || 6;
+    const paginationCurrentPage = Number(req.params.currentPage) || 1;
+
+    const skip =
+      (paginationCurrentPage - 1) * paginationLimit;
+
+    const take =
+      paginationLimit;
+
+    const where = {
+      ...(filterOnlyActives !== null && {
+        isActive: filterOnlyActives,
+      }),
+    }
+
+    const [tags, totalItems] = await Promise.all([
+    prisma.tag.findMany({
+      where,
+      skip,
+      take,
+
       orderBy: [
-        {isActive:'desc'},
-        {name:'asc'},
-      ]
+        { isActive: 'desc' },
+        { name: 'asc' },
+      ],
+    }),
+
+    prisma.tag.count({
+      where,
+    }),
+    ])
+
+    
+    const paginationDetails = {
+      totalPages: Math.ceil(totalItems / paginationLimit),
+      currentPage: paginationCurrentPage,
+      itemsPerPage: paginationLimit,
+    }
+
+    res.status(200).json({
+      data: tags,
+      paginationDetails,
     })
-    res.status(200).json(tags)
+
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar as tags' })
   }
-})
+});
 
 /* ============== GET ALL ITEMS - ACTIVE ================= */
 router.get('/get/tagList/active', async (req, res) => {
   try {
     const tags = await prisma.tag.findMany({
-      where:{
+      where: {
         isActive: true,
       },
       orderBy: [
-        {name: 'asc'},
-        {isActive: 'desc'},
+        { name: 'asc' },
+        { isActive: 'desc' },
       ]
     });
 
@@ -80,11 +123,11 @@ router.get('/get/tagID/:id', async (req, res) => {
 /* ============== UPDATE ================= */
 router.put('/update/tag/:id', async (req, res) => {
   const tagId = parseInt(req.params.id)
-  const { name, isActive} =  req.body
+  const { name, isActive } = req.body
 
   try {
     const updated = await prisma.tag.update({
-      where: { id: tagId},
+      where: { id: tagId },
       data: {
         name,
         isActive: isActive === 'true' || isActive === true,
@@ -92,9 +135,9 @@ router.put('/update/tag/:id', async (req, res) => {
       },
     })
     res.status(200).json(updated)
-  }catch (error) {
+  } catch (error) {
     console.error('Error ao atualizar a tag', error)
-    res.status(500).json({error: 'Erro ao atualizar a tag'})
+    res.status(500).json({ error: 'Erro ao atualizar a tag' })
   }
 })
 
@@ -104,12 +147,12 @@ router.delete('/delete/tag/:id', async (req, res) => {
   const tagId = parseInt(req.params.id)
   try {
     const res = await prisma.tag.delete({
-      where: {id: tagId},
+      where: { id: tagId },
     })
     res.status(200).end()
-  }catch (error) {
+  } catch (error) {
     console.error('Error ao deletar tag', error)
-    res.status(500).json({error: 'Erro ao deletar tag'})
+    res.status(500).json({ error: 'Erro ao deletar tag' })
   }
 })
 
