@@ -29,6 +29,7 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
   const [listCategories, setCategories] = useState([]);
   const [listTags, setTags] = useState([]);
   const [listIngredients, setIngredients] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   /* ==== PAGINATION STATES ==== */
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,12 +51,11 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
   /* ==== FETCH DATA ==== */
   const fetchDishes = async () => {
     try {
-      const token = import.meta.env.VITE_API_SECRET;
-
+      setLoading(true);
       const filterOnlyByActives = filters.isActive === 'true' ? 'true' : null;
 
       const headers = {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${TOKEN_FOR_API}`,
       };
       
       const [dishRes, catRes, tagRes, ingredientsRes] = await Promise.all([
@@ -80,6 +80,9 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
 
     } catch (error) {
       console.log('Error fetching dish list:', error);
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -142,6 +145,7 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
                 <label className="text-sm w-30 md:w-full text-gray-700">Category:</label>
                 <select
                   value={filters.category}
+                  disabled={loading}
                   onChange={(e) =>{
                     setFilters((prev) => ({
                       ...prev,
@@ -170,6 +174,7 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
                 </label>
                 <select
                   value={filters.ingredients}
+                  disabled={loading}
                   onChange={(e) =>
                     setFilters((prev) => ({
                       ...prev,
@@ -195,6 +200,7 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
                 <label className="text-sm text-gray-700 w-30  md:w-full ">Highlights:</label>
                 <select
                   value={filters.tag}
+                  disabled={loading}
                   onChange={(e) =>{
                     setFilters((prev) => ({ ...prev, tag: e.target.value })),
                     setCurrentPage(1);
@@ -220,6 +226,7 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
           <span className="flex items-center justify-start gap-2 w-full ">
             <input
               type="checkbox"
+              disabled={loading}
               checked={filters.isActive}
               className='cursor-pointer'
               onChange={(e) =>{
@@ -257,7 +264,7 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
                   </span>
                 </p>
 
-                <div className="mt-2">
+                <div className="mt-2 text-wrap break-all">
                   <p className="text-lg text-gray-700 font-medium text-wrap break-all ">
                     Description:
                   </p>
@@ -298,12 +305,12 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
                     </span>
                   </div>
 
-                <div className="w-full  sm:w-36">
+                <div className="w-full sm:w-36 mb-2">
                   <ListImagesByDish dishId={item.id} refresh={dishcontrolPopup}/>
                 </div>
 
-                <div className="flex gap-2  justify-end gap-6 items-center flex-wrap ">
-                  <div className='w-70 flex flex-wrap gap-4 md:justify-end justify-center'>
+                <div className="flex gap-2 justify-end  gap-6  flex-wrap ">
+                  <div className='w-full flex flex-wrap gap-4 justify-end'>
                     <button
                       onClick={() => {
                         clickButtonEdit(item.id)
@@ -325,10 +332,10 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
         )}
 
         {/* ==== PAGINATION ==== */}
-        <div className="flex gap-2 mt-4 justify-end items-center ">
+        <div className="flex gap-2 mt-4 md:justify-end justify-center ">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
+            disabled={currentPage === 1  || loading}
             className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
           >
             Previous
@@ -336,7 +343,7 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
           <span>Page {currentPage} of {totalPages}</span>
           <button
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || loading}
             className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
           >
             Next

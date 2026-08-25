@@ -12,9 +12,9 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
 
     useEffect(() => {
         if (propsIngredientID) {
+            setLoading(true);
             const fetchIngredient = async () => {
                 try {
-                    setLoading(true);
                     const res = await fetch(`${API_BASE_URL}/api/get/ingredientID/${propsIngredientID}`)
                     const data = await res.json()
                     setFormNewIngredient({
@@ -28,7 +28,7 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
                     setLoading(false);
                 }
             }
-            fetchIngredient()
+            fetchIngredient();
         } else {
             setFormNewIngredient({ name: '', isActive: true })
         }

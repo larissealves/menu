@@ -17,11 +17,11 @@ export default function HeroSection() {
 
   const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
 
-  const [filters, setFilters] = useState({ 
-    name: '', 
-    category: 0, 
-    tag: 0, 
-    ingredients: 0 
+  const [filters, setFilters] = useState({
+    name: '',
+    category: 0,
+    tag: 0,
+    ingredients: 0
   });
 
   const [categories, setCategories] = useState([]);
@@ -36,7 +36,7 @@ export default function HeroSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
-  
+
   // Busca inicial de categorias, tags e pratos
   useEffect(() => {
     setLoading(true);
@@ -49,16 +49,16 @@ export default function HeroSection() {
 
         const [catRes, tagRes, ingredientsRes, dishRes] = await Promise.all([
           fetch(`${API_BASE_URL}/api/get/categoryList/active`,
-            {headers,}
+            { headers, }
           ),
           fetch(`${API_BASE_URL}/api/get/tagList/active`,
-            {headers,}
+            { headers, }
           ),
           fetch(`${API_BASE_URL}/api/get/ingredientList/active`,
-            {headers,}
+            { headers, }
           ),
           fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}/${limitItemsPerPage}/${currentPage}/${filters.category}/${filters.ingredients}/${filters.tag}`,
-            {headers,}
+            { headers, }
           )
         ]);
 
@@ -103,8 +103,8 @@ export default function HeroSection() {
       <Loading loadingIsActive={loading} />
 
       {/* Header */}
-      <section className=" justify-between gap-16 ">
-        <div className="flex flex-row items-center gap-6 mb-4 max-sm:flex-col max-sm:text-center">
+      <section className="flex flex-col items-center gap-6">
+        <div className="flex flex-row items-center gap-6 mb-2 max-sm:flex-col max-sm:text-center">
           <div>
             <img
               src={mainImage}
@@ -117,19 +117,40 @@ export default function HeroSection() {
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-700">
               Saboré
             </h1>
+
             <p className="text-xl font-bold text-gray-700">
               MENU
             </p>
           </div>
         </div>
 
-        <div className="w-full flex flex-wrap gap-4  sm:flex-1 justify-center">
-          <Link to="https://github.com/larissealves/" target="_blank" className="text-blue-600 underline font-bold">
-            Github - Larisse Alves → </Link>
-          <Link to="/ProjectDocumentation" target="_blank" className="text-blue-600 underline font-bold">
-            Project Documentation → </Link>
-          <Link to="/settings" target="_blank" className="text-blue-600 underline font-bold">
-            SETTINGS  → </Link>
+        <div className="flex flex-wrap justify-center items-center gap-2">
+          <Link
+            to="/settings"
+            className="group px-4 py-2 rounded-full bg-violet-100 text-violet-700 font-semibold text-sm hover:bg-violet-200 transition"
+          >
+            ⚙ Back Office
+            <span className="ml-1 transition-transform group-hover:translate-x-1 inline-block">
+              →
+            </span>
+          </Link>
+
+          <Link
+            to="/ProjectDocumentation"
+            target="_blank"
+            className="px-4 py-2 rounded-full text-gray-600 font-medium text-sm hover:bg-gray-100 hover:text-gray-900 transition"
+          >
+            Project Documentation ↗
+          </Link>
+
+          <a
+            href="https://github.com/larissealves/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 rounded-full text-gray-600 font-medium text-sm hover:bg-gray-100 hover:text-gray-900 transition"
+          >
+            GitHub ↗
+          </a>
         </div>
       </section>
 
@@ -144,7 +165,7 @@ export default function HeroSection() {
             value={filters.name}
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, name: e.target.value }), setCurrentPage(1))
-              }
+            }
             className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:max-w-xs"
           />
 
@@ -157,12 +178,12 @@ export default function HeroSection() {
                   onChange={(e) =>
                     setFilters((prev) => ({ ...prev, category: e.target.value }), setCurrentPage(1))
                   }
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
                   <option value="0">All categories</option>
                   {categories.map((cat) => (
                     <option
-                      className="capitalize w-full"
+                      className="capitalize text-wrap break-all "
                       key={cat.id}
                       value={cat.id}
                     >
@@ -186,12 +207,12 @@ export default function HeroSection() {
                       ingredients: e.target.value,
                     }), setCurrentPage(1))
                   }
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
                   <option value="0">All options</option>
                   {ingredients.map((ing) => (
                     <option
-                      className="capitalize w-full"
+                      className="capitalize text-wrap break-all "
                       key={ing.id}
                       value={ing.id}
                     >
@@ -210,12 +231,12 @@ export default function HeroSection() {
                   onChange={(e) =>
                     setFilters((prev) => ({ ...prev, tag: e.target.value }), setCurrentPage(1))
                   }
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full"
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
                   <option value="0">Other highlights</option>
                   {tags.map((tag) => (
                     <option
-                      className="capitalize"
+                      className="capitalize text-wrap break-all "
                       key={tag.id}
                       value={tag.id}
                     >
@@ -251,9 +272,9 @@ export default function HeroSection() {
                     className="flex flex-col w-full gap-4 border border-gray-200 rounded-lg p-4 bg-white mb-4"
                   >
                     <div className="flex-1 flex flex-col gap-1">
-                      <p className="font-semibold text-lg text-gray-800 break-all dish-name !capitalize">{dish.name.toLowerCase()}</p>
+                      <p className="font-semibold text-lg text-gray-800 dish-name text-wrap break-all !capitalize">{dish.name.toLowerCase()}</p>
                       <p className="text-gray-500 text-lg">R$ {dish.price}</p>
-                      <p className="text-gray-500 text-lg text-justify first-letter:uppercase ">{dish.description}</p>
+                      <p className="text-gray-500 text-lg text-justify  text-wrap break-all first-letter:uppercase ">{dish.description}</p>
                       <>
                         <ListIngredientsByDisheId propDishId={dish.id} />
                       </>
@@ -274,7 +295,7 @@ export default function HeroSection() {
           END - SECTION LIST DISH
         =======================================================*/}
 
-        
+
         {/* ==== PAGINATION ==== */}
         <div className="flex gap-2 mt-4 justify-end items-center ">
           <button

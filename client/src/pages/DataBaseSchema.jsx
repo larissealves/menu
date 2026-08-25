@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 
 const models = [
   {
@@ -102,6 +103,25 @@ const models = [
 export default function DatabaseSchema() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
+
+      <div className="flex flex-wrap items-center gap-2 border-b pb-2 mb-5">
+        <Link
+          to="/"
+          className="px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition"
+        >
+          ← Home
+        </Link>
+
+        <Link
+          to="/ProjectDocumentation"
+          target="_blank"
+          className="px-3 py-1.5 rounded-md text-sm font-medium text-violet-600 hover:bg-violet-50 transition"
+        >
+          Project Docs ↗
+        </Link>
+
+      </div>
+
       <h1 className="text-3xl font-bold mb-6">🗃️ Database Schema – Menu App</h1>
       <p className="mb-8 text-gray-700">Built with Prisma + PostgreSQL</p>
       {models.map((model) => (

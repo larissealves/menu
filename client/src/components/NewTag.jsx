@@ -15,6 +15,7 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
 
     useEffect(() => {
         if (isEdit) {
+            setLoading(true);
             const fetchTag = async () => {
                 try {
                     const res = await fetch(`${API_BASE_URL}/api/get/tagID/${propsTagID}`)
@@ -25,6 +26,8 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
                     })
                 } catch (error) {
                     console.error('Failed to fetch tag', error)
+                }finally{
+                    setLoading(false);
                 }
             }
             fetchTag()
@@ -114,7 +117,7 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
                                     disabled={loading}
                                     className={`cursor-pointer text-white px-4 py-2 rounded transition ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                                 >
-                                    {loading ? 'Loading......'
+                                    {loading ? 'Loading...'
                                         : isEdit ? 'Update' : 'Create'
                                     }
                                 </button>
