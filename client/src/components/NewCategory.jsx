@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react'
 
-export default function AddCategory({ propsCategoryID, handleToggleControlPopup, controlPopup }) {
+export default function AddCategory({ adminKey, propsCategoryID, handleToggleControlPopup, controlPopup }) {
+    
     const API_BASE_URL =
         import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
-
+    const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+    const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${TOKEN_FOR_API}`,
+        "x-admin-key": adminKey,
+    };
 
     const [formNewCategory, setFormNewCategory] = useState({
         name: '',
@@ -47,6 +53,12 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+
+        if (!adminKey) {
+            alert('For this action, please provide the admin key.');
+            return;
+        }
+
         setLoading(true);
         const endpoint = propsCategoryID
             ? `${API_BASE_URL}/api/update/category/${propsCategoryID}`
@@ -57,22 +69,27 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
         try {
             const res = await fetch(endpoint, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify(formNewCategory),
             })
+
+            if (res.status === 403) {
+                alert('For this action, please provide the admin key.');
+                setLoading(fals);
+                return;
+            }
+
+            setFormNewCategory({ name: '', isActive: true })
+            handleToggleControlPopup();
 
         } catch (error) {
             console.error('Erro na requisição:', error)
             setLoading(false);
         }
         finally {
-            setFormNewCategory({ name: '', isActive: true })
-            handleToggleControlPopup();
             setLoading(false);
         }
     }
-
-
 
     return (
         <div className="main-content">

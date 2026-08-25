@@ -36,8 +36,27 @@ const requireAuth = (req, res, next) => {
   next();
 };
 
+
+function adminAuth(req, res, next) {
+  const adminKey = req.headers["x-admin-key"];
+
+  if (!adminKey) {
+    return res.status(401).json({
+      error: "Admin key required"
+    });
+  }
+
+  if (adminKey !== process.env.ADMIN_KEY) {
+    return res.status(403).json({
+      error: "Invalid admin key"
+    });
+  }
+
+  next();
+}
+
 /* ============== CREATE DISH ================= */
-router.post('/new/addDishes', upload.array('images'), requireAuth,
+router.post('/new/addDishes', upload.array('images'), requireAuth, adminAuth,
  async (req, res) => {
   const { name, price, description, categoryId, isActive } = req.body;
   const tags = JSON.parse(req.body.tags || '[]');
@@ -111,7 +130,7 @@ router.post('/new/addDishes', upload.array('images'), requireAuth,
 
 
 /* ============== UPDATE DISH ================= */
-router.put('/update/editDishes/:id', upload.array('images'), async (req, res) => {
+router.put('/update/editDishes/:id', requireAuth, adminAuth, upload.array('images'), async (req, res) => {
   const dishID = parseInt(req.params.id);
   const { name, price, description, categoryId, isActive } = req.body;
   console.log('update dish', req.body)

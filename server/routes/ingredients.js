@@ -16,8 +16,26 @@ const requireAuth = (req, res, next) => {
 };
 
 
+function adminAuth(req, res, next) {
+  const adminKey = req.headers["x-admin-key"];
+
+  if (!adminKey) {
+    return res.status(401).json({
+      error: "Admin key required"
+    });
+  }
+
+  if (adminKey !== process.env.ADMIN_KEY) {
+    return res.status(403).json({
+      error: "Invalid admin key"
+    });
+  }
+
+  next();
+}
+
 /* ============== CREATE ================= */
-router.post('/new/ingredient', async (req, res) => {
+router.post('/new/ingredient', requireAuth, adminAuth, async (req, res) => {
   const { name, isActive} = req.body
   try {
     const newIngredient = await prisma.ingredient.create ({
@@ -57,7 +75,7 @@ router.get('/get/ingredientID/:id', async (req, res) => {
 
 
 /* ============== UPDATE ================= */
-router.put('/update/ingredient/:id', async (req, res) => {
+router.put('/update/ingredient/:id', requireAuth, adminAuth, async (req, res) => {
   const ingredientId = parseInt(req.params.id)
   const { name, isActive} =  req.body
 
@@ -156,7 +174,7 @@ router.get('/get/ingredientList/active', requireAuth, async (req, res) => {
 
 
 /* ============== DELETE ================= */
-router.delete('/delete/ingredient/:id', async (req, res) => {
+router.delete('/delete/ingredient/:id', requireAuth, adminAuth, async (req, res) => {
   const ingredientId = parseInt(req.params.id)
   try {
     const res = await prisma.ingredient.delete({

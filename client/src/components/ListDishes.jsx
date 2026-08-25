@@ -6,7 +6,7 @@ import ListIngredientsByDisheId from './ListIngredientsbyDish';
 import ListImagesByDish from './ListImagesbyDish';
 import BtnDeleteDish from './BtnDeleteDish';
 
-export default function ListAllDishes({dishcontrolPopup, onClose}) {
+export default function ListAllDishes({adminKey, dishcontrolPopup, onClose}) {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
@@ -55,7 +55,7 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
       const filterOnlyByActives = filters.isActive === 'true' ? 'true' : null;
 
       const headers = {
-        Authorization: `Bearer ${TOKEN_FOR_API}`,
+        Authorization: `Bearer ${TOKEN_FOR_API}`
       };
       
       const [dishRes, catRes, tagRes, ingredientsRes] = await Promise.all([
@@ -320,7 +320,7 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
                       Edit
                     </button>
 
-                    <BtnDeleteDish dishID={item.id} onDelete={fetchDishes} />
+                    <BtnDeleteDish adminKey={adminKey} dishID={item.id} onDelete={fetchDishes} />
                   </div>
                 </div>
 
@@ -354,6 +354,7 @@ export default function ListAllDishes({dishcontrolPopup, onClose}) {
       {/* ==== POPUP ==== */}
       {dishcontrolPopup && (
         <AddDishes
+          adminKey={adminKey}
           propDishID={dishEditId}
           handleToggleControlPopup={toggleControlPopup}
           controlPopup={dishcontrolPopup}

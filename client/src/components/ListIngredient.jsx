@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import AddIngredient from './NewIngredient';
 import BtnDeleteIngredient from './BtnDeleteIngredient';
 
-export default function ListIngredient({ showInList, ingredientControlPopup, onClose }) {
+export default function ListIngredient({ adminKey, showInList, ingredientControlPopup, onClose }) {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
   
@@ -106,12 +106,6 @@ export default function ListIngredient({ showInList, ingredientControlPopup, onC
             <span className="text-sm text-gray-800 font-medium break-all">
               {item.name}
             </span>
-            <span className="text-sm text-gray-500 hidden md:block">
-              Created: {new Date(item.createdAt).toLocaleDateString('en-US')}
-            </span>
-            <span className="text-sm text-gray-500 hidden md:block">
-              Last update: {new Date(item.updatedAt).toLocaleDateString('en-US')}
-            </span>
 
             <span className="text-sm text-gray-500">
               Created: {new Date(item.createdAt).toLocaleDateString('en-US')}
@@ -139,7 +133,7 @@ export default function ListIngredient({ showInList, ingredientControlPopup, onC
                 >
                   Edit
                 </button>
-                <BtnDeleteIngredient ingredientID={item.id} onDelete={fetchIngredient} />
+                <BtnDeleteIngredient adminKey={adminKey} ingredientID={item.id} onDelete={fetchIngredient} />
               </div>
             )}
           </div>
@@ -168,6 +162,7 @@ export default function ListIngredient({ showInList, ingredientControlPopup, onC
       {/* ==== POPUP ==== */}
       {ingredientControlPopup && (
         <AddIngredient
+          adminKey={adminKey} 
           propsIngredientID={ingredientEditID}
           handletoggleControlPopup={toggleControlPopup}
           controlPopup={ingredientControlPopup}

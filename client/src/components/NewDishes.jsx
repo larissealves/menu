@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
-export default function AddDishes({ propDishID, handleToggleControlPopup, controlPopup }) {
+export default function AddDishes({ adminKey, propDishID, handleToggleControlPopup, controlPopup }) {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
   const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
   const headers = {
-      Authorization: `Bearer ${TOKEN_FOR_API}`,
-    };
+    Authorization: `Bearer ${TOKEN_FOR_API}`,
+    "x-admin-key": adminKey,
+  };
 
   const [categories, setCategories] = useState([]);
   const [ingredients, setIngredients] = useState([]);
@@ -29,7 +30,7 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
     listImages: [],
   });
 
-  
+
   useEffect(() => {
     if (propDishID) {
       const fetchDish = async () => {
@@ -77,7 +78,7 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
     }
   }, [propDishID]);
 
-  
+
 
   /* ================= FLOW IMAGES - FOR DATA BASE =========================== */
   useEffect(() => {
@@ -86,7 +87,7 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
     const fetchImagesEditDish = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${propDishID}`, {headers,});
+        const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${propDishID}`, { headers, });
         const data = await res.json();
 
         if (Array.isArray(data)) {
@@ -115,6 +116,11 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
   }, [propDishID]);
 
   const handleDeleteImage = async (id) => {
+    if (!adminKey) {
+      setStatus('For delete image, please provide the admin key.');
+      return;
+    }
+    setStatus("");
     try {
       setLoading(true);
       const res = await fetch(`${API_BASE_URL}/api/delete/imageByDishId/${id}`, {
@@ -122,10 +128,16 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
         method: 'DELETE',
       });
 
+      if (!res.ok) {
+        setStatus('For delete image, please provide the admin key.');
+        return;
+      }
+
       setImagesEditDish((prev) => prev.filter((img) => img.id !== id));
-      
+
     } catch (error) {
       console.error('Erro ao deletar imagem:', error);
+       setStatus('Erro ao deletar imagem:');
     }
     finally {
       setLoading(false);
@@ -141,9 +153,9 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
     const sizeAvaliable = 4 - listTempImages.length;
     const selectedFiles = files.slice(0, sizeAvaliable);
 
-    if (sizeAvaliable <= 0 ) {
+    if (sizeAvaliable <= 0) {
       e.target.value = "";
-      return; 
+      return;
     }
 
     selectedFiles.forEach((file) => {
@@ -171,14 +183,14 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
   };
 
   /* ================= (END) FLOW IMAGES- ONLY FORM =========================== */
-  
+
   useEffect(() => {
     const fetchAll = async () => {
       try {
         const [catRes, ingRes, tagRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/get/categoryList/active`, {headers,}),
-          fetch(`${API_BASE_URL}/api/get/ingredientList/active`, {headers,}),
-          fetch(`${API_BASE_URL}/api/get/tagList/active`, {headers,}),
+          fetch(`${API_BASE_URL}/api/get/categoryList/active`, { headers, }),
+          fetch(`${API_BASE_URL}/api/get/ingredientList/active`, { headers, }),
+          fetch(`${API_BASE_URL}/api/get/tagList/active`, { headers, }),
         ]);
         setCategories(await catRes.json());
         setIngredients(await ingRes.json());
@@ -193,6 +205,12 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!adminKey) {
+      setStatus('Error. For this action, please provide the admin key');
+      return;
+    }
+
     setStatus('');
 
     if (!formDishes.name.trim() || !formDishes.price || !formDishes.categoryId) {
@@ -225,6 +243,16 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
         body: formData,
       });
 
+      if (!res.ok) {
+        console.error('Erro da API', res.statusText)
+        setStatus(`Error. 
+          ${res.status === 403
+            ? 'For this action, please provide the admin key.'
+            : 'Status:' `${res.status}`
+          }`);
+        return;
+      }
+
       setStatus(propDishID ? "Prato editado com sucesso!" : 'Prato salvo com sucesso!');
       setListImageTemp([]);
       setFormDishes({
@@ -238,16 +266,13 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
         listImages: [],
       });
 
-      if (!res.ok) {
-        setStatus('Erro ao salvar o prato.', res.status);
-        handleToggleControlPopup();
-      }
+
+      handleToggleControlPopup();
+
     } catch (error) {
       console.error('Erro na requisição:', error);
       setStatus('Erro na requisição.');
     } finally {
-      setStatus("");
-      handleToggleControlPopup();
       setLoading(false);
     }
   };
@@ -344,23 +369,23 @@ export default function AddDishes({ propDishID, handleToggleControlPopup, contro
                           onChange={handleTempImage} className="hidden" />
                       </label>
                     )}
-                    
+
                     <div className="grid grid-cols-4 gap-2">
                       {[...imagesEditDish, ...listTempImages].map((item, index) => (
                         <div key={index} className="relative border p-2 rounded w-fit">
-                          <img src={item.id ? item.previewUrl : item.preview} alt={`img-${index}`} 
+                          <img src={item.id ? item.previewUrl : item.preview} alt={`img-${index}`}
                             className=" h-fit object-cover rounded  w-fit" />
                           {!loading && (
-                          <button type="button"
-                            disabled={loading}
-                            onClick={() => item.id
-                              ? handleDeleteImage(item.id)
-                              : handleRemoveTempImage(index)
-                            }
-                            className="absolute cursor-pointer top-1 right-1 text-white
+                            <button type="button"
+                              disabled={loading}
+                              onClick={() => item.id
+                                ? handleDeleteImage(item.id)
+                                : handleRemoveTempImage(index)
+                              }
+                              className="absolute cursor-pointer top-1 right-1 text-white
                               bg-red-500 rounded-full px-2">
-                            ×
-                          </button>
+                              ×
+                            </button>
                           )}
                         </div>
                       ))}
