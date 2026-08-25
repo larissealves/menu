@@ -14,6 +14,7 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
 
     useEffect(() => {
         if (propsCategoryID) {
+            setLoading(true);
             const fetchCategory = async () => {
                 try {
                     const res = await fetch(`${API_BASE_URL}/api/get/categoryID/${propsCategoryID}`)
@@ -26,7 +27,8 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
                     console.error('Failed to fetch category:', error)
                 }
             }
-            fetchCategory()
+            fetchCategory();
+            setLoading(false);
         } else {
             setFormNewCategory({ name: '', isActive: true })
         }
