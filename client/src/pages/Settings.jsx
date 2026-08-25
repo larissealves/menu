@@ -15,6 +15,8 @@ export default function Settings() {
   const [controlPopupIngredient, setControlPopupIngredient] = useState(false);
   const [controlPopupTag, setControlPopupTag] = useState(false);
 
+  const [adminKey, setAdminKey] = useState("");
+
 
   const tabs = [
     { key: 'categories', label: 'Categories', icon: <LayoutGrid size={16} /> },
@@ -43,30 +45,45 @@ export default function Settings() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8">
+
       <div className="flex flex-wrap items-center gap-2 border-b-0 pb-5">
-        <Link
-          to="/"
-          className="px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition"
-        >
-          ← Home
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to="/"
+            className="px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition"
+          >
+            ← Home
+          </Link>
 
-        <Link
-          to="/ProjectDocumentation"
-          target="_blank"
-          className="px-3 py-1.5 rounded-md text-sm font-medium text-violet-600 hover:bg-violet-50 transition"
-        >
-          Project Docs ↗
-        </Link>
+          <Link
+            to="/ProjectDocumentation"
+            target="_blank"
+            className="px-3 py-1.5 rounded-md text-sm font-medium text-violet-600 hover:bg-violet-50 transition"
+          >
+            Project Docs ↗
+          </Link>
 
-        <Link
-          to="/DeployDocumentation"
-          target="_blank"
-          className="px-3 py-1.5 rounded-md text-sm font-medium text-pink-600 hover:bg-pink-50 transition"
-        >
-          Deploy Docs ↗
-        </Link>
+          <Link
+            to="/DeployDocumentation"
+            target="_blank"
+            className="px-3 py-1.5 rounded-md text-sm font-medium text-pink-600 hover:bg-pink-50 transition"
+          >
+            Deploy Docs ↗
+          </Link>
+        </div>
+
+        <div className="ml-auto flex items-center gap-2 w-full sm:w-auto">
+          <label>Admin Key:</label>
+          <input
+            type="password"
+            placeholder="Admin key"
+            value={adminKey}
+            onChange={(e) => setAdminKey(e.target.value)}
+            className="w-full sm:w-64 px-3 py-1.5 rounded-md border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-gray-200"
+          />
+        </div>
       </div>
+
       <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 justify-end mt-4">
         <button onClick={() => { setControlPopupCategory(true); setActiveTab('categories') }}
           className="bg-purple-400 hover:bg-purple-700 text-white font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center md:justify-center justify-start gap-2 w-full sm:w-auto">
@@ -122,7 +139,7 @@ export default function Settings() {
         }
 
         {activeTab === 'dishes' &&
-          <ListAllDishes dishcontrolPopup={controlPopupDish} onClose={toggleControlPopup}
+          <ListAllDishes adminKey={adminKey} dishcontrolPopup={controlPopupDish} onClose={toggleControlPopup}
           />
         }
 
