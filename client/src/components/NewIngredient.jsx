@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react'
 
-export default function AddIngredient({ propsIngredientID, handletoggleControlPopup, controlPopup }) {
-  const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+export default function AddIngredient({ adminKey, propsIngredientID, handletoggleControlPopup, controlPopup }) {
 
-    const [loading, setLoading ] = useState(false);
+    const API_BASE_URL =
+        import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+    const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${TOKEN_FOR_API}`,
+        "x-admin-key": adminKey,
+    };
+
+    const [loading, setLoading] = useState(false);
     const [formNewIngredient, setFormNewIngredient] = useState({
         name: '',
         isActive: true,
@@ -44,7 +51,14 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+
+        if (!adminKey) {
+            alert('For this action, please provide the admin key.');
+            return;
+        }
+
         setLoading(true);
+
         const endpoint = propsIngredientID
             ? `${API_BASE_URL}/api/update/ingredient/${propsIngredientID}`
             : `${API_BASE_URL}/api/new/ingredient`
@@ -54,15 +68,23 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
         try {
             const res = await fetch(endpoint, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify(formNewIngredient),
             })
+
+            if (res.status === 403) {
+                alert('For this action, please provide the admin key.');
+                setLoading(fals);
+                return;
+            }
+            handletoggleControlPopup()
+            
+            setFormNewIngredient({ name: '', isActive: true })
+
         } catch (error) {
             console.error('Erro na requisição:', error)
         }
         finally {
-            setFormNewIngredient({ name: '', isActive: true })
-            handletoggleControlPopup()
             setLoading(false);
         }
     }
@@ -79,13 +101,13 @@ export default function AddIngredient({ propsIngredientID, handletoggleControlPo
                                 {propsIngredientID ? 'Edit' : 'Create'} Ingredient
                             </h2>
                             {!loading && (
-                            <button
-                                onClick={handletoggleControlPopup}
-                                className="text-gray-500 cursor-pointer  hover:text-gray-800 text-2xl font-bold leading-none"
-                                aria-label="Close"
-                            >
-                                ×
-                            </button>
+                                <button
+                                    onClick={handletoggleControlPopup}
+                                    className="text-gray-500 cursor-pointer  hover:text-gray-800 text-2xl font-bold leading-none"
+                                    aria-label="Close"
+                                >
+                                    ×
+                                </button>
                             )}
                         </div>
                         <form onSubmit={handleSubmit} className="space-y-4">

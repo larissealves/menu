@@ -134,7 +134,7 @@ export default function Settings() {
         }
 
         {activeTab === 'ingredients' &&
-          <ListIngredient ingredientControlPopup={controlPopupIngredient} onClose={toggleIngredientsPopup}
+          <ListIngredient adminKey={adminKey} ingredientControlPopup={controlPopupIngredient} onClose={toggleIngredientsPopup}
           />
         }
 
