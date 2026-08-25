@@ -4,6 +4,7 @@ import App from './App'
 import Settings from './pages/Settings';
 import ProjectDocumentation from './pages/Doc';
 import DatabaseSchema from './pages/DataBaseSchema';
+import DocDeploy  from './pages/DocDeploy';
 
 function Router() {
     return (
@@ -12,6 +13,7 @@ function Router() {
             <Route path='/settings' element={<Settings />} />
             <Route path='/ProjectDocumentation' element={<ProjectDocumentation />} />
             <Route path='/DataBaseSchema' element={<DatabaseSchema />} />
+            <Route path='/DeployDocumentation' element={<DocDeploy />} />
 
             
             {/* Catch-all route */}
