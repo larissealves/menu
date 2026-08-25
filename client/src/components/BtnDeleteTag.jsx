@@ -48,13 +48,13 @@ export default function BtnDeleteTag({adminKey, tagID, onDelete }) {
         method: 'DELETE',
       });
 
-      onDelete();
-
       if (res.status === 403) {
         alert('For this action, please provide the admin key.');
         setLoading(false);
         return;
       }
+
+      onDelete();
 
     } catch (error) {
       console.error('Erro ao deletar esta tag', error);

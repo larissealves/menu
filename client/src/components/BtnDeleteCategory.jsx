@@ -2,10 +2,16 @@ import React, { useEffect, useState } from 'react'
 
 import Tooltip from "../components/tooltip/Tooltip"
 
-export default function BtnDeleteCategory({ categoryID, onDelete }) {
+export default function BtnDeleteCategory({ adminKey, categoryID, onDelete }) {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
+  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${TOKEN_FOR_API}`,
+    'x-admin-key': adminKey,
+  }
 
   const [hasDishesLinked, setHasDishesLinked] = useState(false);
   const [loading, setLoading] = useState();
@@ -32,12 +38,27 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
   }, [categoryID]);
 
   const handleDeleteSubmit = async () => {
+    setLoading(true);
+
+    if (!adminKey) {
+      alert('For this action, please provide the admin key.');
+      setLoading(false);
+      return;
+    }
+
     const endpoint = `${API_BASE_URL}/api/delete/category/${categoryID}`;
 
     try {
       const res = await fetch(endpoint, {
+        headers,
         method: 'DELETE',
       });
+
+      if (res.status === 403) {
+        alert('For this action, please provide the admin key.');
+        setLoading(false);
+        return;
+      }
 
       onDelete();
 
@@ -63,7 +84,7 @@ export default function BtnDeleteCategory({ categoryID, onDelete }) {
 
         ) : (
           <button type="button"
-            disabled={hasDishesLinked}
+            disabled={hasDishesLinked || loading}
             onClick={handleDeleteSubmit}
             className={
               `px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white cursor-pointer`

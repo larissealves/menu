@@ -16,8 +16,27 @@ const requireAuth = (req, res, next) => {
   next();
 };
 
+function adminAuth(req, res, next) {
+  const adminKey = req.headers["x-admin-key"];
+
+  if (!adminKey) {
+    return res.status(401).json({
+      error: "Admin key required"
+    });
+  }
+
+  if (adminKey !== process.env.ADMIN_KEY) {
+    return res.status(403).json({
+      error: "Invalid admin key"
+    });
+  }
+
+  next();
+}
+
+
 /* ============== CREATE ================= */
-router.post('/new/category', async (req, res) => {
+router.post('/new/category', requireAuth, adminAuth, async (req, res) => {
   const { name, isActive } = req.body
   try {
     const newCategory = await prisma.category.create({
@@ -136,7 +155,7 @@ router.get('/get/categoryID/:id', async (req, res) => {
 
 
 /* ============== UPDATE ================= */
-router.put('/update/category/:id', async (req, res) => {
+router.put('/update/category/:id', requireAuth, adminAuth, async (req, res) => {
   const categoryId = parseInt(req.params.id)
   const { name, isActive } = req.body
 
@@ -158,7 +177,7 @@ router.put('/update/category/:id', async (req, res) => {
 
 
 /* ============== DELETE ================= */
-router.delete('/delete/category/:id', async (req, res) => {
+router.delete('/delete/category/:id', requireAuth, adminAuth, async (req, res) => {
   const categoryId = parseInt(req.params.id)
   try {
     const res = await prisma.category.delete({

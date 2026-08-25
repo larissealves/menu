@@ -3,11 +3,16 @@ import React, { useEffect, useState } from 'react';
 import AddCategory from './NewCategory';
 import BtnDeleteCategory from './BtnDeleteCategory';
 
-export default function ListCategories({ categoriesControlPopup, onClose }) {
+export default function ListCategories({ adminKey, categoriesControlPopup, onClose }) {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
   const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const headers = {
+    Authorization: `Bearer ${TOKEN_FOR_API}`,
+    'x-admin-key': adminKey,
+  };
+
 
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({ option: 'null' });
@@ -36,11 +41,8 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const headers = {
-        Authorization: `Bearer ${TOKEN_FOR_API}`,
-      };
 
-      const res = await fetch(`${API_BASE_URL}/api/get/categoryList/${filters.option}/${itemsPerPage}/${currentPage}`, {headers,});
+      const res = await fetch(`${API_BASE_URL}/api/get/categoryList/${filters.option}/${itemsPerPage}/${currentPage}`, { headers, });
       const data = await res.json();
       setCategories(data.categories);
       setCurrentPage(data.paginationDetails.currentPage);
@@ -131,8 +133,8 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
             <span
               className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit 
               ${item.isActive
-                ? 'bg-green-100 text-green-800'
-                : 'bg-orange-100 text-orange-800'
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-orange-100 text-orange-800'
                 }`}
             >
               {item.isActive ? 'Active' : 'Disabled'}
@@ -148,6 +150,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
               </button>
 
               <BtnDeleteCategory
+                adminKey={adminKey}
                 categoryID={item.id}
                 onDelete={fetchCategories}
               />
@@ -180,6 +183,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
       {/* ==== POPUP ==== */}
       {categoriesControlPopup && (
         <AddCategory
+          adminKey={adminKey}
           propsCategoryID={categoryEditID}
           handleToggleControlPopup={closePopup}
           controlPopup={categoriesControlPopup}

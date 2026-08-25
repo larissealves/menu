@@ -124,7 +124,7 @@ export default function Settings() {
       <div className="bg-white rounded-xl shadow p-6 ">
 
         {activeTab === 'categories' &&
-          <ListCategories categoriesControlPopup={controlPopupCategory} onClose={toggleCategoryPopup}
+          <ListCategories adminKey={adminKey} categoriesControlPopup={controlPopupCategory} onClose={toggleCategoryPopup}
           />
         }
 
