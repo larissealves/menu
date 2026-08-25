@@ -39,27 +39,49 @@ export default function Settings() {
   const toggleControlPopup = () => {
     setControlPopupDish((prev) => !prev);
   };
-  
+
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8">
-      <Link to="/" className="text-blue-600 underline font-bold"> ← BACK TO HOME </Link>
-      <br></br>
-      <br></br>
-      <Link to="/ProjectDocumentation" target="_blank" className="text-blue-600 underline font-bold">
-        Project Documentation → </Link>
-      {/* Ações */}
-      <div className="flex flex-wrap gap-4 justify-end mt-4">
-        <button onClick={() =>{ setControlPopupCategory(true); setActiveTab('categories')}} className="bg-purple-400 hover:bg-purple-700 text-white  font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 border-b-0 pb-5">
+        <Link
+          to="/"
+          className="px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition"
+        >
+          ← Home
+        </Link>
+
+        <Link
+          to="/ProjectDocumentation"
+          target="_blank"
+          className="px-3 py-1.5 rounded-md text-sm font-medium text-violet-600 hover:bg-violet-50 transition"
+        >
+          Project Docs ↗
+        </Link>
+
+        <Link
+          to="/DeployDocumentation"
+          target="_blank"
+          className="px-3 py-1.5 rounded-md text-sm font-medium text-pink-600 hover:bg-pink-50 transition"
+        >
+          Deploy Docs ↗
+        </Link>
+      </div>
+      <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 justify-end mt-4">
+        <button onClick={() => { setControlPopupCategory(true); setActiveTab('categories') }}
+          className="bg-purple-400 hover:bg-purple-700 text-white font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center md:justify-center justify-start gap-2 w-full sm:w-auto">
           <PlusCircle size={18} /> Category
         </button>
-        <button onClick={() => {setControlPopupTag(true); setActiveTab('tags')}} className="bg-purple-400 hover:bg-purple-700 text-white font-semibold  cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
+        <button onClick={() => { setControlPopupTag(true); setActiveTab('tags') }}
+          className="bg-purple-400 hover:bg-purple-700 text-white font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center md:justify-center justify-start  gap-2 w-full sm:w-auto">
           <PlusCircle size={18} /> Tag
         </button>
-        <button onClick={() => {setControlPopupIngredient(true), setActiveTab('ingredients')}} className="bg-purple-400 hover:bg-purple-700 text-white  cursor-pointer font-semibold px-4 py-2 rounded-lg flex items-center gap-2">
+        <button onClick={() => { setControlPopupIngredient(true), setActiveTab('ingredients') }}
+          className="bg-purple-400 hover:bg-purple-700 text-white font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center md:justify-center justify-start  gap-2 w-full sm:w-auto">
           <PlusCircle size={18} /> Ingredient
         </button>
-        <button onClick={() => {setControlPopupDish(true), setActiveTab('dishes')}} className="bg-pink-600 hover:bg-pink-700 text-white font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center gap-2">
+        <button onClick={() => { setControlPopupDish(true), setActiveTab('dishes') }}
+          className="bg-pink-600 hover:bg-pink-700 text-white font-semibold cursor-pointer px-4 py-2 rounded-lg flex items-center md:justify-center justify-start  gap-2 w-full sm:w-auto">
           <PlusCircle size={18} /> Dish
         </button>
       </div>
@@ -71,8 +93,8 @@ export default function Settings() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`flex items-center gap-1 px-3 py-1 border-b-2 transition cursor-pointer w-full md:w-auto ${activeTab === tab.key
-                ? 'border-fuchsia-600 text-fuchsia-600 font-semibold  '
-                : 'border-transparent hover:text-violet'
+              ? 'border-fuchsia-600 text-fuchsia-600 font-semibold  '
+              : 'border-transparent hover:text-violet'
               }`}
           >
             {tab.icon}
@@ -94,17 +116,17 @@ export default function Settings() {
           />
         }
 
-        {activeTab === 'ingredients' && 
+        {activeTab === 'ingredients' &&
           <ListIngredient ingredientControlPopup={controlPopupIngredient} onClose={toggleIngredientsPopup}
           />
         }
-        
-        {activeTab === 'dishes' && 
-            <ListAllDishes dishcontrolPopup={controlPopupDish} onClose={toggleControlPopup} 
+
+        {activeTab === 'dishes' &&
+          <ListAllDishes dishcontrolPopup={controlPopupDish} onClose={toggleControlPopup}
           />
         }
 
-      </div>      
+      </div>
     </div>
   );
 }

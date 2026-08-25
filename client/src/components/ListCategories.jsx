@@ -14,13 +14,13 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
   const [listCategories, setCategories] = useState([]);
   const [categoryEditID, setCategoryEditID] = useState(null);
   const [controlPopup, setControlPopup] = useState(false);
+  const [loading, setLoading] = useState(false);
 
 
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
-  console.log(filters.option);
   /* ==== HANDLERS ==== */
   const editCategory = (id) => {
     setCategoryEditID(id);
@@ -35,6 +35,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
   /* ==== FETCH DATA ==== */
   const fetchCategories = async () => {
     try {
+      setLoading(true);
       const headers = {
         Authorization: `Bearer ${TOKEN_FOR_API}`,
       };
@@ -46,6 +47,9 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
       setTotalPages(data.paginationDetails.totalPages);
     } catch (error) {
       console.log('Error fetching category list:', error);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -90,11 +94,15 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
       <div className="mb-4">
         <select
           value={filters.option}
+          disabled={loading}
           onChange={(e) =>
             setFilters((prev) => ({ ...prev, option: e.target.value }),
               setCurrentPage(1))
           }
-          className="capitalize px-3 py-2 border border-gray-300 rounded-md text-sm  w-full md:w-[30%] "
+          className={`capitalize px-3 py-2 border border-gray-300 
+            rounded-md text-sm  w-full md:w-[30%]
+            ${loading ? "cursor-not-allowed" : ""}`
+          }
         >
           <option value="null">All items</option>
           <option value="true">Active items</option>
@@ -107,7 +115,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
         {listCategories.map((item) => (
           <div
             key={item.id}
-            className="grid grid-cols-1 md:grid-cols-5 items-center border rounded px-4 py-3 bg-gray-50 hover:bg-gray-100 transition"
+            className="grid grid-cols-1 md:grid-cols-5 items-center border rounded px-4 py-3 bg-gray-50 hover:bg-gray-100 transition gap-2"
           >
             <span className="font-medium text-gray-800 break-all capitalize  ">
               {item.name}
@@ -121,7 +129,8 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
             </span>
 
             <span
-              className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit ${item.isActive
+              className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit 
+              ${item.isActive
                 ? 'bg-green-100 text-green-800'
                 : 'bg-orange-100 text-orange-800'
                 }`}
@@ -130,7 +139,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
             </span>
 
             {/* ==== ACTIONS ==== */}
-            <div className="flex justify-center md:justify-end gap-4 mt-2 md:mt-0 ">
+            <div className="flex gap-4 mt-2 md:mt-0 justify-end">
               <button
                 onClick={() => editCategory(item.id)}
                 className="px-3 py-1 text-sm bg-fuchsia-600 hover:bg-violet-700 text-white rounded cursor-pointer"
@@ -152,7 +161,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
       <div className="flex gap-2 mt-4 justify-center items-center md:justify-end  ">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || loading}
           className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
         >
           Previous
@@ -160,7 +169,7 @@ export default function ListCategories({ categoriesControlPopup, onClose }) {
         <span>Page {currentPage} of {totalPages}</span>
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || loading}
           className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
         >
           Next

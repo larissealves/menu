@@ -13,6 +13,7 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
   const [filters, setFilters] = useState({ option: 'null' });
   const [listTags, setTags] = useState([]);
   const [tagsEditID, setTagsEditID] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,6 +33,7 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
   /* ==== FETCH DATA ==== */
   const fetchTag = async () => {
     try {
+      setLoading(true);
       const headers = {
         Authorization: `Bearer ${TOKEN_FOR_API}`,
       };
@@ -42,6 +44,8 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
       setTotalPages(data.paginationDetails.totalPages);
     } catch (error) {
       console.log('Error fetching tag list:', error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -78,6 +82,7 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
       <div className="mb-4">
         <select
           value={filters.option}
+          disabled={loading}
           onChange={(e) =>{
             setFilters((prev) => ({ ...prev, option: e.target.value }));
             setCurrentPage(1)
@@ -95,7 +100,7 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
         {listTags.map((item) => (
           <div
             key={item.id}
-            className={`grid grid-cols-1 md:grid-cols-5 items-center border px-4 py-3 rounded-md capitalize ${showInList ? 'bg-gray-50' : 'hover:bg-gray-100'
+            className={`grid grid-cols-1 md:grid-cols-5 items-center border px-4 py-3 rounded-md capitalize gap-2 ${showInList ? 'bg-gray-50' : 'hover:bg-gray-100'
               } transition`}
           >
             <span className="text-sm font-medium break-all text-gray-800">
@@ -109,6 +114,15 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
               Last update:{' '}
               {new Date(item.updatedAt).toLocaleDateString('en-US')}
             </span>
+
+            <span className="text-sm text-gray-500">
+              Created: {new Date(item.createdAt).toLocaleDateString('en-US')}
+            </span>
+            <span className="text-sm text-gray-500">
+              Last update:{' '}
+              {new Date(item.updatedAt).toLocaleDateString('en-US')}
+            </span>
+
             <span
               className={`text-sm font-medium px-2.5 py-0.5 rounded-full w-fit ${item.isActive
                 ? 'bg-green-100 text-green-800'
@@ -138,7 +152,7 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
       <div className="flex gap-2 mt-4 justify-center items-center md:justify-end  ">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || loading}
           className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
         >
           Previous
@@ -146,7 +160,7 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
         <span>Page {currentPage} of {totalPages}</span>
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || loading}
           className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50 cursor-pointer"
         >
           Next

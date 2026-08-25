@@ -117,7 +117,7 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
                                     disabled={loading}
                                     className={`cursor-pointer text-white px-4 py-2 rounded transition ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                                 >
-                                    {loading ? 'Loading......'
+                                    {loading ? 'Loading...'
                                         : isEdit ? 'Update' : 'Create'
                                     }
                                 </button>

@@ -1,23 +1,33 @@
 import React from 'react';
-import { useNavigate, Link } from "react-router-dom";
-
-import image01 from '../assets/app-images/img-01.png'
-import image02 from '../assets/app-images/img-02.png'
-import image03 from '../assets/app-images/img-03.png'
-import image04 from '../assets/app-images/img-04.png'
-import image05 from '../assets/app-images/img-05.png'
-import image06 from '../assets/app-images/img-06.png'
-
+import { Link } from "react-router-dom";
 
 export default function ProjectDocumentation() {
   return (
     <div className="prose max-w-4xl mx-auto px-4 py-10">
-      <Link to="/" target="_blank" className="text-blue-600 underline font-bold"> ← BACK TO HOME </Link>
-      <br></br>
-      <br></br>
-      <Link to="/DataBaseSchema" target="_blank" className="text-blue-600 underline font-bold"> Data base Schema  → </Link>
-      <br></br>
-      <br></br>
+      <div className="flex flex-wrap items-center gap-2 border-b pb-2 mb-5">
+        <Link
+          to="/"
+          className="px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition"
+        >
+          ← Home
+        </Link>
+
+        <Link
+          to="/DataBaseSchema"
+          target="_blank"
+          className="px-3 py-1.5 rounded-md text-sm font-medium text-violet-600 hover:bg-violet-50 transition"
+        >
+          Data Base Schema↗
+        </Link>
+
+        <Link
+          to="/DeployDocumentation"
+          target="_blank"
+          className="px-3 py-1.5 rounded-md text-sm font-medium text-pink-600 hover:bg-pink-50 transition"
+        >
+          Deploy Docs ↗
+        </Link>
+      </div>
       <h1 className="text-4xl font-bold mb-4">🍽️ Menu - Restaurant Menu Management System</h1>
 
       <p>
@@ -212,28 +222,59 @@ npm run dev`}</code>
       </table>
 
       <section className="mt-10">
-        <h2 className="text-2xl font-semibold">👨‍💻 Author</h2>
-        <p>
-          Developed by <strong>Larisse Alves</strong> 
-          <br />
-          <a
-            className="text-blue-600 underline"
-            href="https://linktr.ee/larisseralves"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            🌐 Larisse Alves – Linktree
-          </a>
-          <br />
-          <a
-            className="text-blue-600 underline"
-            href="https://github.com/larissealves/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            🌐 GitHub
-          </a>
-        </p>
+        <div>
+          <h2 className="text-2xl font-semibold mb-3">👨‍💻 Author</h2>
+
+          <p className="mb-4">
+            Developed by <strong>Larisse Alves</strong>
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href="https://linktr.ee/larisseralves"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-violet-300 hover:bg-violet-50 transition"
+            >
+              <span className="text-xl">🌐</span>
+
+              <div>
+                <p className="font-semibold text-gray-800 group-hover:text-violet-700">
+                  Linktree
+                </p>
+                <p className="text-sm text-gray-500">
+                  Social links &amp; profiles
+                </p>
+              </div>
+
+              <span className="ml-auto text-gray-400 group-hover:text-violet-600 transition-transform group-hover:translate-x-1">
+                ↗
+              </span>
+            </a>
+
+            <a
+              href="https://github.com/larissealves/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md hover:border-gray-400 hover:bg-gray-50 transition"
+            >
+              <span className="text-xl">💻</span>
+
+              <div>
+                <p className="font-semibold text-gray-800 group-hover:text-gray-950">
+                  GitHub
+                </p>
+                <p className="text-sm text-gray-500">
+                  Projects &amp; repositories
+                </p>
+              </div>
+
+              <span className="ml-auto text-gray-400 group-hover:text-gray-800 transition-transform group-hover:translate-x-1">
+                ↗
+              </span>
+            </a>
+          </div>
+        </div>
       </section>
     </div>
   );

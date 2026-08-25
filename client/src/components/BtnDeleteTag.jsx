@@ -15,7 +15,6 @@ export default function BtnDeleteTag({ tagID, onDelete }) {
         const res = await fetch(`${API_BASE_URL}/api/get/filterDishesByTag/${tagID}}`);
         const data = await res.json();
         setHasDishesLinked(data.length > 0);
-        console.log('aaa', hasDishesLinked)
       } catch (error) {
         console.error('Erro ao buscar pratos vinculados à tag informada', error);
       }

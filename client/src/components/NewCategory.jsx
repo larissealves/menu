@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export default function AddCategory({ propsCategoryID, handleToggleControlPopup, controlPopup}) {
+export default function AddCategory({ propsCategoryID, handleToggleControlPopup, controlPopup }) {
     const API_BASE_URL =
         import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
@@ -26,11 +26,14 @@ export default function AddCategory({ propsCategoryID, handleToggleControlPopup,
                 } catch (error) {
                     console.error('Failed to fetch category:', error)
                 }
+                finally {
+                    setLoading(false);
+                }
             }
             fetchCategory();
-            setLoading(false);
         } else {
             setFormNewCategory({ name: '', isActive: true })
+            setLoading(false);
         }
     }, [propsCategoryID])
 
