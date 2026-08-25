@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react'
 
-export default function AddIngredient({ propsTagID, handletoggleControlPopup, controlPopup }) {
+export default function AddIngredient({ adminKey, propsTagID, handletoggleControlPopup, controlPopup }) {
 
     const API_BASE_URL =
         import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
-    const isEdit =( propsTagID != null);
+    const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+    const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${TOKEN_FOR_API}`,
+        'x-admin-key': adminKey,
+    }
+
+    const isEdit = (propsTagID != null);
     const [loading, setLoading] = useState(false);
 
     const [formNewTag, setFormNewTag] = useState({
@@ -26,7 +33,7 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
                     })
                 } catch (error) {
                     console.error('Failed to fetch tag', error)
-                }finally{
+                } finally {
                     setLoading(false);
                 }
             }
@@ -47,26 +54,39 @@ export default function AddIngredient({ propsTagID, handletoggleControlPopup, co
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true);
+
+        if (!adminKey) {
+            alert('For this action, please provide the admin key.');
+            setLoading(false);
+            return;
+        }
+
         const endpoint = isEdit
             ? `${API_BASE_URL}/api/update/tag/${propsTagID}`
             : `${API_BASE_URL}/api/new/tag`
 
-        const method = isEdit  ? 'PUT' : 'POST'
+        const method = isEdit ? 'PUT' : 'POST'
 
         try {
             const res = await fetch(endpoint, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify(formNewTag),
             })
 
+            if (res.status === 403) {
+                alert('For this action, please provide the admin key.');
+                setLoading(false);
+                return;
+            }
+
+            setFormNewTag({ name: '', isActive: true })
+            handletoggleControlPopup();
 
         } catch (error) {
             console.error('Erro na requisição:', error)
         }
         finally {
-            setFormNewTag({ name: '', isActive: true })
-            handletoggleControlPopup();
             setLoading(false);
 
         }

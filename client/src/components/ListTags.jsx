@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import AddTag from './NewTag';
 import BtnDeleteTag from './BtnDeleteTag';
 
-export default function ListTags({ showInList, tagControlPopup, onClose }) {
+export default function ListTags({ adminKey, showInList, tagControlPopup, onClose }) {
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
@@ -37,14 +37,14 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
       const headers = {
         Authorization: `Bearer ${TOKEN_FOR_API}`,
       };
-      const res = await fetch(`${API_BASE_URL}/api/get/tagList/${filters.option}/${itemsPerPage}/${currentPage}`,{headers});
+      const res = await fetch(`${API_BASE_URL}/api/get/tagList/${filters.option}/${itemsPerPage}/${currentPage}`, { headers });
       const data = await res.json();
       setTags(data.data);
       setCurrentPage(data.paginationDetails.currentPage);
       setTotalPages(data.paginationDetails.totalPages);
     } catch (error) {
       console.log('Error fetching tag list:', error);
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
@@ -83,7 +83,7 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
         <select
           value={filters.option}
           disabled={loading}
-          onChange={(e) =>{
+          onChange={(e) => {
             setFilters((prev) => ({ ...prev, option: e.target.value }));
             setCurrentPage(1)
           }}
@@ -105,14 +105,6 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
           >
             <span className="text-sm font-medium break-all text-gray-800">
               {item.name}
-            </span>
-
-            <span className="text-sm text-gray-500 hidden md:block">
-              Created: {new Date(item.createdAt).toLocaleDateString('en-US')}
-            </span>
-            <span className="text-sm text-gray-500 hidden md:block">
-              Last update:{' '}
-              {new Date(item.updatedAt).toLocaleDateString('en-US')}
             </span>
 
             <span className="text-sm text-gray-500">
@@ -141,7 +133,7 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
                 >
                   Edit
                 </button>
-                <BtnDeleteTag tagID={item.id} onDelete={fetchTag}/>
+                <BtnDeleteTag  adminKey={adminKey} tagID={item.id} onDelete={fetchTag} />
               </div>
             )}
           </div>
@@ -170,6 +162,7 @@ export default function ListTags({ showInList, tagControlPopup, onClose }) {
       {/* ==== POPUP ==== */}
       {tagControlPopup && (
         <AddTag
+          adminKey={adminKey}
           propsTagID={tagsEditID}
           handletoggleControlPopup={toggleControlPopup}
           controlPopup={tagControlPopup}

@@ -15,8 +15,26 @@ const requireAuth = (req, res, next) => {
   next();
 };
 
+function adminAuth(req, res, next) {
+  const adminKey = req.headers["x-admin-key"];
+
+  if (!adminKey) {
+    return res.status(401).json({
+      error: "Admin key required"
+    });
+  }
+
+  if (adminKey !== process.env.ADMIN_KEY) {
+    return res.status(403).json({
+      error: "Invalid admin key"
+    });
+  }
+
+  next();
+}
+
 /* ============== CREATE ================= */
-router.post('/new/tag', async (req, res) => {
+router.post('/new/tag', requireAuth, adminAuth,  async (req, res) => {
   const { name, isActive } = req.body
   try {
     const newTag = await prisma.tag.create({
@@ -131,7 +149,7 @@ router.get('/get/tagID/:id', async (req, res) => {
 });
 
 /* ============== UPDATE ================= */
-router.put('/update/tag/:id', async (req, res) => {
+router.put('/update/tag/:id', requireAuth, adminAuth, async (req, res) => {
   const tagId = parseInt(req.params.id)
   const { name, isActive } = req.body
 
@@ -153,7 +171,7 @@ router.put('/update/tag/:id', async (req, res) => {
 
 
 /* ============== DELETE ================= */
-router.delete('/delete/tag/:id', async (req, res) => {
+router.delete('/delete/tag/:id', requireAuth, adminAuth, async (req, res) => {
   const tagId = parseInt(req.params.id)
   try {
     const res = await prisma.tag.delete({

@@ -129,7 +129,7 @@ export default function Settings() {
         }
 
         {activeTab === 'tags' &&
-          <ListTags tagControlPopup={controlPopupTag} onClose={toggleTagPopup}
+          <ListTags  adminKey={adminKey} tagControlPopup={controlPopupTag} onClose={toggleTagPopup}
           />
         }
 
