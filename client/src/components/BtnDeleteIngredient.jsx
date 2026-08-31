@@ -41,7 +41,7 @@ export default function BtnDeleteIngredient({ adminKey, ingredientID, onDelete }
       setLoading(false);
       return;
     }
-    const endpoint = `${API_BASE_URL}/api/delete/ingredient/${ingredientID}`;
+    const endpoint = `${API_BASE_URL}/api/ingredients/${ingredientID}`;
 
     try {
       const res = await fetch(endpoint, {

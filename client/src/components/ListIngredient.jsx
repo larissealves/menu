@@ -8,6 +8,9 @@ export default function ListIngredient({ adminKey, showInList, ingredientControl
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
   
   const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const headers = {
+        Authorization: `Bearer ${TOKEN_FOR_API}`,
+  };
 
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({ option: 'null' });
@@ -23,10 +26,7 @@ export default function ListIngredient({ adminKey, showInList, ingredientControl
   const fetchIngredient = async () => {
     try {
       setLoading(true);
-      const headers = {
-        Authorization: `Bearer ${TOKEN_FOR_API}`,
-      };
-      const res = await fetch(`${API_BASE_URL}/api/get/ingredientList/${filters.option}/${itemsPerPage}/${currentPage}`,{headers,});
+      const res = await fetch(`${API_BASE_URL}/api/ingredients?onlyActives=${filters.option}&limitItemsPerPage=${itemsPerPage}&currentPage=${currentPage}`,{headers,});
       const data = await res.json();
       setIngredient(data.data);
       setCurrentPage(data.paginationDetails.currentPage);

@@ -15,7 +15,6 @@ const requireAuth = (req, res, next) => {
   next();
 };
 
-
 function adminAuth(req, res, next) {
   const adminKey = req.headers["x-admin-key"];
 
@@ -35,7 +34,7 @@ function adminAuth(req, res, next) {
 }
 
 /* ============== CREATE ================= */
-router.post('/new/ingredient', requireAuth, adminAuth, async (req, res) => {
+router.post('/ingredients', requireAuth, adminAuth, async (req, res) => {
   const { name, isActive} = req.body
   try {
     const newIngredient = await prisma.ingredient.create ({
@@ -54,7 +53,7 @@ router.post('/new/ingredient', requireAuth, adminAuth, async (req, res) => {
 
 
 /* ============== GET ONE ITEM - FOR ID ================= */
-router.get('/get/ingredientID/:id', async (req, res) => {
+router.get('/ingredients/:id', async (req, res) => {
   const ingredientId = parseInt(req.params.id);
 
   try {
@@ -75,7 +74,7 @@ router.get('/get/ingredientID/:id', async (req, res) => {
 
 
 /* ============== UPDATE ================= */
-router.put('/update/ingredient/:id', requireAuth, adminAuth, async (req, res) => {
+router.put('/ingredients/:id', requireAuth, adminAuth, async (req, res) => {
   const ingredientId = parseInt(req.params.id)
   const { name, isActive} =  req.body
 
@@ -96,22 +95,28 @@ router.put('/update/ingredient/:id', requireAuth, adminAuth, async (req, res) =>
 })
 
 /* ============== GET ALL ITEMS ================= */
-router.get('/get/ingredientList/:onlyActivesItems/:limitItemsPerPage/:currentPage', requireAuth,
+router.get('/ingredients', requireAuth,
   async (req, res) => {
   try {
 
-    const filterOnlyActives = req.params.onlyActivesItems === 'true' 
+    const filterOnlyActives = req.query.onlyActives === 'true' 
     ? true 
-    : req.params.onlyActivesItems === 'false' ? false : null;
+    : req.query.onlyActives === 'false' ? false : null;
 
-    const paginationLimit = Number(req.params.limitItemsPerPage) || 6;
-    const paginationCurrentPage = Number(req.params.currentPage) || 1;
+    const hasPagination =
+      req.query.itemsPerPage !== undefined ||
+      req.query.currentPage !== undefined;
 
-    const skip =
-      (paginationCurrentPage - 1) * paginationLimit;
+    const paginationLimit = Number(req.query.limitItemsPerPage) || 6;
+    const paginationCurrentPage = Number(req.query.currentPage) || 1;
 
-    const take =
-      paginationLimit;
+    const skip = hasPagination
+      ? (paginationCurrentPage - 1) * paginationLimit
+      : undefined;
+
+    const take = hasPagination
+      ? paginationLimit
+      : undefined;
 
     const where = {
       ...(filterOnlyActives !== null && {
@@ -153,28 +158,9 @@ router.get('/get/ingredientList/:onlyActivesItems/:limitItemsPerPage/:currentPag
   }
 }),
 
-/* ============== GET ALL ITEMS - Active ================= */
-router.get('/get/ingredientList/active', requireAuth, async (req, res) => {
-  try {
-    const ingredients = await prisma.ingredient.findMany
-    ({
-      where:{
-        isActive: true,
-      },
-      orderBy: {
-        name: 'asc',
-      }
-    });
-    res.status(200).json(ingredients)
-  } catch (error) {
-    console.error('Erro ao buscar os ingredientes:', error)
-    res.status(500).json({ error: 'Erro ao buscar os ingredientes' })
-  }
-})
-
 
 /* ============== DELETE ================= */
-router.delete('/delete/ingredient/:id', requireAuth, adminAuth, async (req, res) => {
+router.delete('/ingredients/:id', requireAuth, adminAuth, async (req, res) => {
   const ingredientId = parseInt(req.params.id)
   try {
     const res = await prisma.ingredient.delete({

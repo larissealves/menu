@@ -22,7 +22,7 @@ export default function AddIngredient({ adminKey, propsIngredientID, handletoggl
             setLoading(true);
             const fetchIngredient = async () => {
                 try {
-                    const res = await fetch(`${API_BASE_URL}/api/get/ingredientID/${propsIngredientID}`)
+                    const res = await fetch(`${API_BASE_URL}/api/ingredients/${propsIngredientID}`)
                     const data = await res.json()
                     setFormNewIngredient({
                         name: data.name || '',
@@ -60,8 +60,8 @@ export default function AddIngredient({ adminKey, propsIngredientID, handletoggl
         setLoading(true);
 
         const endpoint = propsIngredientID
-            ? `${API_BASE_URL}/api/update/ingredient/${propsIngredientID}`
-            : `${API_BASE_URL}/api/new/ingredient`
+            ? `${API_BASE_URL}/api/ingredients/${propsIngredientID}`
+            : `${API_BASE_URL}/api/ingredients`
 
         const method = propsIngredientID ? 'PUT' : 'POST'
 

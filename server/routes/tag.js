@@ -98,7 +98,6 @@ router.get('/tags', requireAuth,
     }),
     ])
 
-    
     const paginationDetails = {
       totalPages: Math.ceil(totalItems / paginationLimit),
       currentPage: paginationCurrentPage,

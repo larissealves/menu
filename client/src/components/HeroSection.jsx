@@ -53,7 +53,7 @@ export default function HeroSection() {
           fetch(`${API_BASE_URL}/api/tags?onlyActives=${true}`,
             { headers, }
           ),
-          fetch(`${API_BASE_URL}/api/get/ingredientList/active`,
+          fetch(`${API_BASE_URL}/api/ingredients?onlyActives=${true}`,
             { headers, }
           ),
         ]);
