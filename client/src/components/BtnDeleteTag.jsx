@@ -40,7 +40,7 @@ export default function BtnDeleteTag({adminKey, tagID, onDelete }) {
       setLoading(false);
       return;
     }
-    const endpoint = `${API_BASE_URL}/api/delete/tag/${tagID}`;
+    const endpoint = `${API_BASE_URL}/api/tags/${tagID}`;
 
     try {
       const res = await fetch(endpoint, {

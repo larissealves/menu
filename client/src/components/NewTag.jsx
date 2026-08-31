@@ -25,7 +25,7 @@ export default function NewTag({ adminKey, propsTagID, handletoggleControlPopup,
             setLoading(true);
             const fetchTag = async () => {
                 try {
-                    const res = await fetch(`${API_BASE_URL}/api/get/tagID/${propsTagID}`)
+                    const res = await fetch(`${API_BASE_URL}/api/tags/${propsTagID}`)
                     const data = await res.json()
                     setFormNewTag({
                         name: data.name || '',
@@ -62,8 +62,8 @@ export default function NewTag({ adminKey, propsTagID, handletoggleControlPopup,
         }
 
         const endpoint = isEdit
-            ? `${API_BASE_URL}/api/update/tag/${propsTagID}`
-            : `${API_BASE_URL}/api/new/tag`
+            ? `${API_BASE_URL}/api/tags/${propsTagID}`
+            : `${API_BASE_URL}/api/tags`
 
         const method = isEdit ? 'PUT' : 'POST'
 

@@ -190,15 +190,16 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
         const [catRes, ingRes, tagRes] = await Promise.all([
           fetch(`${API_BASE_URL}/api/categories?onlyActives=${true}`, { headers, }),
           fetch(`${API_BASE_URL}/api/get/ingredientList/active`, { headers, }),
-          fetch(`${API_BASE_URL}/api/get/tagList/active`, { headers, }),
+          fetch(`${API_BASE_URL}/api/tags?onlyActives=${true}`, { headers, }),
         ]);
 
-
         const dataCat = await catRes.json();
+        const dataTag = await tagRes.json();
+
         setCategories(dataCat.data);
-        
+        setTags(dataTag.data);
         setIngredients(await ingRes.json());
-        setTags(await tagRes.json());
+        
       } catch (error) {
         console.error('Erro ao buscar dados iniciais:', error);
       }

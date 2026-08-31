@@ -50,7 +50,7 @@ export default function HeroSection() {
           fetch(`${API_BASE_URL}/api/categories?onlyActives=${true}`,
             { headers, }
           ),
-          fetch(`${API_BASE_URL}/api/get/tagList/active`,
+          fetch(`${API_BASE_URL}/api/tags?onlyActives=${true}`,
             { headers, }
           ),
           fetch(`${API_BASE_URL}/api/get/ingredientList/active`,
