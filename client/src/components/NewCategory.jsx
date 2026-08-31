@@ -4,6 +4,7 @@ export default function AddCategory({ adminKey, propsCategoryID, handleToggleCon
     
     const API_BASE_URL =
         import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+
     const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
     const headers = {
         "Content-Type": "application/json",
@@ -23,11 +24,11 @@ export default function AddCategory({ adminKey, propsCategoryID, handleToggleCon
             setLoading(true);
             const fetchCategory = async () => {
                 try {
-                    const res = await fetch(`${API_BASE_URL}/api/get/categoryID/${propsCategoryID}`)
+                    const res = await fetch(`${API_BASE_URL}/api/categories/${propsCategoryID}`)
                     const data = await res.json()
                     setFormNewCategory({
-                        name: data.name || '',
-                        isActive: data.isActive ?? true,
+                        name: data.data.name || '',
+                        isActive: data.data.isActive ?? true,
                     })
                 } catch (error) {
                     console.error('Failed to fetch category:', error)
@@ -61,8 +62,8 @@ export default function AddCategory({ adminKey, propsCategoryID, handleToggleCon
 
         setLoading(true);
         const endpoint = propsCategoryID
-            ? `${API_BASE_URL}/api/update/category/${propsCategoryID}`
-            : `${API_BASE_URL}/api/new/category`
+            ? `${API_BASE_URL}/api/categories/${propsCategoryID}`
+            : `${API_BASE_URL}/api/categories`
 
         const method = propsCategoryID ? 'PUT' : 'POST'
 

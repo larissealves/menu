@@ -41,10 +41,9 @@ export default function ListCategories({ adminKey, categoriesControlPopup, onClo
   const fetchCategories = async () => {
     try {
       setLoading(true);
-
-      const res = await fetch(`${API_BASE_URL}/api/get/categoryList/${filters.option}/${itemsPerPage}/${currentPage}`, { headers, });
+      const res = await fetch(`${API_BASE_URL}/api/categories?onlyActives=${filters.option}&itemsPerPage=${itemsPerPage}&currentPage=${currentPage}`, { headers, });
       const data = await res.json();
-      setCategories(data.categories);
+      setCategories(data.data);
       setCurrentPage(data.paginationDetails.currentPage);
       setTotalPages(data.paginationDetails.totalPages);
     } catch (error) {

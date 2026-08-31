@@ -62,7 +62,7 @@ export default function ListAllDishes({adminKey, dishcontrolPopup, onClose}) {
         fetch(`${API_BASE_URL}/api/dishes?onlyActivies=${filterOnlyByActives}&itemPerPage=${itemsPerPage}&currentPage=${currentPage}&CategoryId=${filters.category}&listIngredients=${filters.ingredients}&listTags=${filters.tag}`, {
           headers
         }),
-        fetch(`${API_BASE_URL}/api/get/categoryList/active`,{headers}),
+        fetch(`${API_BASE_URL}/api/categories?onlyActives=${true}`,{headers}),
         fetch(`${API_BASE_URL}/api/get/tagList/active`,{headers}),
         fetch(`${API_BASE_URL}/api/get/ingredientList/active`,{headers}),
       ]);

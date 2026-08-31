@@ -47,7 +47,7 @@ export default function HeroSection() {
     const fetchFilters = async () => {
       try {
         const [catRes, tagRes, ingredientsRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/get/categoryList/active`,
+          fetch(`${API_BASE_URL}/api/categories?onlyActives=${true}`,
             { headers, }
           ),
           fetch(`${API_BASE_URL}/api/get/tagList/active`,
@@ -58,7 +58,8 @@ export default function HeroSection() {
           ),
         ]);
 
-        setCategories(await catRes.json());
+        const dataCat = await catRes.json();
+        setCategories(dataCat.data);
         setTags(await tagRes.json());
         setIngredients(await ingredientsRes.json());
 
@@ -72,9 +73,6 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
-    console.log("FILTWERS=>>", filters);
-    console.log(`${API_BASE_URL}/api/dishes?onlyActives=${true}&itemPerPage=${limitItemsPerPage}&currentPage=${currentPage}&categoryId=${filters.category}&listIngredients=${filters.ingredients}&listTags=${filters.tag}`,
-            { headers}, )
     const fetchListDishes = async () => {
       try {
         const dishRes = await fetch(`${API_BASE_URL}/api/dishes?onlyActives=${true}&itemPerPage=${limitItemsPerPage}&currentPage=${currentPage}&categoryId=${filters.category}&listIngredients=${filters.ingredients}&listTags=${filters.tag}`,
@@ -83,7 +81,6 @@ export default function HeroSection() {
 
         const data = await dishRes.json();
         setDishes(Array.isArray(data.dishes) ? data.dishes : []);
-        //setCurrentPage(data.paginationDetais.currentPage);
         setTotalPages(data.paginationDetais.totalPages);
         setLimitPerPage(data.paginationDetais.ItemsPerPage);
 

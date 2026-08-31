@@ -46,7 +46,7 @@ export default function BtnDeleteCategory({ adminKey, categoryID, onDelete }) {
       return;
     }
 
-    const endpoint = `${API_BASE_URL}/api/delete/category/${categoryID}`;
+    const endpoint = `${API_BASE_URL}/api/categories/${categoryID}`;
 
     try {
       const res = await fetch(endpoint, {
