@@ -20,6 +20,7 @@ export default function HeroSection() {
     Authorization: `Bearer ${TOKEN_FOR_API}`,
   };
 
+  const [filterByName, setFilterByName] = useState("");
   const [filters, setFilters] = useState({
     name: '',
     category: 0,
@@ -46,7 +47,7 @@ export default function HeroSection() {
 
     const fetchFilters = async () => {
       try {
-        const [catRes, tagRes, ingredientsRes] = await Promise.all([
+        const [catRes, tagRes, ingRes] = await Promise.all([
           fetch(`${API_BASE_URL}/api/categories?onlyActives=${true}`,
             { headers, }
           ),
@@ -59,9 +60,12 @@ export default function HeroSection() {
         ]);
 
         const dataCat = await catRes.json();
+        const dataTag = await tagRes.json();
+        const dataIng = await ingRes.json();
+
         setCategories(dataCat.data);
-        setTags(await tagRes.json());
-        setIngredients(await ingredientsRes.json());
+        setTags(dataTag.data);
+        setIngredients(dataIng.data);
 
       } catch (error) {
         console.error('Erro ao buscar dados iniciais:', error);
@@ -75,9 +79,9 @@ export default function HeroSection() {
   useEffect(() => {
     const fetchListDishes = async () => {
       try {
-        const dishRes = await fetch(`${API_BASE_URL}/api/dishes?onlyActives=${true}&itemPerPage=${limitItemsPerPage}&currentPage=${currentPage}&categoryId=${filters.category}&listIngredients=${filters.ingredients}&listTags=${filters.tag}`,
-            { headers, }
-          )
+        const dishRes = await fetch(`${API_BASE_URL}/api/dishes?onlyActives=${true}&itemPerPage=${limitItemsPerPage}&currentPage=${currentPage}&categoryId=${filters.category}&listIngredients=${filters.ingredients}&listTags=${filters.tag}&name=${filters.name}`,
+          { headers, }
+        )
 
         const data = await dishRes.json();
         setDishes(Array.isArray(data.dishes) ? data.dishes : []);
@@ -93,20 +97,28 @@ export default function HeroSection() {
     fetchListDishes();
   }, [currentPage, limitItemsPerPage, filters]);
 
-  // LOCAL FILTERS
-  const filtered = dishes.filter(dish => {
-    const matchesName = dish.name.toLowerCase().includes(filters.name.toLowerCase());
-    /*const matchesCategory = filters.category ? dish.categoryId === +filters.category : true;
-    const matchesTag = filters.tag
-      ? dish.tags?.some(tag => tag.tagId === +filters.tag)
-      : true;
-  
-    const matchesIngredients = filters.ingredients
-      ? dish.ingredients?.some(ing => ing.ingredientId === + filters.ingredients)
-      : true;
-      */
-    return matchesName;
-  });
+  const hasActiveFilters =
+    filterByName ||
+    filters.name ||
+    filters.category !== "0" ||
+    filters.ingredients !== "0" ||
+    filters.tag !== "0";
+
+  const handleSearch = () => {
+    setFilters({ ...filters, name: filterByName });
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setFilters({
+      name: '',
+      category: 0,
+      tag: 0,
+      ingredients: 0
+    });
+    setFilterByName('');
+    setCurrentPage(1);
+  }
 
   return (
     <div className="flex flex-col items-center px-4 py-8 md:px-8 md:py-12 max-w-6xl 
@@ -171,15 +183,30 @@ export default function HeroSection() {
       ========================= */}
       <section className="w-full flex flex-col gap-6">
         <div className="flex flex-col gap-4 w-full sm:flex-row sm:items-end sm:gap-6 ">
-          <input
-            type="text"
-            placeholder="Search by name"
-            value={filters.name}
-            onChange={(e) =>{
-              setFilters((prev) => ({ ...prev, name: e.target.value })), setCurrentPage(1)
-            }}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:max-w-xs"
-          />
+          <div className="relative w-full sm:max-w-xs">
+            <input
+              type="text"
+              placeholder="Search by name"
+              value={filterByName}
+              onChange={(e) => setFilterByName(e.target.value)}
+              className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md text-sm 
+              focus:outline-none focus:ring-2 focus:ring-violet-200"
+            />
+
+            <button
+              type="button"
+              onClick={handleSearch}
+              disabled={loading}
+              title={'Click for search by name'}
+              className="absolute right-0 top-0 h-full px-3 flex items-center text-gray-500 
+              hover:text-gray-800 cursor-pointer"
+              aria-label="Search"
+            >
+              🔍
+            </button>
+
+          </div>
+
 
           <div className="flex gap-4 w-full items-end sm:flex-1">
             {categories.length > 0 && (
@@ -187,7 +214,7 @@ export default function HeroSection() {
                 <label className="text-sm text-gray-700">Category:</label>
                 <select
                   value={filters.category}
-                  onChange={(e) =>{
+                  onChange={(e) => {
                     setFilters((prev) => ({ ...prev, category: e.target.value })), setCurrentPage(1)
                   }}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
@@ -213,7 +240,7 @@ export default function HeroSection() {
                 </label>
                 <select
                   value={filters.ingredients}
-                  onChange={(e) =>{
+                  onChange={(e) => {
                     setFilters((prev) => ({
                       ...prev,
                       ingredients: e.target.value,
@@ -240,7 +267,7 @@ export default function HeroSection() {
                 <label className="text-sm text-gray-700">Tags:</label>
                 <select
                   value={filters.tag}
-                  onChange={(e) =>{
+                  onChange={(e) => {
                     setFilters((prev) => ({ ...prev, tag: e.target.value })), setCurrentPage(1)
                   }}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
@@ -260,6 +287,17 @@ export default function HeroSection() {
             )}
           </div>
 
+          {(hasActiveFilters) && (
+              <button type="button"
+                onClick={handleReset}
+                disabled={loading}
+                className="px-3 py-2 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 
+                hover:text-gray-900 cursor-pointer disabled:cursor-not-allowed"
+              >
+                ↻ Reset Filters
+              </button>
+            )}
+
         </div>
         {/* ====================
             END - SECTION FILTERS
@@ -272,7 +310,7 @@ export default function HeroSection() {
         =======================================================*/}
         <div className="w-full">
           {categories.map((category) => {
-            const categoryDishes = filtered.filter(d => d.categoryId === category.id);
+            const categoryDishes = dishes.filter(d => d.categoryId === category.id);
             if (categoryDishes.length === 0) return null;
 
             return (

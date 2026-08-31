@@ -185,6 +185,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
   /* ================= (END) FLOW IMAGES- ONLY FORM =========================== */
 
   useEffect(() => {
+    setLoading(true);
     const fetchAll = async () => {
       try {
         const [catRes, ingRes, tagRes] = await Promise.all([
@@ -203,6 +204,8 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
         
       } catch (error) {
         console.error('Erro ao buscar dados iniciais:', error);
+      }finally{
+        setLoading(false);
       }
     };
     fetchAll();

@@ -433,7 +433,7 @@ router.get('/dishes', requireAuth,
       const paginationLimit = Number(req.query.itemPerPage) || 6;
       const paginationCurrentPage = Number(req.query.currentPage) || 1;
 
-      const skip =
+      const skip = 
         (paginationCurrentPage - 1) * paginationLimit;
 
       const take =
@@ -444,8 +444,11 @@ router.get('/dishes', requireAuth,
           isActive: filterOnlyActives,
         }),
 
-        ...(whereName !== '' && {
-          name: whereName,
+        ...(whereName && {
+          name: {
+            contains: whereName,
+            mode: 'insensitive',
+          },
         }),
 
         ...(whereCategoryId > 0 && {
