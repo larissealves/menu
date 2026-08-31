@@ -20,7 +20,7 @@ export default function BtnDeleteTag({adminKey, tagID, onDelete }) {
     const fetchDishes = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/get/filterDishesByTag/${tagID}}`);
+        const res = await fetch(`${API_BASE_URL}/api/dishes/${tagID}/tags`);
         const data = await res.json();
         setHasDishesLinked(data.length > 0);
       } catch (error) {

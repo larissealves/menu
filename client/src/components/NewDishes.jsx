@@ -35,7 +35,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
     if (propDishID) {
       const fetchDish = async () => {
         try {
-          const res = await fetch(`${API_BASE_URL}/api/get/disheID/${propDishID}`);
+          const res = await fetch(`${API_BASE_URL}/api/dishes/${propDishID}`);
           const data = await res.json();
           setFormDishes((prev) => ({
             ...prev,
@@ -52,7 +52,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
 
       const fetchDishTags = async () => {
         try {
-          const res = await fetch(`${API_BASE_URL}/api/get/filterTagByDishId/${propDishID}`);
+          const res = await fetch(`${API_BASE_URL}/api/tags/${propDishID}/dishes`);
           const data = await res.json();
           const tags = data.map((item) => item.tagId);
           setFormDishes((prev) => ({ ...prev, tags }));
@@ -63,7 +63,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
 
       const fetchDishIngredients = async () => {
         try {
-          const res = await fetch(`${API_BASE_URL}/api/get/filterIngredientsByDishId/${propDishID}`);
+          const res = await fetch(`${API_BASE_URL}/api/ingredients/${propDishID}/dishes`);
           const data = await res.json();
           const ingredients = data.map((item) => item.ingredient.id);
           setFormDishes((prev) => ({ ...prev, ingredients }));
@@ -87,7 +87,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
     const fetchImagesEditDish = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${propDishID}`, { headers, });
+        const res = await fetch(`${API_BASE_URL}/api/images/${propDishID}/dishes`, { headers, });
         const data = await res.json();
 
         if (Array.isArray(data)) {
@@ -231,8 +231,8 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
     });
 
     const endpoint = propDishID
-      ? `${API_BASE_URL}/api/update/editDishes/${propDishID}`
-      : `${API_BASE_URL}/api/new/addDishes`;
+      ? `${API_BASE_URL}/api/dishes/${propDishID}`
+      : `${API_BASE_URL}/api/dishes`;
     const method = propDishID ? 'PUT' : 'POST';
 
     try {

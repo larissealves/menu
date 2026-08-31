@@ -17,7 +17,7 @@ export default function ListImagesByDish({ dishId, refresh }) {
       if (!dishId) return;
       const fetchImagesEditDish = async () => {
         try { 
-          const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${dishId}`, {headers,});
+          const res = await fetch(`${API_BASE_URL}/api/images/${dishId}/dishes`, {headers,});
           const data = await res.json();
           if (Array.isArray(data)) {
             const imagesWithPreview = data.map((img) => {

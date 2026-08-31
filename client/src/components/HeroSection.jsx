@@ -16,6 +16,9 @@ export default function HeroSection() {
     import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
 
   const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const headers = {
+    Authorization: `Bearer ${TOKEN_FOR_API}`,
+  };
 
   const [filters, setFilters] = useState({
     name: '',
@@ -41,13 +44,9 @@ export default function HeroSection() {
   useEffect(() => {
     setLoading(true);
 
-    const fetchInitialData = async () => {
+    const fetchFilters = async () => {
       try {
-        const headers = {
-          Authorization: `Bearer ${TOKEN_FOR_API}`,
-        };
-
-        const [catRes, tagRes, ingredientsRes, dishRes] = await Promise.all([
+        const [catRes, tagRes, ingredientsRes] = await Promise.all([
           fetch(`${API_BASE_URL}/api/get/categoryList/active`,
             { headers, }
           ),
@@ -57,21 +56,11 @@ export default function HeroSection() {
           fetch(`${API_BASE_URL}/api/get/ingredientList/active`,
             { headers, }
           ),
-          fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}/${limitItemsPerPage}/${currentPage}/${filters.category}/${filters.ingredients}/${filters.tag}`,
-            { headers, }
-          )
         ]);
 
         setCategories(await catRes.json());
         setTags(await tagRes.json());
         setIngredients(await ingredientsRes.json());
-
-        const data = await dishRes.json();
-        setDishes(Array.isArray(data.dishes) ? data.dishes : []);
-        setCurrentPage(data.paginationDetais.currentPage);
-        console.log(data.paginationDetais.currentPage);
-        setTotalPages(data.paginationDetais.totalPages);
-        setLimitPerPage(data.paginationDetais.ItemsPerPage);
 
       } catch (error) {
         console.error('Erro ao buscar dados iniciais:', error);
@@ -79,8 +68,33 @@ export default function HeroSection() {
         setLoading(false);
       }
     };
-    fetchInitialData();
-  }, [currentPage, filters]);
+    fetchFilters();
+  }, []);
+
+  useEffect(() => {
+    console.log("FILTWERS=>>", filters);
+    console.log(`${API_BASE_URL}/api/dishes?onlyActives=${true}&itemPerPage=${limitItemsPerPage}&currentPage=${currentPage}&categoryId=${filters.category}&listIngredients=${filters.ingredients}&listTags=${filters.tag}`,
+            { headers}, )
+    const fetchListDishes = async () => {
+      try {
+        const dishRes = await fetch(`${API_BASE_URL}/api/dishes?onlyActives=${true}&itemPerPage=${limitItemsPerPage}&currentPage=${currentPage}&categoryId=${filters.category}&listIngredients=${filters.ingredients}&listTags=${filters.tag}`,
+            { headers, }
+          )
+
+        const data = await dishRes.json();
+        setDishes(Array.isArray(data.dishes) ? data.dishes : []);
+        //setCurrentPage(data.paginationDetais.currentPage);
+        setTotalPages(data.paginationDetais.totalPages);
+        setLimitPerPage(data.paginationDetais.ItemsPerPage);
+
+      } catch (error) {
+        console.error('Erro ao buscar a lista de pratos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchListDishes();
+  }, [currentPage, limitItemsPerPage, filters]);
 
   // LOCAL FILTERS
   const filtered = dishes.filter(dish => {
@@ -89,7 +103,7 @@ export default function HeroSection() {
     const matchesTag = filters.tag
       ? dish.tags?.some(tag => tag.tagId === +filters.tag)
       : true;
-
+  
     const matchesIngredients = filters.ingredients
       ? dish.ingredients?.some(ing => ing.ingredientId === + filters.ingredients)
       : true;
@@ -98,7 +112,8 @@ export default function HeroSection() {
   });
 
   return (
-    <div className="flex flex-col items-center px-4 py-8 md:px-8 md:py-12 max-w-6xl mx-auto gap-12">
+    <div className="flex flex-col items-center px-4 py-8 md:px-8 md:py-12 max-w-6xl 
+    mx-auto gap-12">
 
       <Loading loadingIsActive={loading} />
 
@@ -163,9 +178,9 @@ export default function HeroSection() {
             type="text"
             placeholder="Search by name"
             value={filters.name}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, name: e.target.value }), setCurrentPage(1))
-            }
+            onChange={(e) =>{
+              setFilters((prev) => ({ ...prev, name: e.target.value })), setCurrentPage(1)
+            }}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:max-w-xs"
           />
 
@@ -175,9 +190,9 @@ export default function HeroSection() {
                 <label className="text-sm text-gray-700">Category:</label>
                 <select
                   value={filters.category}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, category: e.target.value }), setCurrentPage(1))
-                  }
+                  onChange={(e) =>{
+                    setFilters((prev) => ({ ...prev, category: e.target.value })), setCurrentPage(1)
+                  }}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
                   <option value="0">All categories</option>
@@ -201,12 +216,12 @@ export default function HeroSection() {
                 </label>
                 <select
                   value={filters.ingredients}
-                  onChange={(e) =>
+                  onChange={(e) =>{
                     setFilters((prev) => ({
                       ...prev,
                       ingredients: e.target.value,
-                    }), setCurrentPage(1))
-                  }
+                    })), setCurrentPage(1)
+                  }}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
                   <option value="0">All options</option>
@@ -228,9 +243,9 @@ export default function HeroSection() {
                 <label className="text-sm text-gray-700">Tags:</label>
                 <select
                   value={filters.tag}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, tag: e.target.value }), setCurrentPage(1))
-                  }
+                  onChange={(e) =>{
+                    setFilters((prev) => ({ ...prev, tag: e.target.value })), setCurrentPage(1)
+                  }}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
                   <option value="0">Other highlights</option>

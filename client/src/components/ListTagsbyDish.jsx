@@ -10,7 +10,7 @@ export default function ListTagsByDisheId({ propDishId, refreshTable }) {
 
   const fetchDishes = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/get/filterTagByDishId/${propDishId}`);
+      const res = await fetch(`${API_BASE_URL}/api/tags/${propDishId}/dishes`);
       const data = await res.json();
       setListTags(data);
     } catch (error) {

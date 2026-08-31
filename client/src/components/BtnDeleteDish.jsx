@@ -18,7 +18,7 @@ export default function BtnDeleteDish({ adminKey, dishID, onDelete }) {
     const confirmDelete = window.confirm("Are you sure you want to delete this dish?");
     if (!confirmDelete) return;
 
-    const endpoint = (`${API_BASE_URL}/api/delete/dish/${dishID}`, 
+    const endpoint = (`${API_BASE_URL}/api/dishes/${dishID}`, 
       {
         headers,
       }

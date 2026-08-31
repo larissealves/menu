@@ -25,6 +25,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage }); // correto!
 
+// ========================================================
 const requireAuth = (req, res, next) => {
   const auth = req.headers.authorization;
   const api_secret = `Bearer ${process.env.API_SECRET}`;
@@ -54,83 +55,84 @@ function adminAuth(req, res, next) {
 
   next();
 }
+// =================================================
 
 /* ============== CREATE DISH ================= */
-router.post('/new/addDishes', upload.array('images'), requireAuth, adminAuth,
- async (req, res) => {
-  const { name, price, description, categoryId, isActive } = req.body;
-  const tags = JSON.parse(req.body.tags || '[]');
-  const ingredients = JSON.parse(req.body.ingredients || '[]');
+router.post('/dishes', upload.array('images'), requireAuth, adminAuth,
+  async (req, res) => {
+    const { name, price, description, categoryId, isActive } = req.body;
+    const tags = JSON.parse(req.body.tags || '[]');
+    const ingredients = JSON.parse(req.body.ingredients || '[]');
 
-  try {
-    const newDish = await prisma.dish.create({
-      data: {
-        name,
-        price: parseFloat(price),
-        description,
-        categoryId: parseInt(categoryId),
-        isActive: isActive === 'true' || isActive === true,
-        //updatedAt: new Date(),
-      },
-    });
-
-    const newDishId = newDish.id;
-
-    if (tags.length > 0) {
-      await prisma.dishTag.createMany({
-        data: tags.map((tagId) => ({
-          dishId: newDishId,
-          tagId,
-          // updatedAt: new Date(),
-        })),
-      });
-    }
-
-    if (ingredients.length > 0) {
-      await prisma.dishIngredient.createMany({
-        data: ingredients.map((ingredientId) => ({
-          dishId: newDishId,
-          ingredientId,
+    try {
+      const newDish = await prisma.dish.create({
+        data: {
+          name,
+          price: parseFloat(price),
+          description,
+          categoryId: parseInt(categoryId),
+          isActive: isActive === 'true' || isActive === true,
           //updatedAt: new Date(),
-        })),
+        },
       });
-    }
 
-    if (req.files && req.files.length > 0) {
-      for (const file of req.files) {
-        //const binary = await fs.readFile(file.path);
-        const binary = await fs.readFile(file.path);
+      const newDishId = newDish.id;
 
-        const dishImage = await prisma.dishImage.create({
-          data: {
+      if (tags.length > 0) {
+        await prisma.dishTag.createMany({
+          data: tags.map((tagId) => ({
             dishId: newDishId,
-            imageName: file.originalname,
-            imageType: file.mimetype,
-            isPrimary: false,
-          },
-        });
-
-        // 2. Armazena o binário
-        await prisma.dishImageBinary.create({
-          data: {
-            dishImageId: dishImage.id,
-            binaryData: binary,
-          },
+            tagId,
+            // updatedAt: new Date(),
+          })),
         });
       }
+
+      if (ingredients.length > 0) {
+        await prisma.dishIngredient.createMany({
+          data: ingredients.map((ingredientId) => ({
+            dishId: newDishId,
+            ingredientId,
+            //updatedAt: new Date(),
+          })),
+        });
+      }
+
+      if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+          //const binary = await fs.readFile(file.path);
+          const binary = await fs.readFile(file.path);
+
+          const dishImage = await prisma.dishImage.create({
+            data: {
+              dishId: newDishId,
+              imageName: file.originalname,
+              imageType: file.mimetype,
+              isPrimary: false,
+            },
+          });
+
+          // 2. Armazena o binário
+          await prisma.dishImageBinary.create({
+            data: {
+              dishImageId: dishImage.id,
+              binaryData: binary,
+            },
+          });
+        }
+      }
+
+
+      res.status(201).json(newDish);
+    } catch (error) {
+      console.error('Erro ao criar prato:', error);
+      res.status(500).json({ error: 'Erro ao criar prato' });
     }
-
-
-    res.status(201).json(newDish);
-  } catch (error) {
-    console.error('Erro ao criar prato:', error);
-    res.status(500).json({ error: 'Erro ao criar prato' });
-  }
-});
+  });
 
 
 /* ============== UPDATE DISH ================= */
-router.put('/update/editDishes/:id', requireAuth, adminAuth, upload.array('images'), async (req, res) => {
+router.put('/dishes/:id', requireAuth, adminAuth, upload.array('images'), async (req, res) => {
   const dishID = parseInt(req.params.id);
   const { name, price, description, categoryId, isActive } = req.body;
   console.log('update dish', req.body)
@@ -214,7 +216,7 @@ router.put('/update/editDishes/:id', requireAuth, adminAuth, upload.array('image
 });
 
 /* ============== DELETE ================= */
-router.delete('/delete/dish/:id', async (req, res) => {
+router.delete('dishes/:id', async (req, res) => {
   const dishId = parseInt(req.params.id);
 
   try {
@@ -247,28 +249,8 @@ router.delete('/delete/dish/:id', async (req, res) => {
   }
 });
 
-
-/* ============== LIST ALL ITEMS ================= */
-router.get('/get/dishes', async (req, res) => {
-  try {
-    const dishes = await prisma.dish.findMany({
-      orderBy: [
-        { isActive: 'desc' },
-        { name: 'asc' },
-      ],
-      include: {
-        category: true,
-      }
-    })
-    res.status(200).json(dishes)
-  } catch (error) {
-    res.status(500).json({ error: 'Erro ao buscar pratos' })
-  }
-})
-
-
 /* ============== GET ONE ITEM - FOR DISH ID  ================= */
-router.get('/get/disheID/:id', async (req, res) => {
+router.get('/dishes/:id', async (req, res) => {
   const dishID = parseInt(req.params.id)
 
   try {
@@ -288,8 +270,8 @@ router.get('/get/disheID/:id', async (req, res) => {
 });
 
 /* ============== FILTER DISHES BY CATEGORY ID ================= */
-// controls delete button status - screen settings
-router.get('/get/filterDishesByCategoryId/:id', async (req, res) => {
+
+router.get('/dishes/:id/categories', async (req, res) => {
   const categoryId = parseInt(req.params.id);
 
   try {
@@ -316,12 +298,8 @@ router.get('/get/filterDishesByCategoryId/:id', async (req, res) => {
   }
 });
 
-
-
-
 /* ============== FILTER DISHES BY INGREDIENT ID ================= */
-// controls delete button status - screen settings
-router.get('/get/filterDishesByIngredientId/:id', async (req, res) => {
+router.get('/dishes/:id/ingredients', async (req, res) => {
   const ingredientId = parseInt(req.params.id);
 
   try {
@@ -347,8 +325,7 @@ router.get('/get/filterDishesByIngredientId/:id', async (req, res) => {
 
 
 /* ============== FILTER DISHES BY TAG ID ================= */
-// controls delete button status - screen settings
-router.get('/get/filterDishesByTag/:id', async (req, res) => {
+router.get('/dishes/:id/tags', async (req, res) => {
   const tagId = parseInt(req.params.id);
 
   try {
@@ -374,7 +351,7 @@ router.get('/get/filterDishesByTag/:id', async (req, res) => {
 
 
 /* ============== FILTER TAGS BY DISH ID ================= */
-router.get('/get/filterTagByDishId/:id', async (req, res) => {
+router.get('/tags/:id/dishes', async (req, res) => {
   const dishId = parseInt(req.params.id);
 
   try {
@@ -408,7 +385,7 @@ router.get('/get/filterTagByDishId/:id', async (req, res) => {
 });
 
 /* ============== FILTER INGREDIENT BY DISHES ID ================= */
-router.get('/get/filterIngredientsByDishId/:id', async (req, res) => {
+router.get('/ingredients/:id/dishes', async (req, res) => {
   const in_dishId = parseInt(req.params.id);
 
   try {
@@ -440,21 +417,21 @@ router.get('/get/filterIngredientsByDishId/:id', async (req, res) => {
 });
 
 //=============== FILTERS FRONT-END ==========
-router.get('/get/dishes-id-relations/:filterOnlyActives/:limitItemsPerPage/:currentPage/:filterCategoryId/:filterIngredientID/:filterTagId',
-  requireAuth,
+router.get('/dishes', requireAuth,
   async (req, res) => {
+
     try {
-      const filterOnlyActives = req.params.filterOnlyActives === 'true' 
-    ? true 
-    : req.params.filterOnlyActives === 'false' ? false : null;
+      const filterOnlyActives = req.query.onlyActives === 'true'
+        ? true
+        : req.query.onlyActives === 'false' ? false : null;
 
-      const whereCategoryId = Number(req.params.filterCategoryId);
-      const whereIngredientId = Number(req.params.filterIngredientID);
-      const whereTagId = Number(req.params.filterTagId);
-      //const whereSearchByName = req.params.searchByName;
+      const whereName = req.query.name;
+      const whereCategoryId = Number(req.query.categoryId);
+      const whereIngredientId = Number(req.query.listIngredients);
+      const whereTagId = Number(req.query.listTags);
 
-      const paginationLimit = Number(req.params.limitItemsPerPage) || 6;
-      const paginationCurrentPage = Number(req.params.currentPage) || 1;
+      const paginationLimit = Number(req.query.itemPerPage) || 6;
+      const paginationCurrentPage = Number(req.query.currentPage) || 1;
 
       const skip =
         (paginationCurrentPage - 1) * paginationLimit;
@@ -465,6 +442,10 @@ router.get('/get/dishes-id-relations/:filterOnlyActives/:limitItemsPerPage/:curr
       const where = {
         ...(filterOnlyActives !== null && {
           isActive: filterOnlyActives,
+        }),
+
+        ...(whereName !== '' && {
+          name: whereName,
         }),
 
         ...(whereCategoryId > 0 && {
@@ -486,15 +467,6 @@ router.get('/get/dishes-id-relations/:filterOnlyActives/:limitItemsPerPage/:curr
             },
           },
         }),
-
-        /*...(whereSearchByName &&
-          whereSearchByName !== 'null' &&
-          whereSearchByName !== 'undefined' && {
-          name: {
-            contains: whereSearchByName,
-            mode: 'insensitive',
-          },
-        }),*/
       };
 
       const [dishes, totalItems] = await Promise.all([
@@ -560,7 +532,7 @@ router.get('/get/dishes-id-relations/:filterOnlyActives/:limitItemsPerPage/:curr
 
 
 /* ============== GET IMAGE BY DISH ID ================= */
-router.get('/get/imagesByDishId/:id', requireAuth, async (req, res) => {
+router.get('/images/:id/dishes', requireAuth, async (req, res) => {
   const dishId = parseInt(req.params.id);
 
   if (isNaN(dishId)) {

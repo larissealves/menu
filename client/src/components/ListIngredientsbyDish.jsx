@@ -9,7 +9,7 @@ export default function ListIngredientsByDisheId({ propDishId, refreshTable }) {
 
     const fetchDishes = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/get/filterIngredientsByDishId/${propDishId}`);
+            const res = await fetch(`${API_BASE_URL}/api/ingredients/${propDishId}/dishes`);
             const data = await res.json();
             setListIngredients(data);
         } catch (error) {

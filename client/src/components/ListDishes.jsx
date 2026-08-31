@@ -59,7 +59,7 @@ export default function ListAllDishes({adminKey, dishcontrolPopup, onClose}) {
       };
       
       const [dishRes, catRes, tagRes, ingredientsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${filterOnlyByActives}/${itemsPerPage}/${currentPage}/${filters.category}/${filters.ingredients}/${filters.tag}`, {
+        fetch(`${API_BASE_URL}/api/dishes?onlyActivies=${filterOnlyByActives}&itemPerPage=${itemsPerPage}&currentPage=${currentPage}&CategoryId=${filters.category}&listIngredients=${filters.ingredients}&listTags=${filters.tag}`, {
           headers
         }),
         fetch(`${API_BASE_URL}/api/get/categoryList/active`,{headers}),

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export default function AddIngredient({ adminKey, propsTagID, handletoggleControlPopup, controlPopup }) {
+export default function NewTag({ adminKey, propsTagID, handletoggleControlPopup, controlPopup }) {
 
     const API_BASE_URL =
         import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';

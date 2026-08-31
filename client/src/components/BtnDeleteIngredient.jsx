@@ -21,7 +21,7 @@ export default function BtnDeleteIngredient({ adminKey, ingredientID, onDelete }
     setLoading(true);
     const fetchDishes = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/get/filterDishesByIngredientId/${ingredientID}`);
+        const res = await fetch(`${API_BASE_URL}/api/dishes/${ingredientID}/ingredients`);
         const data = await res.json();
         setHasDishesLinked(data.length > 0);
       } catch (error) {

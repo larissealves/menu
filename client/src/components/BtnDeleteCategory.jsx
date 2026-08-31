@@ -21,7 +21,7 @@ export default function BtnDeleteCategory({ adminKey, categoryID, onDelete }) {
     const fetchDishes = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/get/filterDishesByCategoryId/${categoryID}`);
+        const res = await fetch(`${API_BASE_URL}/api/dishes/${categoryID}/categories`);
         const data = await res.json();
         setHasDishesLinked(data.length > 0);
       }
