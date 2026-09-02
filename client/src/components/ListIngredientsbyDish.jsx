@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react';
 
 export default function ListIngredientsByDisheId({ propDishId, refreshTable }) {
     const API_BASE_URL =
-        import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
+        import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL_PROD;
 
+    const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+    const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${TOKEN_FOR_API}`
+    };
 
     const [listIngredients, setListIngredients] = useState([])
 
