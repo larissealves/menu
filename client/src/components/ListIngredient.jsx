@@ -5,9 +5,9 @@ import BtnDeleteIngredient from './BtnDeleteIngredient';
 
 export default function ListIngredient({ adminKey, showInList, ingredientControlPopup, onClose }) {
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
   
-  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const TOKEN_FOR_API = import.meta.env.API_SECRET;
   const headers = {
         Authorization: `Bearer ${TOKEN_FOR_API}`,
   };
@@ -49,15 +49,6 @@ export default function ListIngredient({ adminKey, showInList, ingredientControl
     setIngredientEditID(id);
     onClose();
   };
-
-  /* ==== FILTER ==== 
-  const filteredList = listIngredient.filter((item) => {
-    const matchIsActive =
-      filters.option !== ''
-        ? item.isActive === (filters.option === 'true')
-        : true;
-    return matchIsActive;
-  });*/
 
   /* ==== EFFECT ==== */
   useEffect(() => {

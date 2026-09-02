@@ -5,9 +5,9 @@ import BtnDeleteCategory from './BtnDeleteCategory';
 
 export default function ListCategories({ adminKey, categoriesControlPopup, onClose }) {
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
 
-  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const TOKEN_FOR_API = import.meta.env.API_SECRET;
   const headers = {
     Authorization: `Bearer ${TOKEN_FOR_API}`,
     'x-admin-key': adminKey,
@@ -53,15 +53,6 @@ export default function ListCategories({ adminKey, categoriesControlPopup, onClo
       setLoading(false);
     }
   };
-
-  /* ==== FILTER ==== 
-  const filteredList = listCategories.filter((item) => {
-    const matchIsActive =
-      filters.option !== ''
-        ? item.isActive === (filters.option === 'true')
-        : true;
-    return matchIsActive;
-  }); */
 
   /* ==== EFFECT ==== */
   useEffect(() => {

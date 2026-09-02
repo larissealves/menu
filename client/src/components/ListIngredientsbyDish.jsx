@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 
 export default function ListIngredientsByDisheId({ propDishId, refreshTable }) {
     const API_BASE_URL =
-        import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+        import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
 
 
     const [listIngredients, setListIngredients] = useState([])
 
     const fetchDishes = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/ingredients/${propDishId}/dishes`);
+            const res = await fetch(`${API_BASE_URL}/api/ingredients/${propDishId}/dishes`, {headers});
             const data = await res.json();
             setListIngredients(data);
         } catch (error) {

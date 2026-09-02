@@ -4,17 +4,6 @@ import { PrismaClient } from '@prisma/client'
 const router = express.Router()
 const prisma = new PrismaClient()
 
-const requireAuth = (req, res, next) => {
-  const auth = req.headers.authorization;
-  const api_secret = `Bearer ${process.env.API_SECRET}`;
-  if (!auth || auth !== api_secret) {
-    return res.status(401).json({
-      error: "Não autorizado :D ;D",
-    });
-  }
-  next();
-};
-
 function adminAuth(req, res, next) {
   const adminKey = req.headers["x-admin-key"];
 
@@ -34,7 +23,7 @@ function adminAuth(req, res, next) {
 }
 
 /* ============== CREATE ================= */
-router.post('/ingredients', requireAuth, adminAuth, async (req, res) => {
+router.post('/ingredients', adminAuth, async (req, res) => {
   const { name, isActive} = req.body
   try {
     const newIngredient = await prisma.ingredient.create ({
@@ -74,7 +63,7 @@ router.get('/ingredients/:id', async (req, res) => {
 
 
 /* ============== UPDATE ================= */
-router.put('/ingredients/:id', requireAuth, adminAuth, async (req, res) => {
+router.put('/ingredients/:id', adminAuth, async (req, res) => {
   const ingredientId = parseInt(req.params.id)
   const { name, isActive} =  req.body
 
@@ -95,7 +84,7 @@ router.put('/ingredients/:id', requireAuth, adminAuth, async (req, res) => {
 })
 
 /* ============== GET ALL ITEMS ================= */
-router.get('/ingredients', requireAuth,
+router.get('/ingredients', 
   async (req, res) => {
   try {
 
@@ -160,7 +149,7 @@ router.get('/ingredients', requireAuth,
 
 
 /* ============== DELETE ================= */
-router.delete('/ingredients/:id', requireAuth, adminAuth, async (req, res) => {
+router.delete('/ingredients/:id', adminAuth, async (req, res) => {
   const ingredientId = parseInt(req.params.id)
   try {
     const res = await prisma.ingredient.delete({

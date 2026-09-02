@@ -26,18 +26,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }); // correto!
 
 // ========================================================
-const requireAuth = (req, res, next) => {
-  const auth = req.headers.authorization;
-  const api_secret = `Bearer ${process.env.API_SECRET}`;
-  if (!auth || auth !== api_secret) {
-    return res.status(401).json({
-      error: "Não autorizado :D ;D",
-    });
-  }
-  next();
-};
-
-
 function adminAuth(req, res, next) {
   const adminKey = req.headers["x-admin-key"];
 
@@ -58,7 +46,7 @@ function adminAuth(req, res, next) {
 // =================================================
 
 /* ============== CREATE DISH ================= */
-router.post('/dishes', upload.array('images'), requireAuth, adminAuth,
+router.post('/dishes', upload.array('images'),  adminAuth,
   async (req, res) => {
     const { name, price, description, categoryId, isActive } = req.body;
     const tags = JSON.parse(req.body.tags || '[]');
@@ -132,7 +120,7 @@ router.post('/dishes', upload.array('images'), requireAuth, adminAuth,
 
 
 /* ============== UPDATE DISH ================= */
-router.put('/dishes/:id', requireAuth, adminAuth, upload.array('images'), async (req, res) => {
+router.put('/dishes/:id',  adminAuth, upload.array('images'), async (req, res) => {
   const dishID = parseInt(req.params.id);
   const { name, price, description, categoryId, isActive } = req.body;
   console.log('update dish', req.body)
@@ -216,7 +204,7 @@ router.put('/dishes/:id', requireAuth, adminAuth, upload.array('images'), async 
 });
 
 /* ============== DELETE ================= */
-router.delete('dishes/:id', async (req, res) => {
+router.delete('dishes/:id', adminAuth, async (req, res) => {
   const dishId = parseInt(req.params.id);
 
   try {
@@ -417,7 +405,7 @@ router.get('/ingredients/:id/dishes', async (req, res) => {
 });
 
 //=============== FILTERS FRONT-END ==========
-router.get('/dishes', requireAuth,
+router.get('/dishes', 
   async (req, res) => {
 
     try {
@@ -535,7 +523,7 @@ router.get('/dishes', requireAuth,
 
 
 /* ============== GET IMAGE BY DISH ID ================= */
-router.get('/images/:id/dishes', requireAuth, async (req, res) => {
+router.get('/images/:id/dishes',  async (req, res) => {
   const dishId = parseInt(req.params.id);
 
   if (isNaN(dishId)) {

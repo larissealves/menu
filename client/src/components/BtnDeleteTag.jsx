@@ -4,8 +4,9 @@ import Tooltip from './tooltip/Tooltip';
 
 export default function BtnDeleteTag({adminKey, tagID, onDelete }) {
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
-  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+    import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
+    
+  const TOKEN_FOR_API = import.meta.env.API_SECRET;
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${TOKEN_FOR_API}`,
@@ -20,7 +21,7 @@ export default function BtnDeleteTag({adminKey, tagID, onDelete }) {
     const fetchDishes = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/dishes/${tagID}/tags`);
+        const res = await fetch(`${API_BASE_URL}/api/dishes/${tagID}/tags`,{headers});
         const data = await res.json();
         setHasDishesLinked(data.length > 0);
       } catch (error) {

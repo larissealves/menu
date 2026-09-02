@@ -4,18 +4,6 @@ import { PrismaClient } from '@prisma/client'
 const router = express.Router()
 const prisma = new PrismaClient()
 
-
-const requireAuth = (req, res, next) => {
-  const auth = req.headers.authorization;
-  const api_secret = `Bearer ${process.env.API_SECRET}`;
-  if (!auth || auth !== api_secret) {
-    return res.status(401).json({
-      error: "Não autorizado :D ;D",
-    });
-  }
-  next();
-};
-
 function adminAuth(req, res, next) {
   const adminKey = req.headers["x-admin-key"];
 
@@ -34,9 +22,8 @@ function adminAuth(req, res, next) {
   next();
 }
 
-
 /* ============== CREATE ================= */
-router.post('/categories', requireAuth, adminAuth, async (req, res) => {
+router.post('/categories', adminAuth, async (req, res) => {
   const { name, isActive } = req.body
   try {
     const newCategory = await prisma.category.create({
@@ -56,8 +43,7 @@ router.post('/categories', requireAuth, adminAuth, async (req, res) => {
 
 /* ============== GET ALL ITEMS ================= */
 router.get('/categories',
-  requireAuth, async (req, res) => {
-
+   async (req, res) => {
     try {
       const filterOnlyActives = req.query.onlyActives === 'true'
         ? true
@@ -143,7 +129,7 @@ router.get('/categories/:id', async (req, res) => {
 
 
 /* ============== UPDATE ================= */
-router.put('/categories/:id', requireAuth, adminAuth, async (req, res) => {
+router.put('/categories/:id', adminAuth, async (req, res) => {
   const categoryId = parseInt(req.params.id)
   const { name, isActive } = req.body
 
@@ -165,7 +151,7 @@ router.put('/categories/:id', requireAuth, adminAuth, async (req, res) => {
 
 
 /* ============== DELETE ================= */
-router.delete('/categories/:id', requireAuth, adminAuth, async (req, res) => {
+router.delete('/categories/:id', adminAuth, async (req, res) => {
   const categoryId = parseInt(req.params.id)
   try {
     const res = await prisma.category.delete({

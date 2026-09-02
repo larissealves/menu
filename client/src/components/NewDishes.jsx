@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 export default function AddDishes({ adminKey, propDishID, handleToggleControlPopup, controlPopup }) {
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
 
-  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const TOKEN_FOR_API = import.meta.env.API_SECRET;
   const headers = {
     Authorization: `Bearer ${TOKEN_FOR_API}`,
     "x-admin-key": adminKey,
@@ -35,7 +35,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
     if (propDishID) {
       const fetchDish = async () => {
         try {
-          const res = await fetch(`${API_BASE_URL}/api/dishes/${propDishID}`);
+          const res = await fetch(`${API_BASE_URL}/api/dishes/${propDishID}`, {headers});
           const data = await res.json();
           setFormDishes((prev) => ({
             ...prev,
@@ -52,7 +52,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
 
       const fetchDishTags = async () => {
         try {
-          const res = await fetch(`${API_BASE_URL}/api/tags/${propDishID}/dishes`);
+          const res = await fetch(`${API_BASE_URL}/api/tags/${propDishID}/dishes`, {headers});
           const data = await res.json();
           const tags = data.map((item) => item.tagId);
           setFormDishes((prev) => ({ ...prev, tags }));
@@ -63,7 +63,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
 
       const fetchDishIngredients = async () => {
         try {
-          const res = await fetch(`${API_BASE_URL}/api/ingredients/${propDishID}/dishes`);
+          const res = await fetch(`${API_BASE_URL}/api/ingredients/${propDishID}/dishes`, {headers});
           const data = await res.json();
           const ingredients = data.map((item) => item.ingredient.id);
           setFormDishes((prev) => ({ ...prev, ingredients }));

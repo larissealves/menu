@@ -13,9 +13,9 @@ import '../styles/base.css';
 export default function HeroSection() {
 
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
 
-  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const TOKEN_FOR_API = import.meta.env.API_SECRET;
   const headers = {
     Authorization: `Bearer ${TOKEN_FOR_API}`,
   };
@@ -27,6 +27,8 @@ export default function HeroSection() {
     tag: 0,
     ingredients: 0
   });
+
+  const [hasActiveFilters, setHasActiveFilters] = useState(false);
 
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
@@ -97,15 +99,10 @@ export default function HeroSection() {
     fetchListDishes();
   }, [currentPage, limitItemsPerPage, filters]);
 
-  const hasActiveFilters =
-    filterByName ||
-    filters.name ||
-    filters.category !== "0" ||
-    filters.ingredients !== "0" ||
-    filters.tag !== "0";
 
   const handleSearch = () => {
     setFilters({ ...filters, name: filterByName });
+    setHasActiveFilters(true);
     setCurrentPage(1);
   };
 
@@ -117,6 +114,7 @@ export default function HeroSection() {
       ingredients: 0
     });
     setFilterByName('');
+    setHasActiveFilters(false);
     setCurrentPage(1);
   }
 
@@ -198,8 +196,11 @@ export default function HeroSection() {
               onClick={handleSearch}
               disabled={loading}
               title={'Click for search by name'}
-              className="absolute right-0 top-0 h-full px-3 flex items-center text-gray-500 
-              hover:text-gray-800 cursor-pointer"
+              className={`
+                absolute right-0 top-0 h-full px-3 flex items-center text-gray-500 
+                hover:text-gray-800  
+                ${!filterByName ? 'cursor-not-allowed' : 'cursor-pointer'}
+              `}
               aria-label="Search"
             >
               🔍
@@ -215,7 +216,9 @@ export default function HeroSection() {
                 <select
                   value={filters.category}
                   onChange={(e) => {
-                    setFilters((prev) => ({ ...prev, category: e.target.value })), setCurrentPage(1)
+                    setFilters((prev) => ({ ...prev, category: e.target.value })),
+                      setCurrentPage(1),
+                      setHasActiveFilters(true);
                   }}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
@@ -244,7 +247,8 @@ export default function HeroSection() {
                     setFilters((prev) => ({
                       ...prev,
                       ingredients: e.target.value,
-                    })), setCurrentPage(1)
+                    })), setCurrentPage(1),
+                      setHasActiveFilters(true);
                   }}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
@@ -268,7 +272,8 @@ export default function HeroSection() {
                 <select
                   value={filters.tag}
                   onChange={(e) => {
-                    setFilters((prev) => ({ ...prev, tag: e.target.value })), setCurrentPage(1)
+                    setFilters((prev) => ({ ...prev, tag: e.target.value })),
+                      setCurrentPage(1), setHasActiveFilters(true);
                   }}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
@@ -286,17 +291,17 @@ export default function HeroSection() {
               </div>
             )}
           </div>
-
-          {(hasActiveFilters) && (
-              <button type="button"
-                onClick={handleReset}
-                disabled={loading}
-                className="px-3 py-2 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-100 
-                hover:text-gray-900 cursor-pointer disabled:cursor-not-allowed"
-              >
-                ↻ Reset Filters
-              </button>
-            )}
+          
+          {hasActiveFilters && (
+            <button type="button"
+              onClick={handleReset}
+              disabled={loading}
+              className="px-3 py-2 border border-gray-300 rounded-md text-gray-600 
+                hover:bg-gray-100 hover:text-gray-900 cursor-pointer disabled:cursor-not-allowed"
+            >
+              ↻ Reset Filters
+            </button>
+          )}
 
         </div>
         {/* ====================

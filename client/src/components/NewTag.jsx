@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react'
 export default function NewTag({ adminKey, propsTagID, handletoggleControlPopup, controlPopup }) {
 
     const API_BASE_URL =
-        import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+        import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
 
-    const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+    const TOKEN_FOR_API = import.meta.env.API_SECRET;
     const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${TOKEN_FOR_API}`,
@@ -25,7 +25,7 @@ export default function NewTag({ adminKey, propsTagID, handletoggleControlPopup,
             setLoading(true);
             const fetchTag = async () => {
                 try {
-                    const res = await fetch(`${API_BASE_URL}/api/tags/${propsTagID}`)
+                    const res = await fetch(`${API_BASE_URL}/api/tags/${propsTagID}`, {headers})
                     const data = await res.json()
                     setFormNewTag({
                         name: data.name || '',

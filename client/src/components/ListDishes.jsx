@@ -8,9 +8,13 @@ import BtnDeleteDish from './BtnDeleteDish';
 
 export default function ListAllDishes({ adminKey, dishcontrolPopup, onClose }) {
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
 
-  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const TOKEN_FOR_API = import.meta.env.API_SECRET;
+
+  const headers = {
+    Authorization: `Bearer ${TOKEN_FOR_API}`
+  };
 
 
   /* ==== STATES ==== */
@@ -47,28 +51,16 @@ export default function ListAllDishes({ adminKey, dishcontrolPopup, onClose }) {
     onClose();
   };
 
-
   /* ==== FETCH DATA ==== */
-  const fetchDishes = async () => {
+    const fetchDropdowns = async () => {
     try {
       setLoading(true);
-      const filterOnlyByActives = filters.isActive === 'true' ? 'true' : null;
-
-      const headers = {
-        Authorization: `Bearer ${TOKEN_FOR_API}`
-      };
-
-      const [dishRes, catRes, tagRes, ingRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/dishes?onlyActivies=${filterOnlyByActives}&itemPerPage=${itemsPerPage}&currentPage=${currentPage}&CategoryId=${filters.category}&listIngredients=${filters.ingredients}&listTags=${filters.tag}`, {
-          headers
-        }),
+      const [ catRes, tagRes, ingRes] = await Promise.all([
         fetch(`${API_BASE_URL}/api/categories?onlyActives=${true}`, { headers }),
         fetch(`${API_BASE_URL}/api/tags?onlyActives=${true}`, { headers }),
         fetch(`${API_BASE_URL}/api/ingredients?onlyActives=${true}`, { headers }),
       ]);
 
-
-      const data = await dishRes.json();
       const dataCat = await catRes.json();
       const dataTag = await tagRes.json();
       const dataIng = await ingRes.json();
@@ -76,12 +68,30 @@ export default function ListAllDishes({ adminKey, dishcontrolPopup, onClose }) {
       setCategories(dataCat.data);
       setTags(dataTag.data);
       setIngredients(dataIng.data);
+
+    } catch (error) {
+      console.log('Error fetching dropdowns data:', error);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchDishes = async () => {
+    try {
+      setLoading(true);
+      const filterOnlyByActives = filters.isActive === 'true' ? 'true' : null;
+
+      const dishRes = await fetch(`${API_BASE_URL}/api/dishes?onlyActivies=${filterOnlyByActives}&itemPerPage=${itemsPerPage}&currentPage=${currentPage}&CategoryId=${filters.category}&listIngredients=${filters.ingredients}&listTags=${filters.tag}`, {
+          headers
+        })
+
+      const data = await dishRes.json();
       setListAllDishes(Array.isArray(data.dishes) ? data.dishes : []);
-      
+
       setCurrentPage(data.paginationDetais.currentPage);
       setItemsPerPage(data.paginationDetais.ItemsPerPage);
       setTotalPages(data.paginationDetais.totalPages);
-
 
     } catch (error) {
       console.log('Error fetching dish list:', error);
@@ -92,8 +102,11 @@ export default function ListAllDishes({ adminKey, dishcontrolPopup, onClose }) {
   };
 
   useEffect(() => {
+    fetchDropdowns();
+  }, []);
+
+  useEffect(() => {
     fetchDishes();
-    //setRefreshListAux((prev) => prev + 1);
   }, [dishcontrolPopup, filters, currentPage, itemsPerPage]);
 
 

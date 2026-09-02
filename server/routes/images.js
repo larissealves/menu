@@ -4,17 +4,6 @@ import { PrismaClient } from '@prisma/client'
 const router = express.Router()
 const prisma = new PrismaClient()
 
-const requireAuth = (req, res, next) => {
-  const auth = req.headers.authorization;
-  const api_secret = `Bearer ${process.env.API_SECRET}`;
-  if (!auth || auth !== api_secret) {
-    return res.status(401).json({
-      error: "Não autorizado :D ;D",
-    });
-  }
-  next();
-};
-
 function adminAuth(req, res, next) {
   const adminKey = req.headers["x-admin-key"];
 
@@ -34,7 +23,7 @@ function adminAuth(req, res, next) {
 }
 
 /* ============== DELETE ================= */
-router.delete('/delete/imageByDishId/:id', requireAuth, adminAuth, async (req, res) => {
+router.delete('/delete/imageByDishId/:id',  adminAuth, async (req, res) => {
   const imageId = parseInt(req.params.id);
 
   try {
