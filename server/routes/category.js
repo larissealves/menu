@@ -4,18 +4,6 @@ import { PrismaClient } from '@prisma/client'
 const router = express.Router()
 const prisma = new PrismaClient()
 
-
-const requireAuth = (req, res, next) => {
-  const auth = req.headers.authorization;
-  const api_secret = `Bearer ${process.env.API_SECRET}`;
-  if (!auth || auth !== api_secret) {
-    return res.status(401).json({
-      error: "Não autorizado :D ;D",
-    });
-  }
-  next();
-};
-
 function adminAuth(req, res, next) {
   const adminKey = req.headers["x-admin-key"];
 
@@ -34,9 +22,8 @@ function adminAuth(req, res, next) {
   next();
 }
 
-
 /* ============== CREATE ================= */
-router.post('/new/category', requireAuth, adminAuth, async (req, res) => {
+router.post('/categories', adminAuth, async (req, res) => {
   const { name, isActive } = req.body
   try {
     const newCategory = await prisma.category.create({
@@ -55,86 +42,70 @@ router.post('/new/category', requireAuth, adminAuth, async (req, res) => {
 
 
 /* ============== GET ALL ITEMS ================= */
-router.get('/get/categoryList/:onlyActivesItems/:limitItemsPerPage/:currentPage', 
-  requireAuth,
-  async (req, res) => {
-  try {
-    const filterOnlyActives = req.params.onlyActivesItems === 'true' 
-    ? true 
-    : req.params.onlyActivesItems === 'false' ? false : null;
+router.get('/categories',
+   async (req, res) => {
+    try {
+      const filterOnlyActives = req.query.onlyActives === 'true'
+        ? true
+        : req.query.onlyActives === 'false' ? false : null;
 
-    const paginationLimit = Number(req.params.limitItemsPerPage) || 6;
-    const paginationCurrentPage = Number(req.params.currentPage) || 1;
+      const hasPagination =
+        req.query.itemsPerPage !== undefined ||
+        req.query.currentPage !== undefined;
 
-    const skip =
-      (paginationCurrentPage - 1) * paginationLimit;
+      const paginationLimit = Number(req.query.itemsPerPage) || 6;
+      const paginationCurrentPage = Number(req.query.currentPage) || 1;
 
-    const take =
-      paginationLimit;
+      const skip = hasPagination ?
+        (paginationCurrentPage - 1) * paginationLimit : undefined;
 
-    const where = {
-      ...(filterOnlyActives !== null && {
-        isActive: filterOnlyActives,
-      }),
-    }
+      const take = hasPagination ?
+        paginationLimit : undefined;
 
-    const [categories, totalItems] = await Promise.all([
-      prisma.category.findMany({
-        where,
-        skip,
-        take,
-
-        orderBy: [
-          { isActive: 'desc' },
-          { name: 'asc' },
-        ],
-      }),
-
-      prisma.category.count({
-        where,
-      }),
-    ])
-
-    const paginationDetails = {
-      totalPages: Math.ceil(totalItems / paginationLimit),
-      currentPage: paginationCurrentPage,
-      itemsPerPage: paginationLimit,
-    }
-
-    res.status(200).json({
-      categories: categories,
-      paginationDetails,
-    })
-
-  } catch (error) {
-    res.status(500).json({
-      error: 'Erro ao buscar categorias'
-    })
-  }
-})
-
-
-/* ============== GET ALL ITEMS - Active ================= */
-router.get('/get/categoryList/active', requireAuth, async (req, res) => {
-  try {
-    const categories = await prisma.category.findMany({
-      where: {
-        isActive: true,
-      },
-      orderBy: {
-        name: 'asc',
+      const where = {
+        ...(filterOnlyActives !== null && {
+          isActive: filterOnlyActives,
+        }),
       }
-    });
-    res.status(200).json(categories)
-  } catch (error) {
-    console.error('Erro ao buscar categorias:', error)
-    res.status(500).json({ error: 'Erro ao buscar categorias' })
-  }
-})
+
+      const [categories, totalItems] = await Promise.all([
+        prisma.category.findMany({
+          where,
+          skip,
+          take,
+
+          orderBy: [
+            { isActive: 'desc' },
+            { name: 'asc' },
+          ],
+        }),
+
+        prisma.category.count({
+          where,
+        }),
+      ])
+
+      const paginationDetails = {
+        totalPages: Math.ceil(totalItems / paginationLimit),
+        currentPage: paginationCurrentPage,
+        itemsPerPage: paginationLimit,
+      }
+
+      res.status(200).json({
+        data: categories,
+        paginationDetails,
+      })
+
+    } catch (error) {
+      res.status(500).json({
+        error: 'Erro ao buscar categorias'
+      })
+    }
+  });
 
 
 /* ============== GET ONE ITEM - FOR ID ================= */
-router.get('/get/categoryID/:id', async (req, res) => {
+router.get('/categories/:id', async (req, res) => {
   const categoryId = parseInt(req.params.id);
 
   try {
@@ -146,7 +117,10 @@ router.get('/get/categoryID/:id', async (req, res) => {
       return res.status(404).json({ error: 'Categoria não encontrada' });
     }
 
-    res.status(200).json(category);
+    res.status(200).json({
+      data: category,
+    });
+
   } catch (error) {
     console.error('Erro ao buscar categoria por ID:', error);
     res.status(500).json({ error: 'Erro ao buscar categoria' });
@@ -155,7 +129,7 @@ router.get('/get/categoryID/:id', async (req, res) => {
 
 
 /* ============== UPDATE ================= */
-router.put('/update/category/:id', requireAuth, adminAuth, async (req, res) => {
+router.put('/categories/:id', adminAuth, async (req, res) => {
   const categoryId = parseInt(req.params.id)
   const { name, isActive } = req.body
 
@@ -177,7 +151,7 @@ router.put('/update/category/:id', requireAuth, adminAuth, async (req, res) => {
 
 
 /* ============== DELETE ================= */
-router.delete('/delete/category/:id', requireAuth, adminAuth, async (req, res) => {
+router.delete('/categories/:id', adminAuth, async (req, res) => {
   const categoryId = parseInt(req.params.id)
   try {
     const res = await prisma.category.delete({

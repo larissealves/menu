@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react'
 export default function AddCategory({ adminKey, propsCategoryID, handleToggleControlPopup, controlPopup }) {
     
     const API_BASE_URL =
-        import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
-    const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+        import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
+
+    const TOKEN_FOR_API = import.meta.env.API_SECRET;
     const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${TOKEN_FOR_API}`,
@@ -23,11 +24,11 @@ export default function AddCategory({ adminKey, propsCategoryID, handleToggleCon
             setLoading(true);
             const fetchCategory = async () => {
                 try {
-                    const res = await fetch(`${API_BASE_URL}/api/get/categoryID/${propsCategoryID}`)
+                    const res = await fetch(`${API_BASE_URL}/api/categories/${propsCategoryID}`,{headers})
                     const data = await res.json()
                     setFormNewCategory({
-                        name: data.name || '',
-                        isActive: data.isActive ?? true,
+                        name: data.data.name || '',
+                        isActive: data.data.isActive ?? true,
                     })
                 } catch (error) {
                     console.error('Failed to fetch category:', error)
@@ -61,8 +62,8 @@ export default function AddCategory({ adminKey, propsCategoryID, handleToggleCon
 
         setLoading(true);
         const endpoint = propsCategoryID
-            ? `${API_BASE_URL}/api/update/category/${propsCategoryID}`
-            : `${API_BASE_URL}/api/new/category`
+            ? `${API_BASE_URL}/api/categories/${propsCategoryID}`
+            : `${API_BASE_URL}/api/categories`
 
         const method = propsCategoryID ? 'PUT' : 'POST'
 

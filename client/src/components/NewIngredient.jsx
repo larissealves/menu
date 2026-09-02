@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react'
 export default function AddIngredient({ adminKey, propsIngredientID, handletoggleControlPopup, controlPopup }) {
 
     const API_BASE_URL =
-        import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
-    const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+        import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
+    const TOKEN_FOR_API = import.meta.env.API_SECRET;
     const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${TOKEN_FOR_API}`,
@@ -22,7 +22,7 @@ export default function AddIngredient({ adminKey, propsIngredientID, handletoggl
             setLoading(true);
             const fetchIngredient = async () => {
                 try {
-                    const res = await fetch(`${API_BASE_URL}/api/get/ingredientID/${propsIngredientID}`)
+                    const res = await fetch(`${API_BASE_URL}/api/ingredients/${propsIngredientID}`, {headers})
                     const data = await res.json()
                     setFormNewIngredient({
                         name: data.name || '',
@@ -60,8 +60,8 @@ export default function AddIngredient({ adminKey, propsIngredientID, handletoggl
         setLoading(true);
 
         const endpoint = propsIngredientID
-            ? `${API_BASE_URL}/api/update/ingredient/${propsIngredientID}`
-            : `${API_BASE_URL}/api/new/ingredient`
+            ? `${API_BASE_URL}/api/ingredients/${propsIngredientID}`
+            : `${API_BASE_URL}/api/ingredients`
 
         const method = propsIngredientID ? 'PUT' : 'POST'
 

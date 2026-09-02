@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 export default function AddDishes({ adminKey, propDishID, handleToggleControlPopup, controlPopup }) {
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
 
-  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const TOKEN_FOR_API = import.meta.env.API_SECRET;
   const headers = {
     Authorization: `Bearer ${TOKEN_FOR_API}`,
     "x-admin-key": adminKey,
@@ -35,7 +35,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
     if (propDishID) {
       const fetchDish = async () => {
         try {
-          const res = await fetch(`${API_BASE_URL}/api/get/disheID/${propDishID}`);
+          const res = await fetch(`${API_BASE_URL}/api/dishes/${propDishID}`, {headers});
           const data = await res.json();
           setFormDishes((prev) => ({
             ...prev,
@@ -52,7 +52,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
 
       const fetchDishTags = async () => {
         try {
-          const res = await fetch(`${API_BASE_URL}/api/get/filterTagByDishId/${propDishID}`);
+          const res = await fetch(`${API_BASE_URL}/api/tags/${propDishID}/dishes`, {headers});
           const data = await res.json();
           const tags = data.map((item) => item.tagId);
           setFormDishes((prev) => ({ ...prev, tags }));
@@ -63,7 +63,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
 
       const fetchDishIngredients = async () => {
         try {
-          const res = await fetch(`${API_BASE_URL}/api/get/filterIngredientsByDishId/${propDishID}`);
+          const res = await fetch(`${API_BASE_URL}/api/ingredients/${propDishID}/dishes`, {headers});
           const data = await res.json();
           const ingredients = data.map((item) => item.ingredient.id);
           setFormDishes((prev) => ({ ...prev, ingredients }));
@@ -87,7 +87,7 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
     const fetchImagesEditDish = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/get/imagesByDishId/${propDishID}`, { headers, });
+        const res = await fetch(`${API_BASE_URL}/api/images/${propDishID}/dishes`, { headers, });
         const data = await res.json();
 
         if (Array.isArray(data)) {
@@ -185,18 +185,27 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
   /* ================= (END) FLOW IMAGES- ONLY FORM =========================== */
 
   useEffect(() => {
+    setLoading(true);
     const fetchAll = async () => {
       try {
         const [catRes, ingRes, tagRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/get/categoryList/active`, { headers, }),
-          fetch(`${API_BASE_URL}/api/get/ingredientList/active`, { headers, }),
-          fetch(`${API_BASE_URL}/api/get/tagList/active`, { headers, }),
+          fetch(`${API_BASE_URL}/api/categories?onlyActives=${true}`, { headers, }),
+          fetch(`${API_BASE_URL}/api/ingredients?onlyActives=${true}`, { headers, }),
+          fetch(`${API_BASE_URL}/api/tags?onlyActives=${true}`, { headers, }),
         ]);
-        setCategories(await catRes.json());
-        setIngredients(await ingRes.json());
-        setTags(await tagRes.json());
+
+        const dataCat = await catRes.json();
+        const dataTag = await tagRes.json();
+        const dataIng =  await ingRes.json();
+
+        setCategories(dataCat.data);
+        setTags(dataTag.data);
+        setIngredients(dataIng.data);
+        
       } catch (error) {
         console.error('Erro ao buscar dados iniciais:', error);
+      }finally{
+        setLoading(false);
       }
     };
     fetchAll();
@@ -231,8 +240,8 @@ export default function AddDishes({ adminKey, propDishID, handleToggleControlPop
     });
 
     const endpoint = propDishID
-      ? `${API_BASE_URL}/api/update/editDishes/${propDishID}`
-      : `${API_BASE_URL}/api/new/addDishes`;
+      ? `${API_BASE_URL}/api/dishes/${propDishID}`
+      : `${API_BASE_URL}/api/dishes`;
     const method = propDishID ? 'PUT' : 'POST';
 
     try {

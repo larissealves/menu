@@ -13,16 +13,22 @@ import '../styles/base.css';
 export default function HeroSection() {
 
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
 
-  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const TOKEN_FOR_API = import.meta.env.API_SECRET;
+  const headers = {
+    Authorization: `Bearer ${TOKEN_FOR_API}`,
+  };
 
+  const [filterByName, setFilterByName] = useState("");
   const [filters, setFilters] = useState({
     name: '',
     category: 0,
     tag: 0,
     ingredients: 0
   });
+
+  const [hasActiveFilters, setHasActiveFilters] = useState(false);
 
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
@@ -41,37 +47,27 @@ export default function HeroSection() {
   useEffect(() => {
     setLoading(true);
 
-    const fetchInitialData = async () => {
+    const fetchFilters = async () => {
       try {
-        const headers = {
-          Authorization: `Bearer ${TOKEN_FOR_API}`,
-        };
-
-        const [catRes, tagRes, ingredientsRes, dishRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/get/categoryList/active`,
+        const [catRes, tagRes, ingRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/categories?onlyActives=${true}`,
             { headers, }
           ),
-          fetch(`${API_BASE_URL}/api/get/tagList/active`,
+          fetch(`${API_BASE_URL}/api/tags?onlyActives=${true}`,
             { headers, }
           ),
-          fetch(`${API_BASE_URL}/api/get/ingredientList/active`,
+          fetch(`${API_BASE_URL}/api/ingredients?onlyActives=${true}`,
             { headers, }
           ),
-          fetch(`${API_BASE_URL}/api/get/dishes-id-relations/${true}/${limitItemsPerPage}/${currentPage}/${filters.category}/${filters.ingredients}/${filters.tag}`,
-            { headers, }
-          )
         ]);
 
-        setCategories(await catRes.json());
-        setTags(await tagRes.json());
-        setIngredients(await ingredientsRes.json());
+        const dataCat = await catRes.json();
+        const dataTag = await tagRes.json();
+        const dataIng = await ingRes.json();
 
-        const data = await dishRes.json();
-        setDishes(Array.isArray(data.dishes) ? data.dishes : []);
-        setCurrentPage(data.paginationDetais.currentPage);
-        console.log(data.paginationDetais.currentPage);
-        setTotalPages(data.paginationDetais.totalPages);
-        setLimitPerPage(data.paginationDetais.ItemsPerPage);
+        setCategories(dataCat.data);
+        setTags(dataTag.data);
+        setIngredients(dataIng.data);
 
       } catch (error) {
         console.error('Erro ao buscar dados iniciais:', error);
@@ -79,26 +75,52 @@ export default function HeroSection() {
         setLoading(false);
       }
     };
-    fetchInitialData();
-  }, [currentPage, filters]);
+    fetchFilters();
+  }, []);
 
-  // LOCAL FILTERS
-  const filtered = dishes.filter(dish => {
-    const matchesName = dish.name.toLowerCase().includes(filters.name.toLowerCase());
-    /*const matchesCategory = filters.category ? dish.categoryId === +filters.category : true;
-    const matchesTag = filters.tag
-      ? dish.tags?.some(tag => tag.tagId === +filters.tag)
-      : true;
+  useEffect(() => {
+    const fetchListDishes = async () => {
+      try {
+        const dishRes = await fetch(`${API_BASE_URL}/api/dishes?onlyActives=${true}&itemPerPage=${limitItemsPerPage}&currentPage=${currentPage}&categoryId=${filters.category}&listIngredients=${filters.ingredients}&listTags=${filters.tag}&name=${filters.name}`,
+          { headers, }
+        )
 
-    const matchesIngredients = filters.ingredients
-      ? dish.ingredients?.some(ing => ing.ingredientId === + filters.ingredients)
-      : true;
-      */
-    return matchesName;
-  });
+        const data = await dishRes.json();
+        setDishes(Array.isArray(data.dishes) ? data.dishes : []);
+        setTotalPages(data.paginationDetais.totalPages);
+        setLimitPerPage(data.paginationDetais.ItemsPerPage);
+
+      } catch (error) {
+        console.error('Erro ao buscar a lista de pratos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchListDishes();
+  }, [currentPage, limitItemsPerPage, filters]);
+
+
+  const handleSearch = () => {
+    setFilters({ ...filters, name: filterByName });
+    setHasActiveFilters(true);
+    setCurrentPage(1);
+  };
+
+  const handleReset = () => {
+    setFilters({
+      name: '',
+      category: 0,
+      tag: 0,
+      ingredients: 0
+    });
+    setFilterByName('');
+    setHasActiveFilters(false);
+    setCurrentPage(1);
+  }
 
   return (
-    <div className="flex flex-col items-center px-4 py-8 md:px-8 md:py-12 max-w-6xl mx-auto gap-12">
+    <div className="flex flex-col items-center px-4 py-8 md:px-8 md:py-12 max-w-6xl 
+    mx-auto gap-12">
 
       <Loading loadingIsActive={loading} />
 
@@ -159,15 +181,33 @@ export default function HeroSection() {
       ========================= */}
       <section className="w-full flex flex-col gap-6">
         <div className="flex flex-col gap-4 w-full sm:flex-row sm:items-end sm:gap-6 ">
-          <input
-            type="text"
-            placeholder="Search by name"
-            value={filters.name}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, name: e.target.value }), setCurrentPage(1))
-            }
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm w-full sm:max-w-xs"
-          />
+          <div className="relative w-full sm:max-w-xs">
+            <input
+              type="text"
+              placeholder="Search by name"
+              value={filterByName}
+              onChange={(e) => setFilterByName(e.target.value)}
+              className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md text-sm 
+              focus:outline-none focus:ring-2 focus:ring-violet-200"
+            />
+
+            <button
+              type="button"
+              onClick={handleSearch}
+              disabled={loading}
+              title={'Click for search by name'}
+              className={`
+                absolute right-0 top-0 h-full px-3 flex items-center text-gray-500 
+                hover:text-gray-800  
+                ${!filterByName ? 'cursor-not-allowed' : 'cursor-pointer'}
+              `}
+              aria-label="Search"
+            >
+              🔍
+            </button>
+
+          </div>
+
 
           <div className="flex gap-4 w-full items-end sm:flex-1">
             {categories.length > 0 && (
@@ -175,9 +215,11 @@ export default function HeroSection() {
                 <label className="text-sm text-gray-700">Category:</label>
                 <select
                   value={filters.category}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, category: e.target.value }), setCurrentPage(1))
-                  }
+                  onChange={(e) => {
+                    setFilters((prev) => ({ ...prev, category: e.target.value })),
+                      setCurrentPage(1),
+                      setHasActiveFilters(true);
+                  }}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
                   <option value="0">All categories</option>
@@ -201,12 +243,13 @@ export default function HeroSection() {
                 </label>
                 <select
                   value={filters.ingredients}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setFilters((prev) => ({
                       ...prev,
                       ingredients: e.target.value,
-                    }), setCurrentPage(1))
-                  }
+                    })), setCurrentPage(1),
+                      setHasActiveFilters(true);
+                  }}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
                   <option value="0">All options</option>
@@ -228,9 +271,10 @@ export default function HeroSection() {
                 <label className="text-sm text-gray-700">Tags:</label>
                 <select
                   value={filters.tag}
-                  onChange={(e) =>
-                    setFilters((prev) => ({ ...prev, tag: e.target.value }), setCurrentPage(1))
-                  }
+                  onChange={(e) => {
+                    setFilters((prev) => ({ ...prev, tag: e.target.value })),
+                      setCurrentPage(1), setHasActiveFilters(true);
+                  }}
                   className="px-3 py-2 border border-gray-300 rounded-md text-sm w-full truncate"
                 >
                   <option value="0">Other highlights</option>
@@ -247,6 +291,17 @@ export default function HeroSection() {
               </div>
             )}
           </div>
+          
+          {hasActiveFilters && (
+            <button type="button"
+              onClick={handleReset}
+              disabled={loading}
+              className="px-3 py-2 border border-gray-300 rounded-md text-gray-600 
+                hover:bg-gray-100 hover:text-gray-900 cursor-pointer disabled:cursor-not-allowed"
+            >
+              ↻ Reset Filters
+            </button>
+          )}
 
         </div>
         {/* ====================
@@ -260,7 +315,7 @@ export default function HeroSection() {
         =======================================================*/}
         <div className="w-full">
           {categories.map((category) => {
-            const categoryDishes = filtered.filter(d => d.categoryId === category.id);
+            const categoryDishes = dishes.filter(d => d.categoryId === category.id);
             if (categoryDishes.length === 0) return null;
 
             return (

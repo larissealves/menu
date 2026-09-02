@@ -4,17 +4,6 @@ import { PrismaClient } from '@prisma/client'
 const router = express.Router()
 const prisma = new PrismaClient()
 
-const requireAuth = (req, res, next) => {
-  const auth = req.headers.authorization;
-  const api_secret = `Bearer ${process.env.API_SECRET}`;
-  if (!auth || auth !== api_secret) {
-    return res.status(401).json({
-      error: "Não autorizado :D ;D",
-    });
-  }
-  next();
-};
-
 function adminAuth(req, res, next) {
   const adminKey = req.headers["x-admin-key"];
 
@@ -34,7 +23,7 @@ function adminAuth(req, res, next) {
 }
 
 /* ============== CREATE ================= */
-router.post('/new/tag', requireAuth, adminAuth,  async (req, res) => {
+router.post('/tags', adminAuth,  async (req, res) => {
   const { name, isActive } = req.body
   try {
     const newTag = await prisma.tag.create({
@@ -53,21 +42,27 @@ router.post('/new/tag', requireAuth, adminAuth,  async (req, res) => {
 
 
 /* ============== GET ALL ITEMS ================= */
-router.get('/get/tagList/:onlyActivesItems/:limitItemsPerPage/:currentPage', requireAuth,
+router.get('/tags', 
   async (req, res) => {
   try {
-    const filterOnlyActives = req.params.onlyActivesItems === 'true'
+    const filterOnlyActives = req.query.onlyActives === 'true'
       ? true
-      : req.params.onlyActivesItems === 'false' ? false : null;
+      : req.query.onlyActives === 'false' ? false : null;
 
-    const paginationLimit = Number(req.params.limitItemsPerPage) || 6;
-    const paginationCurrentPage = Number(req.params.currentPage) || 1;
+    const hasPagination =
+      req.query.limititemsPerPage !== undefined ||
+      req.query.currentPage !== undefined;
 
-    const skip =
-      (paginationCurrentPage - 1) * paginationLimit;
+    const paginationLimit = Number(req.query.limitItemsPerPage) || 6;
+    const paginationCurrentPage = Number(req.query.currentPage) || 1;
 
-    const take =
-      paginationLimit;
+    const skip = hasPagination
+      ? (paginationCurrentPage - 1) * paginationLimit
+      : undefined;
+
+    const take = hasPagination
+      ? paginationLimit
+      : undefined;
 
     const where = {
       ...(filterOnlyActives !== null && {
@@ -92,7 +87,6 @@ router.get('/get/tagList/:onlyActivesItems/:limitItemsPerPage/:currentPage', req
     }),
     ])
 
-    
     const paginationDetails = {
       totalPages: Math.ceil(totalItems / paginationLimit),
       currentPage: paginationCurrentPage,
@@ -109,27 +103,8 @@ router.get('/get/tagList/:onlyActivesItems/:limitItemsPerPage/:currentPage', req
   }
 });
 
-/* ============== GET ALL ITEMS - ACTIVE ================= */
-router.get('/get/tagList/active', requireAuth, async (req, res) => {
-  try {
-    const tags = await prisma.tag.findMany({
-      where: {
-        isActive: true,
-      },
-      orderBy: [
-        { name: 'asc' },
-        { isActive: 'desc' },
-      ]
-    });
-
-    res.status(200).json(tags)
-  } catch (error) {
-    res.status(500).json({ error: 'Erro ao buscar as tags' })
-  }
-})
-
 /* ============== GET ONE ITEM - FOR ID ================= */
-router.get('/get/tagID/:id', async (req, res) => {
+router.get('/tags/:id', async (req, res) => {
   const tagId = parseInt(req.params.id);
 
   try {
@@ -149,7 +124,7 @@ router.get('/get/tagID/:id', async (req, res) => {
 });
 
 /* ============== UPDATE ================= */
-router.put('/update/tag/:id', requireAuth, adminAuth, async (req, res) => {
+router.put('/tags/:id', adminAuth, async (req, res) => {
   const tagId = parseInt(req.params.id)
   const { name, isActive } = req.body
 
@@ -171,7 +146,7 @@ router.put('/update/tag/:id', requireAuth, adminAuth, async (req, res) => {
 
 
 /* ============== DELETE ================= */
-router.delete('/delete/tag/:id', requireAuth, adminAuth, async (req, res) => {
+router.delete('/tags/:id', adminAuth, async (req, res) => {
   const tagId = parseInt(req.params.id)
   try {
     const res = await prisma.tag.delete({

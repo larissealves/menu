@@ -5,9 +5,13 @@ import BtnDeleteTag from './BtnDeleteTag';
 
 export default function ListTags({ adminKey, showInList, tagControlPopup, onClose }) {
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+    import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
 
-  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  
+  const TOKEN_FOR_API = import.meta.env.API_SECRET;
+  const headers = {
+    Authorization: `Bearer ${TOKEN_FOR_API}`
+  };
 
   /* ==== STATES ==== */
   const [filters, setFilters] = useState({ option: 'null' });
@@ -34,10 +38,8 @@ export default function ListTags({ adminKey, showInList, tagControlPopup, onClos
   const fetchTag = async () => {
     try {
       setLoading(true);
-      const headers = {
-        Authorization: `Bearer ${TOKEN_FOR_API}`,
-      };
-      const res = await fetch(`${API_BASE_URL}/api/get/tagList/${filters.option}/${itemsPerPage}/${currentPage}`, { headers });
+
+      const res = await fetch(`${API_BASE_URL}/api/tags?onlyActives=${filters.option}&limitItemsPerPage=${itemsPerPage}&currentPage=${currentPage}`, { headers });
       const data = await res.json();
       setTags(data.data);
       setCurrentPage(data.paginationDetails.currentPage);

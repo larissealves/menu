@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 
 export default function BtnDeleteDish({ adminKey, dishID, onDelete }) {
   const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://menu-2hxb.onrender.com';
+  import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
 
-  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
+  const TOKEN_FOR_API = import.meta.env.API_SECRET;
   const headers = {
     Authorization: `Bearer ${TOKEN_FOR_API}`,
     'x-admin-key': adminKey,
@@ -18,7 +18,7 @@ export default function BtnDeleteDish({ adminKey, dishID, onDelete }) {
     const confirmDelete = window.confirm("Are you sure you want to delete this dish?");
     if (!confirmDelete) return;
 
-    const endpoint = (`${API_BASE_URL}/api/delete/dish/${dishID}`, 
+    const endpoint = (`${API_BASE_URL}/api/dishes/${dishID}`, 
       {
         headers,
       }
