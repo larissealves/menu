@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 export default function Tooltip({ className, tooltipContent, children }) {
     const API_BASE_URL =
-        import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
+        import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL_PROD;
 
     const baseStyle =
         "text-white font-normal px-2 rounded-lg flex items-center mb-2 "

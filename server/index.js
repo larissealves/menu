@@ -16,8 +16,8 @@ app.use(express.json())
 
 const requireAuth = (req, res, next) => {
   const auth = req.headers.authorization;
-  const api_secret = `Bearer ${process.env.API_SECRET}`;
-  if (!auth || auth !== api_secret) {
+  const API_SECRET = `Bearer ${process.env.API_SECRET}`;
+  if (!auth || auth !== API_SECRET) {
     return res.status(401).json({
       error: "Não autorizado :D ;D",
     });

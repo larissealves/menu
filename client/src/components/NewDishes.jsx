@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 export default function AddDishes({ adminKey, propDishID, handleToggleControlPopup, controlPopup }) {
   const API_BASE_URL =
-    import.meta.env.VITE_API_URL || import.meta.env.API_URL_PROD;
+    import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL_PROD;
 
-  const TOKEN_FOR_API = import.meta.env.API_SECRET;
+  const TOKEN_FOR_API = import.meta.env.VITE_API_SECRET;
   const headers = {
     Authorization: `Bearer ${TOKEN_FOR_API}`,
     "x-admin-key": adminKey,
