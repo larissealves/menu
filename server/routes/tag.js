@@ -35,7 +35,7 @@ router.post('/tags', adminAuth,  async (req, res) => {
     })
     res.status(201).json(newTag)
   } catch (error) {
-    console.error('Error ao adicionar tag', error)
+    console.error('Error ao adicionar tag: ', error.message)
     res.status(500).json({ error: 'Error ao adicionar tag' })
   }
 })
@@ -99,6 +99,7 @@ router.get('/tags',
     })
 
   } catch (error) {
+    console.log("Erro ao buscar as tags: ", error.message)
     res.status(500).json({ error: 'Erro ao buscar as tags' })
   }
 });
@@ -118,8 +119,8 @@ router.get('/tags/:id', async (req, res) => {
 
     res.status(200).json(tag);
   } catch (error) {
-    console.error('Erro ao buscar tage por ID:', error);
-    res.status(500).json({ error: 'Erro ao buscar tage' });
+    console.error('Erro ao buscar tage por ID: ', error.message);
+    res.status(500).json({ error: 'Erro ao buscar tag' });
   }
 });
 
@@ -139,7 +140,7 @@ router.put('/tags/:id', adminAuth, async (req, res) => {
     })
     res.status(200).json(updated)
   } catch (error) {
-    console.error('Error ao atualizar a tag', error)
+    console.error('Error ao atualizar a tag: ', error.message)
     res.status(500).json({ error: 'Erro ao atualizar a tag' })
   }
 })
@@ -154,7 +155,7 @@ router.delete('/tags/:id', adminAuth, async (req, res) => {
     })
     res.status(200).end()
   } catch (error) {
-    console.error('Error ao deletar tag', error)
+    console.error('Error ao deletar tag: ', error.message)
     res.status(500).json({ error: 'Erro ao deletar tag' })
   }
 })
