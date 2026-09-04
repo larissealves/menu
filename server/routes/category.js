@@ -35,7 +35,7 @@ router.post('/categories', adminAuth, async (req, res) => {
     })
     res.status(201).json(newCategory)
   } catch (error) {
-    console.error('Error ao criar nova categoria', error)
+    console.error('Error ao criar nova categoria: ', error.message)
     res.status(500).json({ error: 'Error ao criar categoria' })
   }
 })
@@ -97,6 +97,7 @@ router.get('/categories',
       })
 
     } catch (error) {
+      console.error('Error ao listar categorias: ', error.message)
       res.status(500).json({
         error: 'Erro ao buscar categorias'
       })
@@ -122,8 +123,8 @@ router.get('/categories/:id', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Erro ao buscar categoria por ID:', error);
-    res.status(500).json({ error: 'Erro ao buscar categoria' });
+    console.error('Erro ao buscar categoria por ID:', error.message);
+    res.status(500).json({ error: 'Erro ao buscar categoria por ID' });
   }
 });
 
@@ -144,7 +145,7 @@ router.put('/categories/:id', adminAuth, async (req, res) => {
     })
     res.status(200).json(updated)
   } catch (error) {
-    console.error('Error ao atualizar a categoria', error)
+    console.error('Error ao atualizar a categoria: ', error.message)
     res.status(500).json({ error: 'Erro ao atualizar a categoria' })
   }
 })
@@ -159,7 +160,10 @@ router.delete('/categories/:id', adminAuth, async (req, res) => {
     })
     res.status(200).json()
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao atualizar a categoria id ', categoryId })
+    console.error('Error ao atualizar categoria: ', error.message)
+    res.status(500).json({ 
+      error: 'Erro ao atualizar a categoria id: ', categoryId 
+    })
   }
 })
 

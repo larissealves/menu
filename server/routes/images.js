@@ -44,9 +44,9 @@ router.delete('/delete/imageByDishId/:id',  adminAuth, async (req, res) => {
       where: { id: imageId }
     });
 
-    res.status(200).json({ message: 'Imagem excluída com sucesso.' });
+    res.status(200).json({});
   } catch (error) {
-    console.error('Erro ao deletar imagem:', error);
+    console.error('Erro ao deletar imagem: ', error.message);
     res.status(500).json({ error: 'Erro ao deletar imagem.' });
   }
 });

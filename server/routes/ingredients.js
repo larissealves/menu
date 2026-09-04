@@ -35,7 +35,7 @@ router.post('/ingredients', adminAuth, async (req, res) => {
     })
     res.status(201).json(newIngredient)
   } catch (error) {
-    console.error('Error ao adicionar ingrediente', error)
+    console.error('Error ao adicionar ingrediente: ', error.message)
     res.status(500).json({ error: 'Error ao adicionar ingrediente'})
   }
 })
@@ -56,7 +56,7 @@ router.get('/ingredients/:id', async (req, res) => {
 
     res.status(200).json(ingredient);
   } catch (error) {
-    console.error('Erro ao buscar ingrediente por ID:', error);
+    console.error('Erro ao buscar ingrediente por ID: ', error.message);
     res.status(500).json({ error: 'Erro ao buscar ingrediente' });
   }
 });
@@ -78,7 +78,7 @@ router.put('/ingredients/:id', adminAuth, async (req, res) => {
     })
     res.status(200).json(updated)
   }catch (error) {
-    console.error('Error ao atualizar a ingrediente', error)
+    console.error('Error ao atualizar a ingrediente: ', error.message)
     res.status(500).json({error: 'Erro ao atualizar a ingrediente'})
   }
 })
@@ -143,6 +143,7 @@ router.get('/ingredients',
     })
 
   } catch (error) {
+    console.log("Erro ao buscar os ingredientes: ", error.message)
     res.status(500).json({ error: 'Erro ao buscar os ingredientes' })
   }
 }),
@@ -157,7 +158,7 @@ router.delete('/ingredients/:id', adminAuth, async (req, res) => {
     })
     res.status(200).end()
   }catch (error) {
-    console.error('Error ao deletar o ingrediente', error)
+    console.error('Error ao deletar o ingrediente: ', error.message)
     res.status(500).json({error: 'Erro ao deletar o ingrediente'})
   }
 })

@@ -110,10 +110,9 @@ router.post('/dishes', upload.array('images'),  adminAuth,
         }
       }
 
-
       res.status(201).json(newDish);
     } catch (error) {
-      console.error('Erro ao criar prato:', error);
+      console.error('Erro ao criar prato: ', error.message);
       res.status(500).json({ error: 'Erro ao criar prato' });
     }
   });
@@ -198,7 +197,7 @@ router.put('/dishes/:id',  adminAuth, upload.array('images'), async (req, res) =
 
     res.status(200).json(updatedDish);
   } catch (error) {
-    console.error('Erro ao editar o prato:', error);
+    console.error('Erro ao editar o prato: ', error.message);
     res.status(500).json({ error: 'Erro ao editar o prato' });
   }
 });
@@ -230,10 +229,12 @@ router.delete('dishes/:id', adminAuth, async (req, res) => {
       }),
     ]);
 
-    res.status(200).json({ message: 'Prato e relacionamentos deletados com sucesso.' });
+    res.status(200).json({});
   } catch (error) {
-    console.error('Erro ao deletar com rollback automático:', error);
-    res.status(500).json({ error: 'Erro ao deletar o prato. Nenhuma alteração foi feita.' });
+    console.error('Erro ao deletar com rollback automático: ', error.message);
+    res.status(500).json({ 
+      error: 'Erro ao deletar o prato. Nenhuma alteração realizada.' 
+    });
   }
 });
 
@@ -252,7 +253,7 @@ router.get('/dishes/:id', async (req, res) => {
 
     res.status(200).json(dish)
   } catch (error) {
-    console.error('Erro ao buscar prato:', error)
+    console.error('Erro ao buscar prato: ', error.message)
     res.status(500).json({ error: 'Erro ao buscar prato' })
   }
 });
@@ -281,7 +282,7 @@ router.get('/dishes/:id/categories', async (req, res) => {
 
     res.status(200).json(dishes);
   } catch (error) {
-    console.error('Erro ao buscar pratos por categoryId:', error);
+    console.error('Erro ao buscar pratos por categoryId: ', error.message);
     res.status(500).json({ error: 'Erro ao buscar pratos por categoryId' });
   }
 });
@@ -306,7 +307,7 @@ router.get('/dishes/:id/ingredients', async (req, res) => {
 
     res.status(200).json(dishes);
   } catch (error) {
-    console.error('Erro ao buscar pratos por ingredientId:', error);
+    console.error('Erro ao buscar pratos por ingredientId: ', error.message);
     res.status(500).json({ error: 'Erro ao buscar pratos por ingredientId' });
   }
 });
@@ -332,7 +333,7 @@ router.get('/dishes/:id/tags', async (req, res) => {
 
     res.status(200).json(dishesTag);
   } catch (error) {
-    console.error('Erro ao buscar pratos por tagId:', error);
+    console.error('Erro ao buscar pratos por tagId: ', error.message);
     res.status(500).json({ error: 'Erro ao buscar pratos por tagId' });
   }
 });
@@ -367,7 +368,7 @@ router.get('/tags/:id/dishes', async (req, res) => {
     res.status(200).json(dishesTag);
     console.log('BACK -lista de tags', dishesTag)
   } catch (error) {
-    console.error('Erro ao buscar as tags vinculadas a este prato', error);
+    console.error('Erro ao buscar as tags vinculadas a este prato: ', error.message);
     res.status(500).json({ error: 'Erro ao buscar as tags vinculadas a este prato' });
   }
 });
@@ -399,7 +400,7 @@ router.get('/ingredients/:id/dishes', async (req, res) => {
     }
     res.status(200).json(dishesIngredient);
   } catch (error) {
-    console.error('Erro ao buscar os ingredientes pelo dishId:', error);
+    console.error('Erro ao buscar os ingredientes pelo dishId: ', error.message);
     res.status(500).json({ error: 'Erro ao buscar os ingredientes pelo dishId' });
   }
 });
@@ -517,7 +518,8 @@ router.get('/dishes',
       })
 
     } catch (error) {
-      return res.status(500).json({ error: error.message });
+      console.log("Erro ao listar os pratos: ", error.message)
+      return res.status(500).json({ error: "Erro ao listar os pratos" });
     }
   });
 
@@ -557,11 +559,11 @@ router.get('/images/:id/dishes',  async (req, res) => {
 
     res.status(200).json(imagesWithBinary);
   } catch (error) {
-    console.error('Erro ao buscar imagens:', error);
+    console.error('Erro ao buscar imagens: ', error.message);
     res.status(500).json({
       error: 'Erro interno ao buscar imagens.',
-      detail: error?.message,
-      stack: error?.stack,
+      detail: '',
+      stack: '',
     });
   }
 });
